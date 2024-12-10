@@ -67,4 +67,20 @@ app.post("/register", async (req, res) => {
 
 })
 
+app.post("/job", async (req, res) => {
+  const { title, description, category, price, location, contact} = req.body;
+
+  if (!category || !contact || location) {
+      return res.status(400).json({ error: 'Invalid login' });
+  }
+
+  try {
+      
+
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+
+})
+
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
