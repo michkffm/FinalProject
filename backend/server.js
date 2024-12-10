@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import User from './models/User.js'
 import cors from 'cors';
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 await mongoose.connect(process.env.DB_URI);
 
@@ -20,9 +22,6 @@ app.post("/register", async (req, res) => {
   
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
-    //   const verificationToken = crypto.randomBytes(32).toString("hex");
-      
-  
       const user = await User.create({
         username,
         email,
@@ -37,5 +36,35 @@ app.post("/register", async (req, res) => {
     }
     
   })
+
+  app.post("/login", async (req, res) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ error: 'Invalid login' });
+    }
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (!user) {
+            return res.status(401).json({ error: 'User not found' });
+        }
+
+        const isValidPassword = await bcrypt.compare(password, user.password);
+
+        if (!isValidPassword) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const payload = { userId: user._id };
+        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+
+        res.json({ user: user, token: token });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+})
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
