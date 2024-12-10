@@ -5,31 +5,29 @@ export function Header() {
     <header>
       <nav className="bg-purple-500 p-4 flex justify-between items-center">
         <div className="text-white text-xl font-bold">
-          <div>
-            Logo
-          </div>
+          <div>Logo</div>
         </div>
         <ul className="flex gap-8 text-white text-lg">
           <li>
-            <Link to="/" aria-label="Home" className="flex items-center gap-2 hover:underline">
+            <Link to="/Home" className="flex items-center gap-2 hover:underline">
               <i className="fa-solid fa-house"></i>
               Home
             </Link>
           </li>
           <li>
-            <Link to="/Registrieren" aria-label="Registrieren" className="flex items-center gap-2 hover:underline">
+            <Link to="/register" className="flex items-center gap-2 hover:underline">
               <i className="fa-solid fa-user"></i>
               Registrieren
             </Link>
           </li>
           <li>
-            <Link to="/Anmeldung" aria-label="Anmeldung" className="flex items-center gap-2 hover:underline">
+            <Link to="/Anmeldung" className="flex items-center gap-2 hover:underline">
               <i className="fa-solid fa-right-to-bracket"></i>
               Anmeldung
             </Link>
           </li>
           <li>
-            <Link to="/Hilfe" aria-label="Hilfe" className="flex items-center gap-2 hover:underline">
+            <Link to="/Hilfe" className="flex items-center gap-2 hover:underline">
               <i className="fa-solid fa-question"></i>
               Hilfe
             </Link>
@@ -39,4 +37,3 @@ export function Header() {
     </header>
   );
 }
-
