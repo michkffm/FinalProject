@@ -4,6 +4,8 @@ import { Header } from "./components/Header.jsx";
 import { Footer } from "./components/Footer.jsx";
 import { Main } from "./components/Main.jsx";
 import { Register } from "./components/Register.jsx";
+import { Login } from "./components/Login.jsx";
+import Impressum from "./pages/Impressum.jsx";
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
         {/* Hauptseiten-Routen */}
         <Route path="/Home" element={<Main />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/impressum" element={<Impressum />} />
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
       </>

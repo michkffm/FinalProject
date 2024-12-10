@@ -25,12 +25,14 @@ export function Register() {
       body: JSON.stringify(data),
     })
       .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          throw new Error("Registrierung fehlgeschlagen");
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
         }
+        return res.json();
       })
+
       .then((data) => {
         console.log("Registrierung erfolgreich", data);
       })
@@ -40,7 +42,7 @@ export function Register() {
   };
 
   return (
-    <div className="flex items-center justify-center mt-32">
+    <div className="flex items-center justify-center mt-72">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -78,7 +80,12 @@ export function Register() {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Passwort:</label>
+            <label
+              htmlFor="password"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Passwort:
+            </label>
             <input
               type="password"
               id="password"
@@ -89,7 +96,17 @@ export function Register() {
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <button type="submit" className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44">Registrieren</button>
+          <select name="role" onChange={handleChange}>
+        <option value="">Select Role</option>
+        <option value="anbieter">Anbieter</option>
+        <option value="suchender">Suchender</option>
+      </select>
+          <button
+            type="submit"
+            className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44"
+          >
+            Registrieren
+          </button>
         </form>
       </div>
     </div>
