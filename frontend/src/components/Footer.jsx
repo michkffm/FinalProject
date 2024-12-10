@@ -2,15 +2,35 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
-    <footer>
-      <nav>
-        <ul>
-          <p>@copyright {new Date().getFullYear()}</p>
+    <footer className="bg-purple-500 text-white p-4 mt-20">
+      
+      <nav aria-label="Footer Navigation">
+        <ul className="flex flex-wrap justify-between items-center gap-4">
+        <p className="text-center mt-4">©copyright {new Date().getFullYear()}</p>
           <li>
-            <Link to="/Impressum">Impressum</Link>
+            <Link to="/Impressum" className="hover:underline">
+              Impressum
+            </Link>
           </li>
           <li>
-            <Link to="/Contact">Contakt</Link>
+            <Link to="/Agb" className="hover:underline">
+              AGB
+            </Link>
+          </li>
+          <li>
+            <Link to="/Datenschutz" className="hover:underline">
+              Datenschutz
+            </Link>
+          </li>
+          <li>
+            <Link to="/Cookie" className="hover:underline">
+              Cookie-Einstellungen
+            </Link>
+          </li>
+          <li>
+            <Link to="/Contact" className="hover:underline">
+              Kontakt
+            </Link>
           </li>
         </ul>
       </nav>
