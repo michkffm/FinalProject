@@ -2,13 +2,13 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
-    <footer className="bg-purple-500 text-white p-4 mt-20 fixed bottom-0 left-0 w-full">
+    <footer className="bg-blue-700 text-white p-4 mt-20 fixed bottom-0 left-0 w-full">
       
       <nav aria-label="Footer Navigation">
         <ul className="flex flex-wrap justify-between items-center gap-4">
         <p className="text-center mt-4">©copyright {new Date().getFullYear()}</p>
           <li>
-            <Link to="/Impressum" className="hover:underline">
+            <Link to="/impressum" className="hover:underline">
               Impressum
             </Link>
           </li>
