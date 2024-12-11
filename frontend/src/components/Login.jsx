@@ -47,7 +47,7 @@ export function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center mt-72">
+    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-32">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">

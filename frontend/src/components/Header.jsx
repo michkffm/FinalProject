@@ -4,7 +4,7 @@ import logogross from "../assets/logo-gross-kontur.png";
 export function Header() {
   return (
     <header>
-      <nav className="bg-blue-500 p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center items-center fixed top-0 left-0 w-full">
+      <nav className="bg-teal-600 p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center items-center fixed top-0 left-0 w-full">
         <div className="text-white text-xl font-bold mb-4 sm:mb-0">
           <img src={logogross} alt="logo" className="w-36 sm:w-25" />
         </div>
