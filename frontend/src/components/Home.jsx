@@ -1,7 +1,9 @@
+import "../App.css";
+
 export function Home() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
-      <section className="flex flex-col items-center rounded-lg max-w-4xl mx-auto sm:mt-9 mt-20 border-2 p-8 text-center">
+      <section className="hero-section flex flex-col items-center max-w-4xl sm:mt-9 mt-20  p-8 text-center">
         <h1 className="text-xl sm:text-2xl font-bold">
           Finden Sie qualifizierte Fachleute für Ihre Aufgaben
         </h1>
