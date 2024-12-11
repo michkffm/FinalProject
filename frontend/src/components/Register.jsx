@@ -5,6 +5,7 @@ export function Register() {
     username: "",
     password: "",
     email: "",
+    role: "",
   });
 
   const handleChange = (e) => {
@@ -96,11 +97,11 @@ export function Register() {
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <select name="role" onChange={handleChange}>
+          {/* <select name="role" id="role" value={data.role} onChange={handleChange}>
         <option value="">Select Role</option>
         <option value="anbieter">Anbieter</option>
         <option value="suchender">Suchender</option>
-      </select>
+      </select> */}
           <button
             type="submit"
             className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44"
