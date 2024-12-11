@@ -1,4 +1,4 @@
-export function Main() {
+export function Home() {
   return (
     <main className="p-4">
       <section className="max-w-4xl mx-auto mt-36 border-2 p-4 h-auto text-center pt-8">
