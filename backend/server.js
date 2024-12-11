@@ -9,6 +9,8 @@ await mongoose.connect(process.env.DB_URI);
 
 const app = express();
 const port = process.env.PORT
+
+
 app.use(cors())
 
 app.use(express.json());
@@ -67,7 +69,7 @@ app.post("/register", async (req, res) => {
 
 })
 
-app.post("/job", async (req, res) => {
+app.post("/jobs", async (req, res) => {
   const { title, description, category, price, location, contact} = req.body;
 
   if (!category || !contact || location) {
@@ -82,5 +84,14 @@ app.post("/job", async (req, res) => {
   }
 
 })
+
+app.get('/jobs', async (req, res) => {
+  try {
+      const jobs = await Job.find().sort({ createdAt: -1 }); // -1 for descending order, 1 for ascending
+      res.status(200).json(jobs);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch jobs' });
+  }
+});
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
