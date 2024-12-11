@@ -3,7 +3,7 @@ import "../App.css";
 export function Home() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
-      <section className="hero-section flex flex-col items-center max-w-4xl sm:mt-9 mt-20  p-8 text-center">
+      <section className="hero-section flex flex-col items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
         <h1 className="text-xl sm:text-2xl font-bold">
           Finden Sie qualifizierte Fachleute für Ihre Aufgaben
         </h1>
@@ -25,7 +25,7 @@ export function Home() {
           </button>
         </form>
       </section>
-      <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-16">
+      <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-6">
         <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Finden nach Dienstleister
