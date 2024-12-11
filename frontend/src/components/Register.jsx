@@ -5,8 +5,9 @@ export function Register() {
     username: "",
     password: "",
     email: "",
-    role: "",
   });
+
+  const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,11 +34,12 @@ export function Register() {
         }
         return res.json();
       })
-
       .then((data) => {
+        setMessage("Registrierung erfolgreich!");
         console.log("Registrierung erfolgreich", data);
       })
       .catch((error) => {
+        setMessage("Fehler bei der Registrierung: " + error.message);
         console.error("Fehler bei der Registrierung", error);
       });
   };
@@ -97,11 +99,6 @@ export function Register() {
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          {/* <select name="role" id="role" value={data.role} onChange={handleChange}>
-        <option value="">Select Role</option>
-        <option value="anbieter">Anbieter</option>
-        <option value="suchender">Suchender</option>
-      </select> */}
           <button
             type="submit"
             className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44"
@@ -109,6 +106,11 @@ export function Register() {
             Registrieren
           </button>
         </form>
+        {message && (
+          <div className={`mt-4 p-3 text-white ${message.includes("Fehler") ? "bg-red-500" : "bg-green-500"}`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );
