@@ -1,7 +1,7 @@
 .hero-section {
-    background-image: url('./assets/handshake-1.jpeg');
+    background-image: url('./assets/handshake-2.jpeg');
     background-size: cover;
-    background-position: center;
+    background-position: end;
     background-repeat: no-repeat;
     border-radius: 10px; /* Optional, für ein schönes Design */
     width: 100vw;
