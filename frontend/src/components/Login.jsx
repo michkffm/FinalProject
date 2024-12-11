@@ -56,7 +56,7 @@ export function Login() {
               value={data.email}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div className="space-y-2">
@@ -68,10 +68,10 @@ export function Login() {
               value={data.password}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-          <button type="submit" className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44">Login</button>
+          <button type="submit" className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44">Login</button>
         </form>
       </div>
     </div>
