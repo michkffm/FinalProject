@@ -8,7 +8,7 @@ export function Header() {
     <header>
       <nav className="bg-blue-700 p-4 flex justify-between items-center fixed top-0 left-0 w-full">
         <div className="text-white text-xl font-bold">
-          <img src={logogross} alt="logo" className="w-72 bg-purple-500"/>
+          <img src={logogross} alt="logo" className="w-72"/>
         </div>
         <ul className="flex gap-8 text-white text-lg">
           <li>
