@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Register() {
   const [data, setData] = useState({
@@ -8,6 +9,7 @@ export function Register() {
   });
 
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,6 +39,10 @@ export function Register() {
       .then((data) => {
         setMessage("Registrierung erfolgreich!");
         console.log("Registrierung erfolgreich", data);
+        
+        setTimeout(() => {
+          navigate("/login");
+        }, 2000);
       })
       .catch((error) => {
         setMessage("Fehler bei der Registrierung: " + error.message);
