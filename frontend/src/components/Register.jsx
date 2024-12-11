@@ -60,7 +60,7 @@ export function Register() {
               value={data.username}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div className="space-y-2">
@@ -77,7 +77,7 @@ export function Register() {
               value={data.email}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div className="space-y-2">
@@ -94,7 +94,7 @@ export function Register() {
               value={data.password}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           {/* <select name="role" id="role" value={data.role} onChange={handleChange}>
@@ -104,7 +104,7 @@ export function Register() {
       </select> */}
           <button
             type="submit"
-            className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44"
+            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
           >
             Registrieren
           </button>

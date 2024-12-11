@@ -1,31 +1,31 @@
 export function Main() {
   return (
-    <main className="p-4">
-      <section className="max-w-4xl mx-auto mt-36 border-2 p-4 h-auto text-center pt-8">
-        <h1 className="text-2xl font-bold">
+    <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
+      <section className="flex flex-col items-center rounded-lg max-w-4xl mx-auto sm:mt-9 mt-20 border-2 p-8 text-center">
+        <h1 className="text-xl sm:text-2xl font-bold">
           Finden Sie qualifizierte Fachleute für Ihre Aufgaben
         </h1>
         <p className="text-gray-600 mt-2">
-          Verbindung zu qualifizierten Dienstleistern für alle Ihre Bedürfnisser
+          Verbindung zu qualifizierten Dienstleistern für alle Ihre Bedürfnisse
         </p>
-        <form className="flex gap-4 ml-64 pt-8">
+        <form className="flex flex-col sm:flex-row gap-4 pt-8 items-center sm:items-start">
           <input
             id="search-input"
-            className="border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="border border-gray-300 rounded p-2 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
             placeholder="suche nach Dienstleistung"
           />
           <button
             type="submit"
-            className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600"
+            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
           >
             Suchen
           </button>
         </form>
       </section>
-      <section className="flex mt-20">
-        <div className="w-92 border-2 rounded-lg h-92 pr-8 mr-4 p-8 ml-72  ">
-          <h2 className="text-xl font-semibold mb-4">
+      <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-16">
+        <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Finden nach Dienstleister
           </h2>
           <form className="space-y-4">
@@ -35,7 +35,7 @@ export function Main() {
                 id="stadt-input"
                 type="text"
                 placeholder="Frankfurt"
-                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -58,21 +58,21 @@ export function Main() {
                 id="dienst-input"
                 type="text"
                 placeholder="Fliesenleger"
-                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <button
               type="submit"
-              className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-36"
+              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
             >
               Suchen
             </button>
           </form>
         </div>
 
-        <div className="w-92 border-2 rounded-lg h-92 pr-8 mr-4 p-8 ml-72">
-          <h2 className="text-xl font-semibold mb-4">
-            Bieten nach Dienstleister
+        <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            Bieten nach Dienstleistung
           </h2>
           <form className="space-y-4">
             <div>
@@ -81,7 +81,7 @@ export function Main() {
                 id="stadt-input"
                 type="text"
                 placeholder="Frankfurt"
-                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <div>
@@ -104,14 +104,14 @@ export function Main() {
                 id="dienst-input"
                 type="text"
                 placeholder="Fliesenleger"
-                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
             <button
               type="submit"
-              className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-36"
+              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
             >
-              Suchen
+              Bieten
             </button>
           </form>
         </div>
