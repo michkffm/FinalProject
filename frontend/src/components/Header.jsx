@@ -10,7 +10,7 @@ export function Header() {
         </div>
         <ul className="flex flex-row sm:flex-row gap-4 sm:gap-8 text-white text-lg">
           <li>
-            <Link to="/Home" className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+            <Link to="/" className="flex items-center gap-2 hover:underline">
               <i className="fa-solid fa-house"></i>
               Home
             </Link>

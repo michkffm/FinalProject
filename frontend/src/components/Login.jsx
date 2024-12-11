@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export function Login() {
   const [data, setData] = useState({
@@ -13,6 +14,8 @@ export function Login() {
       [name]: value,
     });
   };
+   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,6 +35,11 @@ export function Login() {
       })
       .then((data) => {
         console.log("Login erfolgreich", data);
+        setMessage("Login erfolgreich!");
+
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       })
       .catch((error) => {
         console.error("Fehler beim Login", error);
@@ -73,6 +81,11 @@ export function Login() {
           </div>
           <button type="submit" className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44">Login</button>
         </form>
+        {message && (
+          <div className={`mt-4 p-3 text-white ${message.includes("Fehler") ? "bg-red-500" : "bg-green-500"}`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );
