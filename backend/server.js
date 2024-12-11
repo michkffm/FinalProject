@@ -16,7 +16,7 @@ app.use(express.json());
 app.post("/register", async (req, res) => {
     const { username, email, password, role } = req.body;
   
-    if (!email || !password || !username || !role) {
+    if (!email || !password || !username) {
       return res.status(400).json({error: 'Invalid registration'});
     }
   
@@ -26,7 +26,6 @@ app.post("/register", async (req, res) => {
         username,
         email,
         password: hashedPassword,
-        role
       })
   
   
