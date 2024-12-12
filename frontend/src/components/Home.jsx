@@ -8,6 +8,13 @@ export function Home() {
     location: "",
   });
 
+  const [kilometer, setKilometer] = useState(50);
+
+  const handleSliderChange = (event) => {
+    setKilometer(event.target.value);
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({
@@ -77,7 +84,7 @@ export function Home() {
       <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-6">
         <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
-          Suchen nach Dienstleistung
+            Suchen nach Dienstleistung
           </h2>
           <form className="space-y-4">
             <div className="space-y-2">
@@ -105,17 +112,24 @@ export function Home() {
               </button>
             </div>
             <div>
-              <label>Entfernung (in km)</label>
+              <label
+                htmlFor="kilometer-slider"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Entfernung (in km)
+              </label>
               <input
                 id="kilometer-slider"
                 type="range"
                 min="1"
                 max="100"
-                defaultValue="50"
-                className="w-full"
+                value={kilometer}
+                onChange={handleSliderChange}
+                className="w-full mt-2"
               />
               <div className="text-sm text-gray-500 mt-1">
-                Aktuelle Auswahl: <span id="kilometer-value">50</span> km
+                Aktuelle Auswahl: <span id="kilometer-value">{kilometer}</span>{" "}
+                km
               </div>
             </div>
             <div>
@@ -143,7 +157,7 @@ export function Home() {
             Dienstleistung anbieten
           </h2>
           <form className="space-y-4">
-          <div className="space-y-2">
+            <div className="space-y-2">
               <label
                 htmlFor="location"
                 className="block text-sm font-medium text-gray-700"
@@ -168,17 +182,24 @@ export function Home() {
               </button>
             </div>
             <div>
-              <label>Entfernung (in km)</label>
+              <label
+                htmlFor="kilometer-slider"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Entfernung (in km)
+              </label>
               <input
                 id="kilometer-slider"
                 type="range"
                 min="1"
                 max="100"
-                defaultValue="50"
-                className="w-full"
+                value={kilometer}
+                onChange={handleSliderChange}
+                className="w-full mt-2"
               />
               <div className="text-sm text-gray-500 mt-1">
-                Aktuelle Auswahl: <span id="kilometer-value">50</span> km
+                Aktuelle Auswahl: <span id="kilometer-value">{kilometer}</span>{" "}
+                km
               </div>
             </div>
             <div>
