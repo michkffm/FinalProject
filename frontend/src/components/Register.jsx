@@ -55,6 +55,9 @@ export function Register() {
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            Registrierung
+          </h2>
             <label
               htmlFor="username"
               className="block text-sm font-medium text-gray-700"

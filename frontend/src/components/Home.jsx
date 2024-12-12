@@ -2,7 +2,7 @@ import "../App.css";
 
 export function Home() {
   return (
-    <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
+    <main className="bilal flex flex-col items-center justify-center p-4 pt-16 pb-16">
       <section className="hero-section flex flex-col items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
         <h1 className="text-xl sm:text-2xl font-bold">
           Finden Sie qualifizierte Fachleute für Ihre Aufgaben
