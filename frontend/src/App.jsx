@@ -6,11 +6,8 @@ import { Home } from "./components/Home.jsx";
 import { Register } from "./components/Register.jsx";
 import { Login } from "./components/Login.jsx";
 import Impressum from "./pages/Impressum.jsx";
-<<<<<<< HEAD
 import { TermsAndConditions } from "./pages/Datenschutz.jsx";
-=======
 import { Profile } from "./components/Profile.jsx";
->>>>>>> e94d539d900b8c221c0a61c198967642d2aed3d3
 
 function App() {
   return (
