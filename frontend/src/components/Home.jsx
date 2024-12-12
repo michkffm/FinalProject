@@ -1,4 +1,5 @@
 import "../App.css";
+import { Link } from "react-router-dom";
 
 export function Home() {
   return (
@@ -63,12 +64,11 @@ export function Home() {
                 className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
-            <button
-              type="submit"
-              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
-            >
-              Suchen
-            </button>
+            <button>
+            <Link to="/profile" className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto">
+              Profile erstellen
+            </Link>
+          </button>
           </form>
         </div>
 
