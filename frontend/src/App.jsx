@@ -6,11 +6,11 @@ import { Home } from "./components/Home.jsx";
 import { Register } from "./components/Register.jsx";
 import { Login } from "./components/Login.jsx";
 import Impressum from "./pages/Impressum.jsx";
+import { TermsAndConditions } from "./pages/Datenschutz.jsx";
 
 function App() {
   return (
     <>
-   
       <Header /> {/* Header immer sichtbar */}
       <Routes>
         {/* Hauptseiten-Routen */}
@@ -18,9 +18,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/impressum" element={<Impressum />} />
+        <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
-      </>
+    </>
   );
 }
 
