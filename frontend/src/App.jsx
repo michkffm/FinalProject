@@ -6,7 +6,7 @@ import { Home } from "./components/Home.jsx";
 import { Register } from "./components/Register.jsx";
 import { Login } from "./components/Login.jsx";
 import Impressum from "./pages/Impressum.jsx";
-import { TermsAndConditions } from "./pages/Datenschutz.jsx";
+import { TermsAndConditions } from "./pages/Agb.jsx";
 import { Profile } from "./components/Profile.jsx";
 
 function App() {
