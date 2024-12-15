@@ -7,10 +7,10 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   role: { type: String, enum: ['Anbieter', 'Suchender'], required: true },
   createdAt: { type: Date, default: Date.now },
-  profession: { type: String },
-  location: { type: String },
-  description: { type: String },
-  profilePhoto: { type: String },
+  profession: { type: String, required: true },
+  location: { type: String, required: true },
+  description: { type: String, required: true },
+  profilePhoto: { type: String, required: false},
 });
 
 const User = mongoose.model("User", userSchema);
