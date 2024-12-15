@@ -47,10 +47,13 @@ export function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center mt-72">
+    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-32">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
+          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            Login
+          </h2>
             <label
               htmlFor="email"
               className="block text-sm font-medium text-gray-700"
@@ -64,7 +67,7 @@ export function Login() {
               value={data.email}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
           <div className="space-y-2">
@@ -76,10 +79,10 @@ export function Login() {
               value={data.password}
               onChange={handleChange}
               required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
           </div>
-          <button type="submit" className="bg-purple-500 text-white py-2 px-4 rounded hover:bg-purple-600 ml-44">Login</button>
+          <button type="submit" className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44">Login</button>
         </form>
         {message && (
           <div className={`mt-4 p-3 text-white ${message.includes("Fehler") ? "bg-red-500" : "bg-green-500"}`}>
