@@ -8,6 +8,7 @@ import { Login } from "./components/Login.jsx";
 import Impressum from "./pages/Impressum.jsx";
 import { TermsAndConditions } from "./pages/Agb.jsx";
 import { Profile } from "./components/Profile.jsx";
+import ContactForm from "./components/ContactForm.jsx"; // Importiere die ContactForm-Komponente
 import { useState } from "react";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
+        <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
     </>
