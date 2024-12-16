@@ -111,6 +111,7 @@ app.post("/jobs", authMiddleware, async (req, res) => {
     res.status(201).json({ message: "Job posted successfully" });
 
   } catch (error) {
+    console.log(error);
       res.status(500).json({ error: "Failed to post job" });
   }
 
