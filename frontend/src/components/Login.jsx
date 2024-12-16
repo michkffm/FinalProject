@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function Login({ setIsLoggedIn }) {
@@ -17,6 +17,7 @@ export function Login({ setIsLoggedIn }) {
       [name]: value,
     });
   };
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -38,12 +39,15 @@ export function Login({ setIsLoggedIn }) {
       })
       .then((data) => {
         setMessage("Login erfolgreich!");
+        localStorage.setItem("token", data.token);
         setIsLoggedIn(true);
         console.log("Login erfolgreich", data);
+      
         setTimeout(() => {
-          navigate("/");
+          navigate("/profile");
         }, 2000);
       })
+      
       .catch((error) => {
         setMessage("Fehler beim Login: " + error.message);
         console.error("Fehler beim Login", error);
