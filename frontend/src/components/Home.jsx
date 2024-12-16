@@ -61,10 +61,10 @@ export function Home() {
     <main className="bilal flex flex-col items-center justify-center p-4 pt-16 pb-16">
       <section className="hero-section flex flex-col items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
         <h1 className="text-xl sm:text-2xl font-bold">
-          Finden Sie qualifizierte Fachleute für Ihre Aufgaben
+          Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
         <p className="text-gray-600 mt-2">
-          Verbindung zu qualifizierten Dienstleistern für alle Ihre Bedürfnisse
+          Verbindung zu qualifizierten Dienstleistern für alle Deine Bedürfnisse
         </p>
         <form className="flex flex-col sm:flex-row gap-4 pt-8 items-center sm:items-start">
           <input
@@ -84,7 +84,7 @@ export function Home() {
       <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-6">
         <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
-            Suchen nach Dienstleistung
+            Dienstleistung suchen
           </h2>
           <form className="space-y-4">
             <div className="space-y-2">
@@ -133,7 +133,7 @@ export function Home() {
               </div>
             </div>
             <div>
-              <label>Was brauchst du?</label>
+              <label>Wonach suchst Du?</label>
               <input
                 id="dienst-input"
                 type="text"
@@ -146,7 +146,7 @@ export function Home() {
                 to="/profile"
                 className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
               >
-                Profile erstellen
+                Profil erstellen
               </Link>
             </button>
           </form>
@@ -203,7 +203,7 @@ export function Home() {
               </div>
             </div>
             <div>
-              <label>Was bietest du an?</label>
+              <label>Was bietest Du an?</label>
               <input
                 id="dienst-input"
                 type="text"
@@ -216,7 +216,7 @@ export function Home() {
                 to="/profile"
                 className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
               >
-                Profile erstellen
+                Profil erstellen
               </Link>
             </button>
           </form>

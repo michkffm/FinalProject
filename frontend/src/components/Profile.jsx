@@ -151,7 +151,7 @@ export function Profile() {
               htmlFor="profession"
               className="block text-sm font-medium text-gray-700"
             >
-              Beruf:
+              Kategorie:
             </label>
             <select
               name="profession"
@@ -161,9 +161,9 @@ export function Profile() {
               onChange={handleChange} // Handle Change, um den State zu aktualisieren
             >
               <option value="" disabled>
-                Bitte wählen Sie einen Beruf
+                Bitte wähle einen Beruf Dienstleistung
               </option>
-              <option value="Storm">Storm</option>
+              <option value="Storm">Elektrik</option>
               <option value="Babysitting">Babysitting</option>
               <option value="IT">IT</option>
               <option value="Heizung">Heizung</option>
@@ -185,7 +185,7 @@ export function Profile() {
               required
               rows="3"
               className="w-full  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Geben Sie hier Ihre Beschreibung ein..."
+              placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
 
@@ -221,7 +221,7 @@ export function Profile() {
               htmlFor="role"
               className="block text-sm font-medium text-gray-700"
             >
-              Rolle:
+              
             </label>
             <div className="flex items-center space-x-4">
               <label className="flex items-center space-x-2">
@@ -242,7 +242,7 @@ export function Profile() {
                   onChange={handleChange}
                   className="h-5 w-5 text-blue-600"
                 />
-                <span> Kunde </span>
+                <span> Suchender </span>
               </label>
             </div>
           </div>
