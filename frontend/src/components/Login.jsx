@@ -38,7 +38,7 @@ export function Login() {
         setMessage("Login erfolgreich!");
 
         setTimeout(() => {
-          navigate("/");
+          navigate("/Profile");
         }, 2000);
       })
       .catch((error) => {
