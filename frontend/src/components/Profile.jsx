@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -11,14 +11,31 @@ export function Profile() {
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  // Änderungen im Formular speichern
+  useEffect(() => {
+    if (!token) {
+      setMessage("Kein Token gefunden, bitte einloggen.");
+      navigate("/profile");
+    }
+  }, [token, navigate]);
+
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
-    setData({
-      ...data,
-      [name]:
-        type === "checkbox" ? checked : type === "file" ? files[0] : value,
+
+    setData((prevData) => {
+      if (type === "checkbox") {
+        const updatedRoles = checked
+          ? [...prevData.role, value]
+          : prevData.role.filter((role) => role !== value);
+        return { ...prevData, role: updatedRoles };
+      }
+
+      if (type === "file") {
+        return { ...prevData, [name]: files[0] };
+      }
+
+      return { ...prevData, [name]: value };
     });
   };
 
@@ -56,23 +73,24 @@ export function Profile() {
     }
   };
 
-  // Registrierung absenden
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // FormData verwenden, falls ein Bild hochgeladen wird
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (Array.isArray(data[key])) {
-        data[key].forEach((item) => formData.append(key, item));
-      } else {
-        formData.append(key, data[key]);
-      }
-    });
-
-    fetch("http://localhost:3000/profile", {
+  
+    // const formData = new FormData();
+    // formData.append("profilePhoto", data.profilePhoto);
+    // formData.append("role", data.role);
+    // formData.append("profession", data.profession);
+    // formData.append("location", data.location);
+    // formData.append("description", data.description);
+  
+    // console.log([...formData]);
+  
+    fetch("http://localhost:3000/profiles", {
       method: "POST",
-      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => {
         if (!res.ok) {
@@ -82,33 +100,36 @@ export function Profile() {
         }
         return res.json();
       })
-      .then((result) => {
-        setMessage("profile erfolgreich!");
-        console.log("Erfolgreich:", result);
+      .then((data) => {
+        setMessage("Profil erfolgreich erstellt!");
         setTimeout(() => {
           navigate("/");
         }, 2000);
       })
       .catch((error) => {
-        setMessage("Fehler beim Profile erstellen: " + error.message);
-        console.error("Fehler:", error);
+        try {
+          const err = JSON.parse(error.message);
+          setMessage(err.error || "Unbekannter Fehler.");
+        } catch {
+          setMessage("Fehler beim Erstellen des Profils.");
+        }
       });
   };
+  
 
   return (
     <div className="flex items-center justify-center sm:mt-44 mt-44 mb-4">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Profilbild */}
-          <div className="space-y-2">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">
-            Profile erstellen
-          </h2>
+          {/* Profile photo */}
+          {/* <div className="space-y-2">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+              Profile erstellen
+            </h2>
             <label
               htmlFor="profilePhoto"
               className="block text-sm font-medium text-gray-700 text-center "
-            >
-            </label>
+            ></label>
             <div className="relative w-20 h-20 left-48">
               <input
                 type="file"
@@ -122,23 +143,24 @@ export function Profile() {
                 <span className="text-sm">📷</span>
               </div>
             </div>
-          </div>
+          </div> */}
 
+          {/* Other fields */}
           <div className="space-y-2">
             <label
               htmlFor="profession"
               className="block text-sm font-medium text-gray-700"
             >
-              Diensleistung:
+              Beruf:
             </label>
             <select
               name="profession"
               id="profession"
-              value={data.profession}
-              onChange={handleChange}
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={data.profession} // Bindung an den State
+              onChange={handleChange} // Handle Change, um den State zu aktualisieren
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Bitte wählen Sie einen Beruf
               </option>
               <option value="Storm">Storm</option>
@@ -166,7 +188,8 @@ export function Profile() {
               placeholder="Geben Sie hier Ihre Beschreibung ein..."
             ></textarea>
           </div>
-          {/* Standort */}
+
+          {/* Location */}
           <div className="space-y-2">
             <label
               htmlFor="location"
@@ -186,13 +209,13 @@ export function Profile() {
             <button
               type="button"
               onClick={handleLocation}
-               className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
+              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
             >
               Standort abrufen
             </button>
           </div>
 
-          {/* Rollen */}
+          {/* Roles */}
           <div className="space-y-2">
             <label
               htmlFor="role"
@@ -207,30 +230,32 @@ export function Profile() {
                   name="role"
                   value="Anbieter"
                   onChange={handleChange}
-                  className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="h-5 w-5 text-blue-600"
                 />
-                <span className="text-sm text-gray-700">Anbieter</span>
+                <span> Anbieter </span>
               </label>
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="role"
-                  value="Suchender"
+                  value="Kunde"
                   onChange={handleChange}
-                  className="h-5 w-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  className="h-5 w-5 text-blue-600"
                 />
-                <span className="text-sm text-gray-700">Suchender</span>
+                <span> Kunde </span>
               </label>
             </div>
           </div>
-          {/* Registrierung */}
+
+          {/* Submit button */}
           <button
             type="submit"
             className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
           >
-            Profile erstellen
+            Profil erstellen
           </button>
         </form>
+
         {message && (
           <div
             className={`mt-4 p-3 text-white ${
