@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function Login() {
@@ -6,6 +6,7 @@ export function Login() {
     password: "",
     email: "",
   });
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -16,6 +17,7 @@ export function Login() {
   };
    const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,9 +38,10 @@ export function Login() {
       .then((data) => {
         console.log("Login erfolgreich", data);
         setMessage("Login erfolgreich!");
+        localStorage.setItem("token", data.token)
 
         setTimeout(() => {
-          navigate("/Profile");
+          navigate("/profile");
         }, 2000);
       })
       .catch((error) => {
@@ -47,7 +50,7 @@ export function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-32">
+    <div className="flex items-center justify-center sm:mt-44 mt-44">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
