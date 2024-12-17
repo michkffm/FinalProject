@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const profileSchema = new mongoose.Schema({
-  role: { type: String, enum: ["Anbieter", "Suchender"], required: true },
+  role: [{ type: String, enum: ["Anbieter", "Suchender"], required: true }],
   profession: { type: String, required: true },
   location: { type: String, required: true },
   description: { type: String, required: true },
