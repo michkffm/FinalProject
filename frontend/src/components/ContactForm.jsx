@@ -11,7 +11,7 @@ export default function ContactForm() {
     if (state.succeeded) {
       setTimeout(() => {
         navigate('/');
-      }, 2000); // 2 Sekunden Verzögerung vor der Umleitung
+      }, 2000); 
     }
   }, [state.succeeded, navigate]);
 
@@ -56,29 +56,29 @@ export default function ContactForm() {
         </form>
       )}
       <div className="flex justify-center mt-20 space-x-20">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
           <a href="https://github.com/Pacome-Adoufack" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600" />
+            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
           </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600">Pacome</span>
+          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Pacome</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
           <a href="https://github.com/Okyanuspol" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600" />
+            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
           </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600">Sükrü</span>
+          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Sükrü</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
           <a href="https://github.com/webdevbfb" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600" />
+            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
           </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600">Bilal</span>
+          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Bilal</span>
         </div>
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
           <a href="https://github.com/michkffm" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600" />
+            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
           </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600">Michael</span>
+          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Michael</span>
         </div>
       </div>
     </div>
