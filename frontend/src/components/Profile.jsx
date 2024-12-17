@@ -20,24 +20,40 @@ export function Profile() {
     }
   }, [token, navigate]);
 
+  const handleChangeRole = (e) => {
+
+    if (e.target.checked) {
+        if(!data.role.includes(e.target.value)){
+            setData(prevData => {
+                return {
+                    ...prevData, // Kopie des gesamten vorherigen Objekts
+                    role: [...prevData.role, e.target.value] // Neue Kopie von `role` mit dem hinzugefügten Wert
+                };
+            });
+        }
+    } else {
+        setData(prevData => {
+            return {
+                ...prevData, // Kopie des gesamten vorherigen Objekts
+                role: prevData.role.filter((role) => role === e.target.value)
+            };
+        }); 
+    }
+  }
+
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-
+    const { name, value, files, type } = e.target;
+  
     setData((prevData) => {
-      if (type === "checkbox") {
-        const updatedRoles = checked
-          ? [...prevData.role, value]
-          : prevData.role.filter((role) => role !== value);
-        return { ...prevData, role: updatedRoles };
-      }
-
       if (type === "file") {
-        return { ...prevData, [name]: files[0] };
+        return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
       }
-
+  
+      // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
       return { ...prevData, [name]: value };
     });
   };
+  
 
   const handleLocation = () => {
     if (navigator.geolocation) {
@@ -75,19 +91,20 @@ export function Profile() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-  
+
     // const formData = new FormData();
     // formData.append("profilePhoto", data.profilePhoto);
-    // formData.append("role", data.role);
+    // formData.append("role", JSON.stringify(data.role));
     // formData.append("profession", data.profession);
     // formData.append("location", data.location);
     // formData.append("description", data.description);
-  
+
     // console.log([...formData]);
-  
+
     fetch("http://localhost:3000/profiles", {
       method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
@@ -100,6 +117,7 @@ export function Profile() {
         }
         return res.json();
       })
+
       .then((data) => {
         setMessage("Profil erfolgreich erstellt!");
         setTimeout(() => {
@@ -115,7 +133,6 @@ export function Profile() {
         }
       });
   };
-  
 
   return (
     <div className="flex items-center justify-center sm:mt-44 mt-44 mb-4">
@@ -220,16 +237,14 @@ export function Profile() {
             <label
               htmlFor="role"
               className="block text-sm font-medium text-gray-700"
-            >
-              
-            </label>
+            ></label>
             <div className="flex items-center space-x-4">
               <label className="flex items-center space-x-2">
                 <input
                   type="checkbox"
                   name="role"
                   value="Anbieter"
-                  onChange={handleChange}
+                  onChange={handleChangeRole}
                   className="h-5 w-5 text-blue-600"
                 />
                 <span> Anbieter </span>
@@ -238,8 +253,8 @@ export function Profile() {
                 <input
                   type="checkbox"
                   name="role"
-                  value="Kunde"
-                  onChange={handleChange}
+                  value="Suchender"
+                  onChange={handleChangeRole}
                   className="h-5 w-5 text-blue-600"
                 />
                 <span> Suchender </span>
@@ -265,6 +280,20 @@ export function Profile() {
             {message}
           </div>
         )}
+         <button>
+            <Link
+              to={`/profile/${users._id}`}
+              className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+              profil löschen
+            </Link>
+          </button>
+          <button>
+            <Link
+              to="/Hilfe"
+              className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+              profil bearbeiten
+            </Link>
+          </button>
       </div>
     </div>
   );
