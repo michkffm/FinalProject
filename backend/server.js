@@ -1,20 +1,25 @@
 import express from "express";
 import mongoose from "mongoose";
-import User from './models/User.js'
+import User from './models/User.js';
+import Job from './models/Job.js';
+import Profile from './models/Profile.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import authMiddleware from "./middlewares/authMiddleware.js";
 
 await mongoose.connect(process.env.DB_URI);
 
 const app = express();
 const port = process.env.PORT
+
+
 app.use(cors())
 
 app.use(express.json());
 
 app.post("/register", async (req, res) => {
-    const { username, email, password, role } = req.body;
+    const { username, email, password } = req.body;
   
     if (!email || !password || !username) {
       return res.status(400).json({error: 'Invalid registration'});
@@ -66,18 +71,48 @@ app.post("/register", async (req, res) => {
 
 })
 
-app.post("/job", async (req, res) => {
-  const { title, description, category, price, location, contact} = req.body;
+app.post("/profiles", authMiddleware, async (req, res) => {
+  const { role, profession, location, description, profilePhoto } = req.body;
+  const userId = req.user.userId;
+  
+  if (!userId) {
+    return res.status(401).json({ error: "User not authenticated" });
+  }
 
-  if (!category || !contact || location) {
-      return res.status(400).json({ error: 'Invalid login' });
+  if (!role || !profession || !location || !description) {
+    return res.status(400).json({ error: "All required fields must be filled" });
   }
 
   try {
-      
+    const profile = new Profile({
+      role,
+      profession,
+      location,
+      description,
+      profilePhoto,
+      createdBy: userId,
+    });
+
+    await profile.save();
+    res.status(201).json({ message: "Profile created successfully", profile });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create profile", details: error.message });
+  }
+});
+
+// neue Job erstellen  
+app.post("/jobs", authMiddleware, async (req, res) => {
+  const { title, description, category, price, location, contact } = req.body;
+  const userId = req.user.userId;
+
+  try {
+    const job = new Job({ title, description, category, price, location, contact, createdBy: userId });
+    await job.save();
+    res.status(201).json({ message: "Job posted successfully" });
 
   } catch (error) {
-      res.status(500).json({ error: error.message });
+    console.log(error);
+      res.status(500).json({ error: "Failed to post job" });
   }
 
 })
@@ -91,33 +126,8 @@ app.get('/jobs', async (req, res) => {
   }
 });
 
-// app.get("/jobs", async (req, res) => {
-//   const limit = 10; 
-//   const page = parseInt(req.query.page) || 1; 
-//   const skipAmount = (page - 1) * limit;
 
- 
-//   let sortField = "category"; 
-//   let sortDirection = "asc"; 
-
-//   if (req.query.sortField) {
-//     sortField = req.query.sortField;
-//   }
-//   if (req.query.sortDirection === "desc") {
-//     sortDirection = "desc";
-//   }
-
-//   try {
-//     const jobs = await Job.find()
-//       .sort({ [sortField]: sortDirection }) 
-//       .skip(skipAmount) 
-//       .limit(limit); 
-
-//     res.json(jobs);
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+// alle Anzeigen sortieren
 
 app.delete('/jobs/:id', async (req, res) => {
   const { id } = req.params;
