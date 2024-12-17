@@ -126,6 +126,34 @@ app.get('/jobs', async (req, res) => {
   }
 });
 
+// app.get("/jobs", async (req, res) => {
+//   const limit = 10; 
+//   const page = parseInt(req.query.page) || 1; 
+//   const skipAmount = (page - 1) * limit;
+
+ 
+//   let sortField = "category"; 
+//   let sortDirection = "asc"; 
+
+//   if (req.query.sortField) {
+//     sortField = req.query.sortField;
+//   }
+//   if (req.query.sortDirection === "desc") {
+//     sortDirection = "desc";
+//   }
+
+//   try {
+//     const jobs = await Job.find()
+//       .sort({ [sortField]: sortDirection }) 
+//       .skip(skipAmount) 
+//       .limit(limit); 
+
+//     res.json(jobs);
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// });
+
 app.delete('/jobs/:id', async (req, res) => {
   const { id } = req.params;
 
