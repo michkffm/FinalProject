@@ -219,6 +219,14 @@ export function Home() {
                 Profil erstellen
               </Link>
             </button>
+            <button>
+              <Link
+                to="/categorie"
+                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
+              >
+                kategorie
+              </Link>
+            </button>
           </form>
         </div>
       </section>
