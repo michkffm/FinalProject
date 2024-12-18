@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import profileImage from "../assets/profile.jpeg";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -333,6 +334,7 @@ export function Profile() {
           </Link>
         </button>
       </div>
+      <img src={profileImage} alt="profileimage" className="h-2/6 w-2/6 object-cover border rounded-2"/>
     </div>
   );
 }
