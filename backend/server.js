@@ -70,10 +70,10 @@ app.post("/register", async (req, res) => {
 
 })
 
-app.patch("/user/profile", authMiddleware, async (req, res) => {
+app.patch("/users/profile", authMiddleware, async (req, res) => {
   const { role, profession, location, description, profilePhoto } = req.body;
   const userId = req.user.userId;
-  
+
   if (!userId) {
     return res.status(401).json({ error: "User not authenticated" });
   }
@@ -87,28 +87,35 @@ app.patch("/user/profile", authMiddleware, async (req, res) => {
       profilePhoto,
     };
 
-    const result = await User.updateOne(
-      { createdBy: userId }, // { _id: userId },
-      { $set: updateData }
-  
-    );
-    res.status(201).json({ message: "Profile updated successfully", result });
+    // Update user document by ID
+    const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
+      new: true, // Return the updated document
+      runValidators: true, // Ensure validations are run
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json({ message: "Profile updated successfully", updatedUser });
   } catch (error) {
     res.status(500).json({ error: "Failed to update profile", details: error.message });
   }
 });
 
+
 app.get("/users/profile", authMiddleware, async (req, res) => {
-  const userId = req.user.userId; 
+  const userId = req.user.userId;
 
   if (!userId) {
     return res.status(401).json({ error: "User not authenticated" });
   }
 
   try {
-    
-    const user = await User.findById(userId).select("-password -__v");
-    
+    const user = await User.findById(userId).select(
+      "username email role profession location description profilePhoto"
+    );
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -118,6 +125,7 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Failed to fetch user profile", details: error.message });
   }
 });
+
 
 // neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
