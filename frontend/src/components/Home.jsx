@@ -71,7 +71,7 @@ export function Home() {
             id="search-input"
             className="border border-gray-300 rounded p-2 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
-            placeholder="suche nach Dienstleistung"
+            placeholder="Suche nach Dienstleistung"
           />
           <button
             type="submit"

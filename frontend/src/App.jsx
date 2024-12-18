@@ -13,6 +13,7 @@ import ContactForm from "./components/ContactForm.jsx";
 import { ProfileDelete } from "./components/ProfileDelete.jsx";
 import { Category } from "./components/Category.jsx";
 import { HauptCategory } from "./components/HauptCategory.jsx";
+import { Datenschutz } from "./pages/Datenschutz.jsx"; // Importiere die Datenschutz-Komponente
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,6 +40,7 @@ function App() {
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
         <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
+        <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
     </>
