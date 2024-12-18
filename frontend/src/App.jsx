@@ -25,7 +25,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/profile-delete" element={<ProfileDelete />} />
+        <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
         <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
