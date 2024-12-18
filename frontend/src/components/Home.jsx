@@ -58,7 +58,7 @@ export function Home() {
   };
 
   return (
-    <main className="bilal flex flex-col items-center justify-center p-4 pt-16 pb-16">
+    <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
       <section className="hero-section flex flex-col items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
         <h1 className="text-xl sm:text-2xl font-bold">
           Finde qualifizierte Fachleute für Deine Aufgaben
@@ -81,8 +81,8 @@ export function Home() {
           </button>
         </form>
       </section>
-      <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row gap-40 mt-6">
-        <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
+      <section className="flex justify-center max-w-4xl mx-auto flex flex-col sm:flex-row sm:gap-20 gap-20 mt-6">
+        <div className="w-full sm:w-[48%] border border-1 rounded-lg shadow sm:p-6 p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Dienstleistung suchen
           </h2>
@@ -152,7 +152,7 @@ export function Home() {
           </form>
         </div>
 
-        <div className="w-full sm:w-[48%] border-2 rounded-lg p-4">
+        <div className="w-full sm:w-[48%] border  border-1 rounded-lg shadow sm:p-6 p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Dienstleistung anbieten
           </h2>
