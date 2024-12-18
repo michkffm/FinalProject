@@ -40,7 +40,7 @@ export function Profile() {
       .then((data) => {
         setData({
           profilePhoto: data.profilePhoto ? data.profilePhoto: "",
-          role: data.role ? [data.role]: [],
+          role: data.role ? data.role: [],
           profession: data.profession ? data.profession: "",
           location: data.location ? data.location: "",
           description: data.description ? data.description : ""
@@ -135,7 +135,7 @@ export function Profile() {
 
     // console.log([...formData]);
 
-    fetch("http://localhost:3000/user/profile", {
+    fetch("http://localhost:3000/users/profile", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
