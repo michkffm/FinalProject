@@ -2,7 +2,6 @@ import express from "express";
 import mongoose from "mongoose";
 import User from './models/User.js';
 import Job from './models/Job.js';
-import Profile from './models/Profile.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
