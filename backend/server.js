@@ -71,7 +71,7 @@ app.post("/register", async (req, res) => {
 
 })
 
-app.post("/profiles", authMiddleware, async (req, res) => {
+app.patch("/user/profile", authMiddleware, async (req, res) => {
   const { role, profession, location, description, profilePhoto } = req.body;
   const userId = req.user.userId;
   
@@ -79,28 +79,48 @@ app.post("/profiles", authMiddleware, async (req, res) => {
     return res.status(401).json({ error: "User not authenticated" });
   }
 
-  if (!role || !profession || !location || !description) {
-    return res.status(400).json({ error: "All required fields must be filled" });
-  }
-
   try {
-    const profile = new Profile({
+    const updateData = {
       role,
       profession,
       location,
       description,
       profilePhoto,
-      createdBy: userId,
-    });
+    };
 
-    await profile.save();
-    res.status(201).json({ message: "Profile created successfully", profile });
+    const result = await User.updateOne(
+      { createdBy: userId }, // { _id: userId },
+      { $set: updateData }
+  
+    );
+    res.status(201).json({ message: "Profile updated successfully", result });
   } catch (error) {
-    res.status(500).json({ error: "Failed to create profile", details: error.message });
+    res.status(500).json({ error: "Failed to update profile", details: error.message });
   }
 });
 
-// neue Job erstellen  
+app.get("/users/profile", authMiddleware, async (req, res) => {
+  const userId = req.user.userId; 
+
+  if (!userId) {
+    return res.status(401).json({ error: "User not authenticated" });
+  }
+
+  try {
+    
+    const user = await User.findById(userId).select("-password -__v");
+    
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user profile", details: error.message });
+  }
+});
+
+// neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
   const { title, description, category, price, location, contact } = req.body;
   const userId = req.user.userId;
