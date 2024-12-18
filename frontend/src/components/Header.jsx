@@ -56,7 +56,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
               </li>
               <li>
                 <Link
-                  to="/categorie"
+                  to="/hauptCategorie"
                   className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
                   <i className="fa-solid fa-list"></i>
                   Kategorie
