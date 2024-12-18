@@ -40,11 +40,11 @@ export function Profile() {
       })
       .then((data) => {
         setData({
-          profilePhoto: data.profilePhoto ? data.profilePhoto: "",
-          role: data.role ? data.role: [],
-          profession: data.profession ? data.profession: "",
-          location: data.location ? data.location: "",
-          description: data.description ? data.description : ""
+          profilePhoto: data.profilePhoto ? data.profilePhoto : "",
+          role: data.role ? data.role : [],
+          profession: data.profession ? data.profession : "",
+          location: data.location ? data.location : "",
+          description: data.description ? data.description : "",
         });
       })
       .catch((error) => {
@@ -217,11 +217,56 @@ export function Profile() {
               <option value="" disabled>
                 Bitte wähle einen Beruf Dienstleistung
               </option>
-              <option value="Storm">Elektrik</option>
-              <option value="Babysitting">Babysitting</option>
-              <option value="IT">IT</option>
-              <option value="Heizung">Heizung</option>
-              <option value="Nachhilfe">Nachhilfe</option>
+              <option value="Beratung">Beratung</option>
+              <option value="Bildung und Schulung">Bildung und Schulung</option>
+              <option
+                value="Betreuung und Gesundheit
+"
+              >
+                Betreuung und Gesundheit
+              </option>
+              <option
+                value="Finanzen und Versicherungen
+"
+              >
+                Finanzen und Versicherungen
+              </option>
+              <option
+                value="Technologie und IT
+"
+              >
+                Technologie und IT
+              </option>
+              <option
+                value="Reparatur und Wartung
+"
+              >
+                Reparatur und Wartung
+              </option>
+              <option
+                value="Transport und Logistik
+"
+              >
+                Transport und Logistik
+              </option>
+              <option
+                value="Reinigung und Pflege
+"
+              >
+                Reinigung und Pflege
+              </option>
+              <option
+                value="Bau- und Renovierungsdienste
+"
+              >
+                Bau- und Renovierungsdienste
+              </option>
+              <option
+                value="Freizeit und Unterhaltung
+"
+              >
+                Freizeit und Unterhaltung
+              </option>
             </select>
           </div>
           <div className="space-y-2">
@@ -238,7 +283,7 @@ export function Profile() {
               onChange={handleChange}
               required
               rows="3"
-              className="w-full  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
@@ -317,24 +362,12 @@ export function Profile() {
             {message}
           </div>
         )}
-        <button>
-          <Link
-            to="/profile/profileDelete/:id"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil löschen
-          </Link>
-        </button>
-        <button>
-          <Link
-            to="/Hilfe"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil bearbeiten
-          </Link>
-        </button>
       </div>
-      <img src={profileImage} alt="profileimage" className="h-2/6 w-2/6 object-cover border rounded-2"/>
+      <img
+        src={profileImage}
+        alt="profileimage"
+        className="h-2/6 w-2/6 object-cover border rounded-2"
+      />
     </div>
   );
 }
