@@ -15,7 +15,7 @@ function authMiddleware(req, res, next) {
         req.user = user;
         next();
     } catch (err) {
-        res.status(403).json({ error: "Invalid or expired token" });
+        res.status(403).json({ error: "Bitte log dich ein." });
     }
 }
 
