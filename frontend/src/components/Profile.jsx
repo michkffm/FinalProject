@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import profileImage from "../assets/profile.jpeg";
+import profileImage from "../assets/profile-1.jpeg";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -172,169 +172,115 @@ export function Profile() {
   };
 
   return (
-    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-4">
-      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Profile photo */}
-          {/* <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
-              Profile erstellen
-            </h2>
-            <label
-              htmlFor="profilePhoto"
-              className="block text-sm font-medium text-gray-700 text-center "
-            ></label>
-            <div className="relative w-20 h-20 left-48">
-              <input
-                type="file"
-                id="profilePhoto"
-                name="profilePhoto"
-                accept="image/*"
-                onChange={handleChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer "
-              />
-              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-white shadow-md">
-                <span className="text-sm">📷</span>
-              </div>
-            </div>
-          </div> */}
-
-          {/* Other fields */}
-          <div className="space-y-2">
-            <label
-              htmlFor="profession"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Kategorie:
-            </label>
-            <select
-              name="profession"
-              id="profession"
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={data.profession} // Bindung an den State
-              onChange={handleChange} // Handle Change, um den State zu aktualisieren
-            >
-              <option value="" disabled>
-                Bitte wähle einen Beruf Dienstleistung
-              </option>
-              <option value="Storm">Elektrik</option>
-              <option value="Babysitting">Babysitting</option>
-              <option value="IT">IT</option>
-              <option value="Heizung">Heizung</option>
-              <option value="Nachhilfe">Nachhilfe</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Beschreibung:
+    <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg border rounded-lg p-6 max-w-4xl w-full">
+        
+        {/* Profilbild */}
+        <div className="w-full sm:w-auto order-1 sm:order-2 mb-6 sm:mb-0 sm:ml-6 ml-0 flex  justify-center">
+          <img
+            src={profileImage}
+            alt="Profilbild"
+            className="w-100 h-100 object-cover rounded-[5%] border border-teal-400"
+          />
+        </div>
+  
+        {/* Formular */}
+        <form onSubmit={handleSubmit} className="w-full sm:w-3/5 order-2 sm:order-1 space-y-6">
+          <h2 className="text-2xl font-bold mb-6 text-center">Profil bearbeiten</h2>
+  
+          {message && <p className="text-green-500 text-center mb-4">{message}</p>}
+  
+          {/* Beschreibung */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Beschreibung
             </label>
             <textarea
-              id="description"
               name="description"
               value={data.description}
               onChange={handleChange}
-              required
               rows="3"
-              className="w-full  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Gebe hier Deine Beschreibung ein..."
-            ></textarea>
-          </div>
-
-          {/* Location */}
-          <div className="space-y-2">
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Standort:
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={data.location}
-              onChange={handleChange}
-              placeholder="Standort eingeben oder abrufen"
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-teal-400"
+              placeholder="Gebe hier deine Beschreibung ein..."
             />
-            <button
-              type="button"
-              onClick={handleLocation}
-              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
-            >
-              Standort abrufen
-            </button>
           </div>
-
-          {/* Roles */}
-          <div className="space-y-2">
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-700"
-            ></label>
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2">
+  
+          {/* Berufskategorie */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Berufskategorie
+            </label>
+            <select
+              name="profession"
+              value={data.profession}
+              onChange={handleChange}
+              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-teal-400"
+            >
+              <option value="" disabled>Bitte wählen</option>
+              <option value="Elektrik">Elektrik</option>
+              <option value="Babysitting">Babysitting</option>
+              <option value="Heizung">Heizung</option>
+              <option value="Nachhilfe">Nachhilfe</option>
+              <option value="IT">IT</option>
+            </select>
+          </div>
+  
+          {/* Rollen */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Rollen</label>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="role"
                   value="Anbieter"
                   onChange={handleChangeRole}
-                  className="h-5 w-5 text-blue-600"
+                  className="mr-2"
                 />
-                <span> Anbieter </span>
+                Anbieter
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="role"
                   value="Suchender"
                   onChange={handleChangeRole}
-                  className="h-5 w-5 text-blue-600"
+                  className="mr-2"
                 />
-                <span> Suchender </span>
+                Suchender
               </label>
             </div>
           </div>
-
-          {/* Submit button */}
+  
+          {/* Standort */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">Standort</label>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                name="location"
+                value={data.location}
+                onChange={handleChange}
+                placeholder="Standort eingeben..."
+                className="flex-1 p-3 border rounded-md"
+              />
+              <button
+                type="button"
+                onClick={handleLocation}
+                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
+              >
+                Abrufen
+              </button>
+            </div>
+          </div>
+  
+          {/* Speichern-Button */}
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
+            className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
           >
             Speichern
           </button>
         </form>
-
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
-        <button>
-          <Link
-            to="/profile/profileDelete/:id"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil löschen
-          </Link>
-        </button>
-        <button>
-          <Link
-            to="/Hilfe"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil bearbeiten
-          </Link>
-        </button>
       </div>
-      <img src={profileImage} alt="profileimage" className="h-2/6 w-2/6 object-cover border rounded-2"/>
     </div>
   );
 }
