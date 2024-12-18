@@ -135,7 +135,7 @@ export function Profile() {
 
     // console.log([...formData]);
 
-    fetch("http://localhost:3000/users/profile", {
+    fetch("http://localhost:3000/user/profile", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -153,6 +153,8 @@ export function Profile() {
       })
 
       .then((data) => {
+        console.log("Gesendete Daten:", data);
+
         setMessage("Profil erfolgreich gespeichert!");
         setTimeout(() => {
           navigate("/");
