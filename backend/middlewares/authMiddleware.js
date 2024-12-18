@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 
 function authMiddleware(req, res, next) {
+    console.log(req.body);
+    
     const authHeader = req.headers.authorization;
 
     if (!authHeader) return res.status(401).json({ error: "Authorization header missing" });
