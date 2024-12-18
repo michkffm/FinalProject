@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -11,16 +11,49 @@ export function Profile() {
   });
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  // Änderungen im Formular speichern
+  useEffect(() => {
+    if (!token) {
+      setMessage("Kein Token gefunden, bitte einloggen.");
+      navigate("/profile");
+    }
+  }, [token, navigate]);
+
+  const handleChangeRole = (e) => {
+
+    if (e.target.checked) {
+        if(!data.role.includes(e.target.value)){
+            setData(prevData => {
+                return {
+                    ...prevData, // Kopie des gesamten vorherigen Objekts
+                    role: [...prevData.role, e.target.value] // Neue Kopie von `role` mit dem hinzugefügten Wert
+                };
+            });
+        }
+    } else {
+        setData(prevData => {
+            return {
+                ...prevData, // Kopie des gesamten vorherigen Objekts
+                role: prevData.role.filter((role) => role === e.target.value)
+            };
+        }); 
+    }
+  }
+
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    setData({
-      ...data,
-      [name]:
-        type === "checkbox" ? checked : type === "file" ? files[0] : value,
+    const { name, value, files, type } = e.target;
+  
+    setData((prevData) => {
+      if (type === "file") {
+        return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
+      }
+  
+      // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
+      return { ...prevData, [name]: value };
     });
   };
+  
 
   const handleLocation = () => {
     if (navigator.geolocation) {
@@ -56,32 +89,25 @@ export function Profile() {
     }
   };
 
-
-  // Registrierung absenden
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // FormData verwenden, falls ein Bild hochgeladen wird
-    const formData = new FormData();
-    Object.keys(data).forEach((key) => {
-      if (Array.isArray(data[key])) {
-        data[key].forEach((item) => formData.append(key, item));
-      } else {
-        formData.append(key, data[key]);
-      }
-    });
+    // const formData = new FormData();
+    // formData.append("profilePhoto", data.profilePhoto);
+    // formData.append("role", JSON.stringify(data.role));
+    // formData.append("profession", data.profession);
+    // formData.append("location", data.location);
+    // formData.append("description", data.description);
 
-  fetch("http://localhost:3000/profile", {
-    method: "POST",
-    body: formData,
-  })
-    .then((res) => {
-      if (!res.ok) {
-        return res.text().then((text) => {
-          throw new Error(text);
-        });
-      }
-      return res.json();
+    // console.log([...formData]);
+
+    fetch("http://localhost:3000/profiles", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
     })
       .then((res) => {
         if (!res.ok) {

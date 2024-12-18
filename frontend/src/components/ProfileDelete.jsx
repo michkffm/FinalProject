@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 export function ProfileDelete() {
-  const [user, setUser] = useState(null); // Speichert den Benutzer
-  const [error, setError] = useState(null); // Fehlerzustand
-  const [message, setMessage] = useState(""); // Erfolgsmeldungen
-  const { id } = useParams(); // ID aus der URL
+  const [user, setUser] = useState(null); 
+  const [error, setError] = useState(null); 
+  const [message, setMessage] = useState(""); 
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  // Daten des Benutzers abrufen
+  
   const fetchUser = () => {
     fetch(`http://localhost:3000/users/${id}`)
       .then((res) => {
@@ -19,18 +19,17 @@ export function ProfileDelete() {
         return res.json();
       })
       .then((data) => {
-        setUser(data); // Benutzerdaten in den State setzen
+        setUser(data);
       })
       .catch((err) => {
-        setError(err.message); // Fehler setzen
+        setError(err.message);
       });
   };
 
   useEffect(() => {
-    fetchUser(); // Beim Laden der Komponente Benutzer abrufen
+    fetchUser(); 
   }, [id]);
 
-  // Benutzer löschen
   const handleDelete = () => {
     fetch(`http://localhost:3000/users/${id}`, {
       method: "DELETE",
@@ -49,7 +48,7 @@ export function ProfileDelete() {
       .then(() => {
         setMessage("Profil erfolgreich gelöscht!");
         setTimeout(() => {
-          navigate("/"); // Nach erfolgreicher Löschung zurück zur Startseite
+          navigate("/"); 
         }, 2000);
       })
       .catch((err) => {
@@ -57,7 +56,7 @@ export function ProfileDelete() {
       });
   };
 
-  // Fehlermeldung anzeigen
+ 
   if (error) {
     return <div className="mt-40 text-red-500">Error: {error}</div>;
   }
