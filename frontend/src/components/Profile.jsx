@@ -153,6 +153,8 @@ export function Profile() {
       })
 
       .then((data) => {
+        console.log("Gesendete Daten:", data);
+
         setMessage("Profil erfolgreich gespeichert!");
         setTimeout(() => {
           navigate("/");
