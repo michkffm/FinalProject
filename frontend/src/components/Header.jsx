@@ -4,6 +4,7 @@ import logogross from "../assets/logo-gross-ohne-kontur.png";
 export function Header({ isLoggedIn, setIsLoggedIn }) {
   const handleLogout = () => {
     setIsLoggedIn(false);
+    localStorage.removeItem("token"); // Token beim Ausloggen entfernen
   };
 
   return (
@@ -44,14 +45,32 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
             </>
           )}
           {isLoggedIn && (
-            <li>
-              <button
-                onClick={handleLogout}
-                className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
-                <i className="fa-solid fa-right-from-bracket"></i>
-                Ausloggen
-              </button>
-            </li>
+            <>
+              <li>
+                <Link
+                  to="/profile"
+                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+                  <i className="fa-solid fa-user"></i>
+                  Profil
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/categorie"
+                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+                  <i className="fa-solid fa-list"></i>
+                  Kategorie
+                </Link>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
+                  <i className="fa-solid fa-right-from-bracket"></i>
+                  Ausloggen
+                </button>
+              </li>
+            </>
           )}
           <li>
             <Link
