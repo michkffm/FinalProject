@@ -11,6 +11,7 @@ import { Profile } from "./components/Profile.jsx";
 import ContactForm from "./components/ContactForm.jsx"; 
 import { ProfileDelete } from "./components/ProfileDelete.jsx";
 import { useState } from "react";
+import { Category } from "./components/Category.jsx";
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/categorie" element={<Category />} />
         <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
