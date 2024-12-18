@@ -20,40 +20,74 @@ export function Profile() {
     }
   }, [token, navigate]);
 
-  const handleChangeRole = (e) => {
-
-    if (e.target.checked) {
-        if(!data.role.includes(e.target.value)){
-            setData(prevData => {
-                return {
-                    ...prevData, // Kopie des gesamten vorherigen Objekts
-                    role: [...prevData.role, e.target.value] // Neue Kopie von `role` mit dem hinzugefügten Wert
-                };
-            });
+  useEffect(() => {
+    //wird am Amfang nur einmal ausgeführt
+    //fetch Anfrage an users/profile(Get)
+    fetch("http://localhost:3000/users/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
         }
+        return res.json();
+      })
+      .then((data) => {
+        setData({
+          profilePhoto: data.profilePhoto ? data.profilePhoto: "",
+          role: data.role ? [data.role]: [],
+          profession: data.profession ? data.profession: "",
+          location: data.location ? data.location: "",
+          description: data.description ? data.description : ""
+        });
+      })
+      .catch((error) => {
+        try {
+          const err = JSON.parse(error.message);
+          setMessage(err.error || "Unbekannter Fehler.");
+        } catch {
+          setMessage("Fehler beim Erstellen des Profils.");
+        }
+      });
+  }, []);
+
+  const handleChangeRole = (e) => {
+    if (e.target.checked) {
+      if (!data.role.includes(e.target.value)) {
+        setData((prevData) => {
+          return {
+            ...prevData, // Kopie des gesamten vorherigen Objekts
+            role: [...prevData.role, e.target.value], // Neue Kopie von `role` mit dem hinzugefügten Wert
+          };
+        });
+      }
     } else {
-        setData(prevData => {
-            return {
-                ...prevData, // Kopie des gesamten vorherigen Objekts
-                role: prevData.role.filter((role) => role === e.target.value)
-            };
-        }); 
+      setData((prevData) => {
+        return {
+          ...prevData, // Kopie des gesamten vorherigen Objekts
+          role: prevData.role.filter((role) => role === e.target.value),
+        };
+      });
     }
-  }
+  };
 
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
-  
+
     setData((prevData) => {
       if (type === "file") {
         return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
       }
-  
+
       // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
       return { ...prevData, [name]: value };
     });
   };
-  
 
   const handleLocation = () => {
     if (navigator.geolocation) {
@@ -101,8 +135,8 @@ export function Profile() {
 
     // console.log([...formData]);
 
-    fetch("http://localhost:3000/profiles", {
-      method: "POST",
+    fetch("http://localhost:3000/users/profile", {
+      method: "PATCH",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
@@ -119,7 +153,7 @@ export function Profile() {
       })
 
       .then((data) => {
-        setMessage("Profil erfolgreich erstellt!");
+        setMessage("Profil erfolgreich gespeichert!");
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -129,7 +163,7 @@ export function Profile() {
           const err = JSON.parse(error.message);
           setMessage(err.error || "Unbekannter Fehler.");
         } catch {
-          setMessage("Fehler beim Erstellen des Profils.");
+          setMessage("Fehler beim Speichern des Profils.");
         }
       });
   };
@@ -267,7 +301,7 @@ export function Profile() {
             type="submit"
             className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
           >
-            Profil erstellen
+            Speichern
           </button>
         </form>
 
@@ -280,20 +314,22 @@ export function Profile() {
             {message}
           </div>
         )}
-         <button>
-            <Link
-              to="/profile/profileDelete/:id"
-              className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
-              profil löschen
-            </Link>
-          </button>
-          <button>
-            <Link
-              to="/Hilfe"
-              className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
-              profil bearbeiten
-            </Link>
-          </button>
+        <button>
+          <Link
+            to="/profile/profileDelete/:id"
+            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
+          >
+            profil löschen
+          </Link>
+        </button>
+        <button>
+          <Link
+            to="/Hilfe"
+            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
+          >
+            profil bearbeiten
+          </Link>
+        </button>
       </div>
     </div>
   );
