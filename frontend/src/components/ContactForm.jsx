@@ -22,7 +22,7 @@ export default function ContactForm() {
       ) : (
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white shadow-md rounded">
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email Address:</label>
+            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email Addresse:</label>
             <input
               id="email"
               type="email"
