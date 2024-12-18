@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import profileImage from "../assets/profile.jpeg";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -40,7 +41,7 @@ export function Profile() {
       .then((data) => {
         setData({
           profilePhoto: data.profilePhoto ? data.profilePhoto: "",
-          role: data.role ? [data.role]: [],
+          role: data.role ? data.role: [],
           profession: data.profession ? data.profession: "",
           location: data.location ? data.location: "",
           description: data.description ? data.description : ""
@@ -135,7 +136,7 @@ export function Profile() {
 
     // console.log([...formData]);
 
-    fetch("http://localhost:3000/user/profile", {
+    fetch("http://localhost:3000/users/profile", {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -333,6 +334,7 @@ export function Profile() {
           </Link>
         </button>
       </div>
+      <img src={profileImage} alt="profileimage" className="h-2/6 w-2/6 object-cover border rounded-2"/>
     </div>
   );
 }

@@ -11,75 +11,100 @@ export default function ContactForm() {
     if (state.succeeded) {
       setTimeout(() => {
         navigate('/');
-      }, 8000); 
+      }, 8000);
     }
   }, [state.succeeded, navigate]);
 
   return (
-    <div className="mt-40"> {/* Fügt einen größeren oberen Rand hinzu */}
+    <div className="sm:mt-32 mt-40 px-4 sm:px-0">
+      {/* Erfolgreich-Nachricht */}
       {state.succeeded ? (
-        <p className="text-4xl font-bold text-center text-teal-400">Du hast erfolgreich Deine Nachricht verschickt!</p>
+        <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
+          Du hast erfolgreich Deine Nachricht verschickt!
+        </p>
       ) : (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto p-4 bg-white shadow-md rounded">
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700 font-bold mb-2">Email Addresse:</label>
+        <form
+          onSubmit={handleSubmit}
+          className="border max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg"
+        >
+          <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-teal-600">
+            Kontaktformular
+          </h2>
+          <div className="mb-6">
+            <label
+              htmlFor="email"
+              className="block text-gray-700 font-semibold mb-2"
+            >
+              Email Adresse:
+            </label>
             <input
               id="email"
               type="email"
               name="email"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
             />
-            <ValidationError 
-              prefix="Email" 
+            <ValidationError
+              prefix="Email"
               field="email"
               errors={state.errors}
               className="text-red-500 text-sm mt-1"
             />
           </div>
-          <div className="mb-4">
-            <label htmlFor="message" className="block text-gray-700 font-bold mb-2">Ihre Nachricht:</label>
+          <div className="mb-6">
+            <label
+              htmlFor="message"
+              className="block text-gray-700 font-semibold mb-2"
+            >
+              Ihre Nachricht:
+            </label>
             <textarea
               id="message"
               name="message"
-              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring focus:border-blue-300"
+              rows="5"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
             />
-            <ValidationError 
-              prefix="Message" 
+            <ValidationError
+              prefix="Message"
               field="message"
               errors={state.errors}
               className="text-red-500 text-sm mt-1"
             />
           </div>
-          <button type="submit" disabled={state.submitting} className="w-full bg-teal-400 text-white font-bold py-2 px-4 rounded hover:bg-teal-500 focus:outline-none focus:ring-2 focus:ring-blue-400">
+          <button
+            type="submit"
+            disabled={state.submitting}
+            className="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          >
             Senden
           </button>
         </form>
       )}
-      <div className="flex justify-center mt-20 space-x-20">
-        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
-          <a href="https://github.com/Pacome-Adoufack" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
-          </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Pacome</span>
-        </div>
-        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
-          <a href="https://github.com/Okyanuspol" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
-          </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Sükrü</span>
-        </div>
-        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
-          <a href="https://github.com/webdevbfb" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
-          </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Bilal</span>
-        </div>
-        <div className="flex flex-col items-center transition-transform duration-500 hover:scale-110 hover:-translate-y-2">
-          <a href="https://github.com/michkffm" target="_blank" rel="noopener noreferrer">
-            <FaGithub className="text-6xl text-teal-400 hover:text-teal-600 transition-colors duration-500" />
-          </a>
-          <span className="text-lg text-teal-400 hover:text-teal-600 transition-colors duration-500">Michael</span>
-        </div>
+
+      {/* GitHub-Links */}
+      <div className="flex flex-wrap justify-center items-center mt-10 gap-8 sm:gap-20">
+        {[
+          { name: 'Pacome', link: 'https://github.com/Pacome-Adoufack' },
+          { name: 'Sükrü', link: 'https://github.com/Okyanuspol' },
+          { name: 'Bilal', link: 'https://github.com/webdevbfb' },
+          { name: 'Michael', link: 'https://github.com/michkffm' },
+        ].map(({ name, link }) => (
+          <div
+            key={name}
+            className="flex flex-col items-center transition-transform duration-300 hover:scale-110"
+          >
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-teal-500 hover:text-teal-600"
+            >
+              <FaGithub className="text-5xl sm:text-6xl" />
+            </a>
+            <span className="mt-2 text-lg font-semibold text-teal-500 hover:text-teal-600">
+              {name}
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
