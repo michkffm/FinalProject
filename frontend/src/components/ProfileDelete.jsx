@@ -1,24 +1,25 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 export function ProfileDelete() {
-  const [profiles, setProfiles] = useState([]); // Mehrere Profile
-  const [error, setError] = useState(null);
+  const [user, setUser] = useState(null); 
+  const [error, setError] = useState(null); 
+  const [message, setMessage] = useState(""); 
+  const { id } = useParams(); 
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
 
-  // Profile abrufen
-  const fetchProfiles = () => {
-    fetch(`http://localhost:3000/users`)
+  
+  const fetchUser = () => {
+    fetch(`http://localhost:3000/users/${id}`)
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Failed to fetch profiles");
+          throw new Error("Failed to fetch user data");
         }
         return res.json();
       })
       .then((data) => {
-        if (data && Array.isArray(data)) {
-          setProfiles(data); // Array von Profilen setzen
-        } else {
-          throw new Error("Invalid data format");
-        }
+        setUser(data);
       })
       .catch((err) => {
         setError(err.message);
@@ -26,64 +27,62 @@ export function ProfileDelete() {
   };
 
   useEffect(() => {
-    fetchProfiles();
-  }, []);
+    fetchUser(); 
+  }, [id]);
 
-  // Profil löschen
-  const handleDelete = (id) => {
-    if (!id) {
-      console.error("Ungültige ID übergeben:", id);
-      return;
-    }
-
+  const handleDelete = () => {
     fetch(`http://localhost:3000/users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
+      body: JSON.stringify(user),
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error("Failed to delete profile");
+          throw new Error("Failed to delete user");
         }
         return res.json();
       })
       .then(() => {
-        // Gelöschtes Profil aus der Liste entfernen
-        setProfiles((prevProfiles) =>
-          prevProfiles.filter((profile) => profile._id !== id)
-        );
+        setMessage("Profil erfolgreich gelöscht!");
+        setTimeout(() => {
+          navigate("/"); 
+        }, 2000);
       })
       .catch((err) => {
         setError(err.message);
       });
   };
 
+ 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <div className="mt-40 text-red-500">Error: {error}</div>;
   }
 
   return (
-    <div>
-      <h1>Profile löschen</h1>
-      <div className="profiles-list">
-        {profiles.map((profile) => (
-          <div
-            key={profile._id}
-            className="border-2 border-gray-300 rounded-lg shadow-lg p-4 mb-4 bg-white"
+    <div className="mt-40">
+      <h1 className="text-2xl font-bold mb-4">Profil löschen</h1>
+
+      {message && <p className="text-green-500">{message}</p>}
+
+      {user ? (
+        <div className="border p-4 rounded shadow">
+          <h2 className="text-xl font-semibold mb-2">Benutzerdetails:</h2>
+          <pre className="bg-gray-100 p-2 rounded mb-4">
+            {JSON.stringify(user, null, 2)}
+          </pre>
+          <button
+            onClick={handleDelete}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
           >
-            <h2 className="text-lg font-semibold">{profile.name}</h2>
-            <p>Beruf: {profile.profession}</p>
-            <p>Standort: {profile.location}</p>
-            <button
-              className="btn bg-red-500 text-white mt-4"
-              onClick={() => handleDelete(profile._id)}
-            >
-              Profil löschen
-            </button>
-          </div>
-        ))}
-      </div>
+            Profil endgültig löschen
+          </button>
+        </div>
+      ) : (
+        !message && <p>Benutzerdaten werden geladen...</p>
+      )}
     </div>
   );
 }

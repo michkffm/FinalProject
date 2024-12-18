@@ -11,7 +11,7 @@ export default function ContactForm() {
     if (state.succeeded) {
       setTimeout(() => {
         navigate('/');
-      }, 2000); 
+      }, 8000); 
     }
   }, [state.succeeded, navigate]);
 
