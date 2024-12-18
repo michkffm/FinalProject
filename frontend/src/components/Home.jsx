@@ -71,7 +71,7 @@ export function Home() {
             id="search-input"
             className="border border-gray-300 rounded p-2 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
-            placeholder="suche nach Dienstleistung"
+            placeholder="Suche nach Dienstleistung"
           />
           <button
             type="submit"
@@ -217,14 +217,6 @@ export function Home() {
                 className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
               >
                 Profil erstellen
-              </Link>
-            </button>
-            <button>
-              <Link
-                to="/categorie"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
-              >
-                kategorie
               </Link>
             </button>
           </form>
