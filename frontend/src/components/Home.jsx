@@ -60,10 +60,10 @@ export function Home() {
   return (
     <main className="flex flex-col items-center justify-center p-4 pt-16 pb-16">
       <section className="hero-section flex flex-col items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
-        <h1 className="text-xl sm:text-2xl font-bold">
+        <h1 className="bg-white bg-opacity-50 pl-2 pr-2 rounded text-xl sm:text-3xl font-bold">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
-        <p className="text-gray-600 mt-2">
+        <p className="bg-white bg-opacity-50 pl-2 pr-2 rounded text-gray-600 mt-2">
           Verbindung zu qualifizierten Dienstleistern für alle Deine Bedürfnisse
         </p>
         <form className="flex flex-col sm:flex-row gap-4 pt-8 items-center sm:items-start">
