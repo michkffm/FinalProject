@@ -5,7 +5,7 @@ export function Category() {
   const [message, setMessage] = useState("");
   const [token, setToken] = useState(localStorage.getItem("token"));
   const navigate = useNavigate();
-  const [data, setData] = useState({});
+  const [data, setData] = useState([]);
 
   useEffect(() => {
     fetch("http://localhost:3000/jobs", {
