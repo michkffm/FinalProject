@@ -282,7 +282,7 @@ export function Profile() {
         )}
          <button>
             <Link
-              to={`/profile/${users._id}`}
+              to="/profile/profileDelete/:id"
               className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
               profil löschen
             </Link>
