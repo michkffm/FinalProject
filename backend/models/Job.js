@@ -6,7 +6,8 @@ const jobSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   category: {
     type: String,
-    enum: ["Storm", "Babysitting", "IT", "Heizung", "Nachhilfe"],
+    enum: ["Beratung", "Bildung und Schulung", "IBetreuung und Gesundheit", "Finanzen und Versicherungen", "Technologie und IT",
+           "Reparatur und Wartung", "Transport und Logistik", "Reinigung und Pflege", "Bau- und Renovierungsdienste", "Freizeit und Unterhaltung"],
     required: true,
   },
   location: { type: String, required: true },

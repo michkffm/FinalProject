@@ -145,7 +145,9 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 })
 // alle Anzeigen sortieren 
 app.get('/jobs', async (req, res) => {
+   const { category } = req.query;
   try {
+    const query = category ? { category } : {};
       const jobs = await Job.find().sort({ createdAt: -1 });
       res.status(200).json(jobs);
   } catch (error) {
