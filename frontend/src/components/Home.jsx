@@ -144,7 +144,7 @@ export function Home() {
             <button>
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
+                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
@@ -184,21 +184,15 @@ export function Home() {
             <div>
               <label
                 htmlFor="kilometer-slider"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 text-white"
               >
-                Entfernung (in km)
+                Platzhalter
               </label>
               <input
-                id="kilometer-slider"
-                type="range"
-                min="1"
-                max="100"
-                value={kilometer}
-                onChange={handleSliderChange}
                 className="w-full mt-2"
               />
-              <div className="text-sm text-gray-500 mt-1">
-                Aktuelle Auswahl: <span id="kilometer-value">{kilometer}</span>{" "}
+              <div className="text-sm text-gray-500 mt-1 text-white">
+                Aktuelle Auswahl:
                 km
               </div>
             </div>
@@ -214,7 +208,7 @@ export function Home() {
             <button>
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
+                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
