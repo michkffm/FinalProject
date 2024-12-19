@@ -143,15 +143,35 @@ app.post("/jobs", authMiddleware, async (req, res) => {
   }
 
 })
-// alle Anzeigen sortieren 
+
 app.get('/jobs', async (req, res) => {
-   const { category } = req.query;
+  const { category } = req.query;
+
+  const allowedCategories = [
+    "Beratung",
+    "Bildung und Schulung",
+    "Betreuung und Gesundheit",
+    "Finanzen und Versicherungen",
+    "Technologie und IT",
+    "Reparatur und Wartung",
+    "Transport und Logistik",
+    "Reinigung und Pflege",
+    "Bau- und Renovierungsdienste",
+    "Freizeit und Unterhaltung"
+  ];
+
   try {
-    const query = category ? { category } : {};
-      const jobs = await Job.find().sort({ createdAt: -1 });
-      res.status(200).json(jobs);
+    let query = {};
+
+    
+    if (category && allowedCategories.includes(category)) {
+      query = { category };
+    }
+
+    const jobs = await Job.find(query).sort({ createdAt: -1 });
+    res.status(200).json(jobs);
   } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch jobs' });
+    res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
 
