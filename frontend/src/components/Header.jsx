@@ -59,7 +59,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                   to="/hauptCategorie"
                   className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
                   <i className="fa-solid fa-list"></i>
-                  Kategorie
+                  Kategorien
                 </Link>
               </li>
               <li>
@@ -67,7 +67,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                   onClick={handleLogout}
                   className="flex flex-col sm:flex-row items-center gap-1 hover:underline">
                   <i className="fa-solid fa-right-from-bracket"></i>
-                  Ausloggen
+                  Logout
                 </button>
               </li>
             </>

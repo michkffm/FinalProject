@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import profileImage from "../assets/profile.jpeg";
+import { useNavigate } from "react-router-dom";
+import profileImage from "../assets/profile-1.jpeg";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -40,11 +40,11 @@ export function Profile() {
       })
       .then((data) => {
         setData({
-          profilePhoto: data.profilePhoto ? data.profilePhoto: "",
-          role: data.role ? data.role: [],
-          profession: data.profession ? data.profession: "",
-          location: data.location ? data.location: "",
-          description: data.description ? data.description : ""
+          profilePhoto: data.profilePhoto ? data.profilePhoto : "",
+          role: data.role ? data.role : [],
+          profession: data.profession ? data.profession : "",
+          location: data.location ? data.location : "",
+          description: data.description ? data.description : "",
         });
       })
       .catch((error) => {
@@ -172,9 +172,29 @@ export function Profile() {
   };
 
   return (
-    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-4">
-      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
+    <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+        <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
+          <img
+            src={profileImage}
+            alt="profileimage"
+            className="w-100 h-90 ml-6 object-cover rounded-[5%] border border-teal-400"
+          />
+        </div>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Profil bearbeiten
+          </h2>
+
+         {message && (
+          <div
+            className={`mt-4 p-3 text-white ${
+              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+            }`}
+          >
+            {message}
+          </div>
+        )}
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
@@ -217,11 +237,56 @@ export function Profile() {
               <option value="" disabled>
                 Bitte wähle einen Beruf Dienstleistung
               </option>
-              <option value="Storm">Elektrik</option>
-              <option value="Babysitting">Babysitting</option>
-              <option value="IT">IT</option>
-              <option value="Heizung">Heizung</option>
-              <option value="Nachhilfe">Nachhilfe</option>
+              <option value="Beratung">Beratung</option>
+              <option value="Bildung und Schulung">Bildung und Schulung</option>
+              <option
+                value="Betreuung und Gesundheit
+"
+              >
+                Betreuung und Gesundheit
+              </option>
+              <option
+                value="Finanzen und Versicherungen
+"
+              >
+                Finanzen und Versicherungen
+              </option>
+              <option
+                value="Technologie und IT
+"
+              >
+                Technologie und IT
+              </option>
+              <option
+                value="Reparatur und Wartung
+"
+              >
+                Reparatur und Wartung
+              </option>
+              <option
+                value="Transport und Logistik
+"
+              >
+                Transport und Logistik
+              </option>
+              <option
+                value="Reinigung und Pflege
+"
+              >
+                Reinigung und Pflege
+              </option>
+              <option
+                value="Bau- und Renovierungsdienste
+"
+              >
+                Bau- und Renovierungsdienste
+              </option>
+              <option
+                value="Freizeit und Unterhaltung
+"
+              >
+                Freizeit und Unterhaltung
+              </option>
             </select>
           </div>
           <div className="space-y-2">
@@ -232,109 +297,75 @@ export function Profile() {
               Beschreibung:
             </label>
             <textarea
-              id="description"
               name="description"
               value={data.description}
               onChange={handleChange}
-              required
               rows="3"
-              className="w-full  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
 
-          {/* Location */}
-          <div className="space-y-2">
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Standort:
+          {/* Standort */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Standort
             </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={data.location}
-              onChange={handleChange}
-              placeholder="Standort eingeben oder abrufen"
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <button
-              type="button"
-              onClick={handleLocation}
-              className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
-            >
-              Standort abrufen
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                name="location"
+                value={data.location}
+                onChange={handleChange}
+                placeholder="Standort eingeben..."
+                className="flex-1 p-3 border rounded-md"
+              />
+              <button
+                type="button"
+                onClick={handleLocation}
+                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
+              >
+                Abrufen
+              </button>
+            </div>
           </div>
 
-          {/* Roles */}
-          <div className="space-y-2">
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-700"
-            ></label>
-            <div className="flex items-center space-x-4">
-              <label className="flex items-center space-x-2">
+          {/* Rollen */}
+          <div>
+            <label className="block text-gray-700 font-medium mb-2">
+              Rollen
+            </label>
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="role"
                   value="Anbieter"
                   onChange={handleChangeRole}
-                  className="h-5 w-5 text-blue-600"
+                  className="mr-2"
                 />
-                <span> Anbieter </span>
+                Anbieter
               </label>
-              <label className="flex items-center space-x-2">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="role"
                   value="Suchender"
                   onChange={handleChangeRole}
-                  className="h-5 w-5 text-blue-600"
+                  className="mr-2"
                 />
-                <span> Suchender </span>
+                Suchender
               </label>
             </div>
           </div>
 
-          {/* Submit button */}
+          {/* Speichern-Button */}
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
+            className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
           >
             Speichern
           </button>
         </form>
-
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
-        <button>
-          <Link
-            to="/profile/profileDelete/:id"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil löschen
-          </Link>
-        </button>
-        <button>
-          <Link
-            to="/Hilfe"
-            className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-          >
-            profil bearbeiten
-          </Link>
-        </button>
       </div>
-      <img src={profileImage} alt="profileimage" className="h-2/6 w-2/6 object-cover border rounded-2"/>
     </div>
   );
 }
