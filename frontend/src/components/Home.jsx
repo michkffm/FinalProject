@@ -184,21 +184,15 @@ export function Home() {
             <div>
               <label
                 htmlFor="kilometer-slider"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-gray-700 text-white"
               >
-                Entfernung (in km)
+                Platzhalter
               </label>
               <input
-                id="kilometer-slider"
-                type="range"
-                min="1"
-                max="100"
-                value={kilometer}
-                onChange={handleSliderChange}
                 className="w-full mt-2"
               />
-              <div className="text-sm text-gray-500 mt-1">
-                Aktuelle Auswahl: <span id="kilometer-value">{kilometer}</span>{" "}
+              <div className="text-sm text-gray-500 mt-1 text-white">
+                Aktuelle Auswahl:
                 km
               </div>
             </div>
