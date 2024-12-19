@@ -106,7 +106,7 @@ export function Home() {
               <button
                 type="button"
                 onClick={handleLocation}
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
+                className="bg-teal-400 w-[100%] text-white py-2 px-4 rounded hover:bg-teal-500"
               >
                 Standort abrufen
               </button>
@@ -141,10 +141,9 @@ export function Home() {
                 className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
-            <button>
+            <button className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-100%">
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
@@ -176,7 +175,7 @@ export function Home() {
               <button
                 type="button"
                 onClick={handleLocation}
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500"
+                className="bg-teal-400 w-[100%] text-white py-2 px-4 rounded hover:bg-teal-500"
               >
                 Standort abrufen
               </button>
@@ -205,10 +204,9 @@ export function Home() {
                 className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
               />
             </div>
-            <button>
+            <button className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-100%">
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
