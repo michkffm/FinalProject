@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export function Category() {
   const [message, setMessage] = useState("");
   const [token, setToken] = useState(localStorage.getItem("token"));
   const navigate = useNavigate();
   const [data, setData] = useState([]);
+  const {name} = useParams();
 
   useEffect(() => {
-    fetch("http://localhost:3000/jobs", {
+    fetch(`http://localhost:3000/jobs?category=${name}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -40,7 +42,7 @@ export function Category() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto mt-20">
         <h1 className="text-3xl font-bold text-center mb-8 text-teal-600">Kategorien</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {data.map((job) => (

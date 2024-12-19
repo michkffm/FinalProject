@@ -34,7 +34,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/categorie" element={<Category />} />
+        <Route path="/categorie/:name" element={<Category />} />
         <Route path="/hauptCategorie" element={<HauptCategory />} />
         <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />
