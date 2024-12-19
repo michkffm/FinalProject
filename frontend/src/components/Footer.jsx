@@ -22,11 +22,6 @@ export function Footer() {
             </Link>
           </li>
           <li>
-            <Link to="/Cookie" className="hover:underline">
-              Cookie-Einstellungen
-            </Link>
-          </li>
-          <li>
             <Link to="/Contact" className="hover:underline">
               Kontakt
             </Link>
