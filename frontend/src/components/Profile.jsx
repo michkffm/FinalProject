@@ -174,17 +174,21 @@ export function Profile() {
   return (
     <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
-      <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
-      <img
-        src={profileImage}
-        alt="profileimage"
-        className="w-100 h-90 ml-6 object-cover rounded-[5%] border border-teal-400"
-      />
-      </div>
+        <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
+          <img
+            src={profileImage}
+            alt="profileimage"
+            className="w-100 h-90 ml-6 object-cover rounded-[5%] border border-teal-400"
+          />
+        </div>
         <form onSubmit={handleSubmit} className="space-y-6">
-        <h2 className="text-2xl font-bold mb-6 text-center">Profil bearbeiten</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Profil bearbeiten
+          </h2>
 
-{message && <p className="text-green-500 text-center mb-4">{message}</p>}
+          {message && (
+            <p className="text-green-500 text-center mb-4">{message}</p>
+          )}
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
@@ -295,49 +299,36 @@ export function Profile() {
               placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
-
-          {/* Location */}
-          <div className="space-y-2">
-            <label
-              htmlFor="location"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Standort:
-            </label>
-            <input
-              type="text"
-              id="location"
-              name="location"
-              value={data.location}
-              onChange={handleChange}
-              placeholder="Standort eingeben oder abrufen"
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-  
-          {/* Berufskategorie */}
+          
+          {/* Standort */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
-              Berufskategorie
+              Standort
             </label>
-            <select
-              name="profession"
-              value={data.profession}
-              onChange={handleChange}
-              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-teal-400"
-            >
-              <option value="" disabled>Bitte wählen</option>
-              <option value="Elektrik">Elektrik</option>
-              <option value="Babysitting">Babysitting</option>
-              <option value="Heizung">Heizung</option>
-              <option value="Nachhilfe">Nachhilfe</option>
-              <option value="IT">IT</option>
-            </select>
+            <div className="flex flex-col sm:flex-row gap-2">
+              <input
+                type="text"
+                name="location"
+                value={data.location}
+                onChange={handleChange}
+                placeholder="Standort eingeben..."
+                className="flex-1 p-3 border rounded-md"
+              />
+              <button
+                type="button"
+                onClick={handleLocation}
+                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
+              >
+                Abrufen
+              </button>
+            </div>
           </div>
-  
+
           {/* Rollen */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">Rollen</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Rollen
+            </label>
             <div className="flex flex-wrap gap-4">
               <label className="flex items-center">
                 <input
@@ -359,29 +350,7 @@ export function Profile() {
               </label>
             </div>
           </div>
-  
-          {/* Standort */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">Standort</label>
-            <div className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="text"
-                name="location"
-                value={data.location}
-                onChange={handleChange}
-                placeholder="Standort eingeben..."
-                className="flex-1 p-3 border rounded-md"
-              />
-              <button
-                type="button"
-                onClick={handleLocation}
-                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
-              >
-                Abrufen
-              </button>
-            </div>
-          </div>
-  
+
           {/* Speichern-Button */}
           <button
             type="submit"
