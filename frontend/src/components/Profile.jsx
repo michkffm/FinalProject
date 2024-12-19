@@ -40,11 +40,11 @@ export function Profile() {
       })
       .then((data) => {
         setData({
-          profilePhoto: data.profilePhoto ? data.profilePhoto: "",
-          role: data.role ? data.role: [],
-          profession: data.profession ? data.profession: "",
-          location: data.location ? data.location: "",
-          description: data.description ? data.description : ""
+          profilePhoto: data.profilePhoto ? data.profilePhoto : "",
+          role: data.role ? data.role : [],
+          profession: data.profession ? data.profession : "",
+          location: data.location ? data.location : "",
+          description: data.description ? data.description : "",
         });
       })
       .catch((error) => {
@@ -173,35 +173,145 @@ export function Profile() {
 
   return (
     <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg border rounded-lg p-6 max-w-4xl w-full">
-        
-        {/* Profilbild */}
-        <div className="w-full sm:w-auto order-1 sm:order-2 mb-6 sm:mb-0 sm:ml-6 ml-0 flex  justify-center">
-          <img
-            src={profileImage}
-            alt="Profilbild"
-            className="w-100 h-100 object-cover rounded-[5%] border border-teal-400"
-          />
-        </div>
-  
-        {/* Formular */}
-        <form onSubmit={handleSubmit} className="w-full sm:w-3/5 order-2 sm:order-1 space-y-6">
-          <h2 className="text-2xl font-bold mb-6 text-center">Profil bearbeiten</h2>
-  
-          {message && <p className="text-green-500 text-center mb-4">{message}</p>}
-  
-          {/* Beschreibung */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-2">
-              Beschreibung
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+      <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
+      <img
+        src={profileImage}
+        alt="profileimage"
+        className="w-100 h-90 ml-6 object-cover rounded-[5%] border border-teal-400"
+      />
+      </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+        <h2 className="text-2xl font-bold mb-6 text-center">Profil bearbeiten</h2>
+
+{message && <p className="text-green-500 text-center mb-4">{message}</p>}
+          {/* Profile photo */}
+          {/* <div className="space-y-2">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+              Profile erstellen
+            </h2>
+            <label
+              htmlFor="profilePhoto"
+              className="block text-sm font-medium text-gray-700 text-center "
+            ></label>
+            <div className="relative w-20 h-20 left-48">
+              <input
+                type="file"
+                id="profilePhoto"
+                name="profilePhoto"
+                accept="image/*"
+                onChange={handleChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer "
+              />
+              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-white shadow-md">
+                <span className="text-sm">📷</span>
+              </div>
+            </div>
+          </div> */}
+
+          {/* Other fields */}
+          <div className="space-y-2">
+            <label
+              htmlFor="profession"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Kategorie:
+            </label>
+            <select
+              name="profession"
+              id="profession"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={data.profession} // Bindung an den State
+              onChange={handleChange} // Handle Change, um den State zu aktualisieren
+            >
+              <option value="" disabled>
+                Bitte wähle einen Beruf Dienstleistung
+              </option>
+              <option value="Beratung">Beratung</option>
+              <option value="Bildung und Schulung">Bildung und Schulung</option>
+              <option
+                value="Betreuung und Gesundheit
+"
+              >
+                Betreuung und Gesundheit
+              </option>
+              <option
+                value="Finanzen und Versicherungen
+"
+              >
+                Finanzen und Versicherungen
+              </option>
+              <option
+                value="Technologie und IT
+"
+              >
+                Technologie und IT
+              </option>
+              <option
+                value="Reparatur und Wartung
+"
+              >
+                Reparatur und Wartung
+              </option>
+              <option
+                value="Transport und Logistik
+"
+              >
+                Transport und Logistik
+              </option>
+              <option
+                value="Reinigung und Pflege
+"
+              >
+                Reinigung und Pflege
+              </option>
+              <option
+                value="Bau- und Renovierungsdienste
+"
+              >
+                Bau- und Renovierungsdienste
+              </option>
+              <option
+                value="Freizeit und Unterhaltung
+"
+              >
+                Freizeit und Unterhaltung
+              </option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Beschreibung:
             </label>
             <textarea
               name="description"
               value={data.description}
               onChange={handleChange}
               rows="3"
-              className="w-full p-3 border rounded-md focus:ring-2 focus:ring-teal-400"
-              placeholder="Gebe hier deine Beschreibung ein..."
+              className="w-full p-3  border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Gebe hier Deine Beschreibung ein..."
+            ></textarea>
+          </div>
+
+          {/* Location */}
+          <div className="space-y-2">
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Standort:
+            </label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              value={data.location}
+              onChange={handleChange}
+              placeholder="Standort eingeben oder abrufen"
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
   
@@ -280,6 +390,16 @@ export function Profile() {
             Speichern
           </button>
         </form>
+
+        {message && (
+          <div
+            className={`mt-4 p-3 text-white ${
+              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+            }`}
+          >
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );
