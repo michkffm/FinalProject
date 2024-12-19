@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import profileImage from "../assets/profile-1.jpeg";
 
 export function Profile() {
@@ -186,9 +186,15 @@ export function Profile() {
             Profil bearbeiten
           </h2>
 
-          {message && (
-            <p className="text-green-500 text-center mb-4">{message}</p>
-          )}
+         {message && (
+          <div
+            className={`mt-4 p-3 text-white ${
+              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+            }`}
+          >
+            {message}
+          </div>
+        )}
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
@@ -299,7 +305,7 @@ export function Profile() {
               placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
-          
+
           {/* Standort */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -359,16 +365,6 @@ export function Profile() {
             Speichern
           </button>
         </form>
-
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
       </div>
     </div>
   );
