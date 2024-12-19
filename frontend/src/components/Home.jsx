@@ -144,7 +144,7 @@ export function Home() {
             <button>
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
+                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
@@ -214,7 +214,7 @@ export function Home() {
             <button>
               <Link
                 to="/profile"
-                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto ml-24"
+                className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
               >
                 Profil erstellen
               </Link>
