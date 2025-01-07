@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import logogross from "../assets/logo-gross-ohne-kontur.png";
+import { Inbox } from "./Inbox";
 
 export function Header({ isLoggedIn, setIsLoggedIn }) {
   const handleLogout = () => {
@@ -69,6 +70,9 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                   <i className="fa-solid fa-right-from-bracket"></i>
                   Logout
                 </button>
+              </li>
+              <li>
+                <Inbox />
               </li>
             </>
           )}
