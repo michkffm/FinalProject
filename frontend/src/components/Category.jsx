@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export function Category() {
   const [message, setMessage] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const navigate = useNavigate();
+  const [token, ] = useState(localStorage.getItem("token"));
   const [data, setData] = useState([]);
+  const {name} = useParams();
   const [contactMessages, setContactMessages] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:3000/jobs", {
+    fetch(`http://localhost:3000/jobs?category=${name}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -23,10 +23,11 @@ export function Category() {
         }
         return res.json();
       })
+
       .then((data) => {
         setData(data);
         console.log(data);
-        setMessage("Kategorie erfolgreich geladen!");
+        setMessage("kategorie erfolgreich geladen!");
       })
       .catch((error) => {
         try {
@@ -86,17 +87,23 @@ export function Category() {
   };
 
   return (
-    <div className="mt-40">
-      <div className="flex flex-wrap justify-center">
-        {data.map((job) => (
-          <div key={job._id} className="w-1/4 p-4">
-            <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white">
-              <h2 className="text-lg font-bold">{job.title}</h2>
-              <h3 className="text-sm text-gray-500">{job.category}</h3>
-              <p className="mt-2">Contact: {job.contact}</p>
-              <p className="mt-2">Description: {job.description}</p>
-              <p className="mt-2">Location: {job.location}</p>
-              <p className="mt-2 font-semibold">Price: ${job.price}</p>
+    <div className="min-h-screen bg-gray-50 px-4 py-8">
+      <div className="container mx-auto mt-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {data.map((job) => (
+            <div key={job._id} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow">
+              <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
+              <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
+              <p className="text-gray-600 mt-2">
+                <span className="font-medium text-gray-800">Kontakt:</span> {job.contact}
+              </p>
+              <p className="text-gray-600 mt-1">{job.description}</p>
+              <p className="text-gray-600 mt-1">
+                <span className="font-medium text-gray-800">Standort:</span> {job.location}
+              </p>
+              <p className="text-lg font-semibold text-teal-600 mt-3">
+                Preis: {job.price}€
+              </p>
               <form onSubmit={(e) => handleContactSubmit(e, job._id)} className="mt-4">
                 <textarea
                   name="message"
@@ -114,18 +121,10 @@ export function Category() {
                 </button>
               </form>
             </div>
-          </div>
-        ))}
-      </div>
-      {message && (
-        <div
-          className={`mt-4 p-3 text-white ${
-            message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-          }`}
-        >
-          {message}
+          ))}
         </div>
-      )}
+      </div>
     </div>
   );
+  
 }
