@@ -14,6 +14,7 @@ import { ProfileDelete } from "./components/ProfileDelete.jsx";
 import { Category } from "./components/Category.jsx";
 import { HauptCategory } from "./components/HauptCategory.jsx";
 import { Datenschutz } from "./pages/Datenschutz.jsx"; // Importiere die Datenschutz-Komponente
+import { Inbox } from "./components/Inbox.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -41,6 +42,7 @@ function App() {
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
         <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
         <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
+        <Route path="/inbox" element={<Inbox />} />
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
     </>
