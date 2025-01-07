@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 
 const messageSchema = new mongoose.Schema({
-  job: { type: mongoose.Schema.Types.ObjectId, ref: "Job", required: true }, // İlgili iş ilanı
-  sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Mesajı gönderen kullanıcı
-  receiver: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Mesajın alıcısı
-  content: { type: String, required: true }, // Mesaj içeriği
+  jobId: { type: mongoose.ObjectId, ref: "Job", required: true }, 
+  senderId: { type: mongoose.ObjectId, ref: "User", required: true }, 
+  receiverId: { type: mongoose.ObjectId, ref: "User", required: true },
+  content: { type: String, required: true }, 
+  parentMessage: { type: mongoose.ObjectId, ref: "Message", default: null }, //alte Nachricht Id
   createdAt: { type: Date, default: Date.now }
 });
 

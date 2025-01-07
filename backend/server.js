@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from './models/User.js';
 import Job from './models/Job.js';
+import Message from './models/Message.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -258,5 +259,53 @@ app.delete('/users/:id', async (req, res) => {
       res.status(500).json({ error: 'Failed to delete user' });
   }
 });
+
+//Messages
+
+app.post("/messages", authMiddleware, async (req, res) => {
+  const { jobId, receiverId, content, parentMessage } = req.body;
+  const senderId = req.user.userId;
+
+  if (!jobId || !receiverId || !content) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const message = new Message({ 
+      jobId, 
+      senderId, 
+      receiverId, 
+      content, 
+      parentMessage: parentMessage || null,
+
+     });
+    await message.save();
+
+    res.status(201).json({ message: "Message sent successfully", message });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to send message", details: error.message });
+  }
+});
+
+// Nachrichten zeigen
+
+app.get("/messages/:jobId", authMiddleware, async (req, res) => {
+  const { jobId } = req.params;
+
+  try {
+    const messages = await Message.find({ jobId })
+      .populate("senderId", "username")
+      .populate("receiverId", "username")
+      .populate("parentMessage")
+      .sort({ createdAt: 1 });
+
+    res.status(200).json(messages);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch messages", details: error.message });
+  }
+});
+
+
+
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
