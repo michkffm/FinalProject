@@ -17,7 +17,7 @@ export function Job({ setIsLoggedIn }) {
   useEffect(() => {
     if (!token) {
       setMessage("Kein Token gefunden, bitte einloggen.");
-      setTimeout(() => navigate("/profile"), 2000);
+      setTimeout(() => navigate("/hauptCategorie"), 2000);
     }
   }, [token, navigate]);
 
@@ -100,7 +100,7 @@ export function Job({ setIsLoggedIn }) {
         contact: "",
       });
 
-      setTimeout(() => navigate("/profile"), 2000);
+      setTimeout(() => navigate("/hauptCategorie"), 2000);
     } catch (error) {
       setMessage("Fehler beim Erstellen des Jobs: " + error.message);
       console.error("Fehler beim Absenden des Formulars:", error);
