@@ -11,6 +11,7 @@ import { TermsAndConditions } from "./pages/Agb.jsx";
 import { Profile } from "./components/Profile.jsx";
 import ContactForm from "./components/ContactForm.jsx"; 
 import { ProfileDelete } from "./components/ProfileDelete.jsx";
+import { Job } from "./components/Job.jsx";
 import { Category } from "./components/Category.jsx";
 import { HauptCategory } from "./components/HauptCategory.jsx";
 import { Datenschutz } from "./pages/Datenschutz.jsx"; // Importiere die Datenschutz-Komponente
@@ -36,6 +37,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/categorie/:name" element={<Category />} />
         <Route path="/hauptCategorie" element={<HauptCategory />} />
+        <Route path="/jobs" element={<Job/>} />
         <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
