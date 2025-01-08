@@ -146,8 +146,7 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 })
 
 app.get('/jobs', async (req, res) => {
-  const { category } = req.query;
-
+  const { category, distance, longitude, latitude } = req.query;
   const allowedCategories = [
     "Beratung",
     "Bildung und Schulung",
@@ -160,15 +159,20 @@ app.get('/jobs', async (req, res) => {
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung"
   ];
-
   try {
     let query = {};
-
-    
     if (category && allowedCategories.includes(category)) {
-      query = { category };
+      query.category = category;
     }
-
+    if (distance && longitude && latitude) {
+      const maxDistance = parseInt(distance, 10) * 1000;
+      query.location = {
+        $near: {
+          $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
+          $maxDistance: maxDistance,
+        },
+      };
+    }
     const jobs = await Job.find(query).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
