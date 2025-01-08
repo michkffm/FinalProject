@@ -3,11 +3,19 @@ import { useParams } from "react-router-dom";
 
 export function Category() {
   const [message, setMessage] = useState("");
-  const [token, ] = useState(localStorage.getItem("token"));
+  const [token] = useState(localStorage.getItem("token"));
   const [data, setData] = useState([]);
-  const {name} = useParams();
+  const [filteredData, setFilteredData] = useState([]);
+  const { name } = useParams();
+  const [filters, setFilters] = useState({
+    name: "",
+    price: "all",
+    location: "",
+  });
   const [contactMessages, setContactMessages] = useState({});
 
+
+  // Daten abrufen
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {
       method: "GET",
@@ -23,11 +31,10 @@ export function Category() {
         }
         return res.json();
       })
-
       .then((data) => {
         setData(data);
-        console.log(data);
-        setMessage("kategorie erfolgreich geladen!");
+        setFilteredData(data); // Initial gefilterte Daten sind alle Daten
+        setMessage("Kategorie erfolgreich geladen!");
       })
       .catch((error) => {
         try {
@@ -37,7 +44,44 @@ export function Category() {
           setMessage("Fehler beim Laden der Kategorie.");
         }
       });
-  }, []);
+  }, [name]);
+
+  // Filter anwenden
+  useEffect(() => {
+    let filtered = data;
+
+    // Nach Name filtern
+    if (filters.name) {
+      filtered = filtered.filter((job) =>
+        job.title.toLowerCase().includes(filters.name.toLowerCase())
+      );
+    }
+
+    // Nach Preis filtern
+    if (filters.price !== "all") {
+      if (filters.price === "low") {
+        filtered = filtered.filter((job) => job.price < 50);
+      } else if (filters.price === "medium") {
+        filtered = filtered.filter((job) => job.price >= 50 && job.price <= 100);
+      } else if (filters.price === "high") {
+        filtered = filtered.filter((job) => job.price > 100);
+      }
+    }
+
+    // Nach Standort filtern
+    if (filters.location) {
+      filtered = filtered.filter((job) =>
+        job.location.toLowerCase().includes(filters.location.toLowerCase())
+      );
+    }
+
+    setFilteredData(filtered);
+  }, [filters, data]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleContactChange = (e, jobId) => {
     const { name, value } = e.target;
@@ -86,20 +130,62 @@ export function Category() {
       });
   };
 
+
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
+        <div className="mb-6 flex flex-wrap gap-4">
+          {/* Name Filter */}
+          <input
+            type="text"
+            name="name"
+            value={filters.name}
+            onChange={handleFilterChange}
+            placeholder="Filter nach Name"
+            className="p-2 border border-gray-300 rounded-md shadow-sm"
+          />
+
+          {/* Preis Filter */}
+          <select
+            name="price"
+            value={filters.price}
+            onChange={handleFilterChange}
+            className="p-2 border border-gray-300 rounded-md shadow-sm"
+          >
+            <option value="all">Alle Preise</option>
+            <option value="low">Unter 50€</option>
+            <option value="medium">50€ - 100€</option>
+            <option value="high">Über 100€</option>
+          </select>
+
+          {/* Standort Filter */}
+          <input
+            type="text"
+            name="location"
+            value={filters.location}
+            onChange={handleFilterChange}
+            placeholder="Filter nach Standort"
+            className="p-2 border border-gray-300 rounded-md shadow-sm"
+          />
+        </div>
+
+        {/* Gefilterte Jobs anzeigen */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {data.map((job) => (
-            <div key={job._id} className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow">
+          {filteredData.map((job) => (
+            <div
+              key={job._id}
+              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+            >
               <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
               <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
               <p className="text-gray-600 mt-2">
-                <span className="font-medium text-gray-800">Kontakt:</span> {job.contact}
+                <span className="font-medium text-gray-800">Kontakt:</span>{" "}
+                {job.contact}
               </p>
               <p className="text-gray-600 mt-1">{job.description}</p>
               <p className="text-gray-600 mt-1">
-                <span className="font-medium text-gray-800">Standort:</span> {job.location}
+                <span className="font-medium text-gray-800">Standort:</span>{" "}
+                {job.location}
               </p>
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
@@ -126,5 +212,4 @@ export function Category() {
       </div>
     </div>
   );
-  
 }
