@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import User from './models/User.js';
 import Job from './models/Job.js';
+import Rating from './models/Rating.js';
 import Message from './models/Message.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
@@ -358,7 +359,52 @@ app.get("/messages/:jobId", authMiddleware, async (req, res) => {
   }
 });
 
+app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
+  const { jobId } = req.params;
 
+  try {
+    const ratings = await Rating.find({ jobId })
+    .populate("userId", "username")
+    .sort({ createdAt: 1 });
 
+    res.status(200).json(ratings);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch ratings", details: error.message });
+  }
+});
+
+app.post("/ratings", authMiddleware, async (req, res) => {
+  const { jobId, rating, content } = req.body;
+  const userId = req.user.userId;
+
+  if (!jobId || !rating) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
+
+  try {
+    const newRating = new Rating({ jobId, userId, rating, content });
+    await newRating.save();
+
+    res.status(201).json({ message: "Rating added successfully", newRating });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add rating", details: error.message });
+  }
+});
+
+app.delete('/ratings/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const rating = await Rating.findByIdAndDelete(id);
+
+      if (!rating) {
+          return res.status(404).json({ error: 'Rating not found' });
+      }
+
+      res.status(200).json({ message: 'Rating deleted successfully' });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to delete rating' });
+  }
+});
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
