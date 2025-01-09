@@ -1,0 +1,131 @@
+import { useEffect, useState } from "react";
+import StarRatings from "react-star-ratings";
+
+export function Ratings({ jobId }) {
+  const [userRating, setUserRating] = useState(0);
+  const [userComment, setUserComment] = useState("");
+  const [message, setMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
+
+  const handleRatingChange = (newRating) => {
+    setUserRating(newRating);
+  };
+
+  const handleCommentChange = (e) => {
+    setUserComment(e.target.value);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    if (!userRating || !userComment) {
+      setMessage("Alle Felder sind erforderlich.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("Bitte einloggen.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    setIsFormSubmitted(true);
+  };
+
+  useEffect(() => {
+    if (isFormSubmitted) {
+      const token = localStorage.getItem("token");
+
+      fetch("http://localhost:3000/ratings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          jobId: jobId,
+          rating: userRating,
+          content: userComment,
+        }),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            return res.text().then((text) => {
+              throw new Error(text);
+            });
+          }
+          return res.json();
+        })
+        .then((data) => {
+          console.log(data);
+          setMessage("Bewertung erfolgreich hinzugefügt!");
+          setUserRating(0);
+          setUserComment("");
+        })
+        .catch((error) => {
+          try {
+            const err = JSON.parse(error.message);
+            setMessage(err.error || "Unbekannter Fehler.");
+          } catch {
+            setMessage("Fehler beim Hinzufügen der Bewertung.");
+          }
+        })
+        .finally(() => {
+          setIsSubmitting(false);
+          setIsFormSubmitted(false);
+        });
+    }
+  }, [isFormSubmitted, jobId, userRating, userComment]);
+
+  return (
+    <div className="rating-section max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-48">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 ml-32">
+        Bewertung hinzufügen
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="flex flex-col items-center">
+          <StarRatings
+            rating={userRating}
+            changeRating={handleRatingChange}
+            starDimension="40px"
+            starSpacing="8px"
+            starRatedColor="#FFD700"
+            starEmptyColor="#E5E7EB"
+          />
+          <p className="text-sm text-gray-600 mt-2">
+            Wählen Sie eine Bewertung aus.
+          </p>
+        </div>
+        <textarea
+          value={userComment}
+          onChange={handleCommentChange}
+          placeholder="Schreiben Sie einen Kommentar..."
+          rows="4"
+          className="w-full p-3 border rounded-md border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none resize-none"
+        ></textarea>
+        <button
+          type="submit"
+          className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Senden..." : "Senden"}
+        </button>
+      </form>
+      {message && (
+        <p
+          className={`mt-4 text-center font-medium ${
+            message.includes("erfolgreich") ? "text-green-600" : "text-red-600"
+          }`}
+        >
+          {message}
+        </p>
+      )}
+    </div>
+  );
+}
+
+export default Ratings;
