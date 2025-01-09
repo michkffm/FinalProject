@@ -2,13 +2,14 @@ import "../App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
-export function Home({ setIsLoggedIn }) {
+export function Home() {
   const [message, setMessage] = useState("");
   const [data, setData] = useState({
     location: "",
   });
-  const [isLoggedIn, setIsLoggedInState] = useState(localStorage.getItem("token") !== null);
+  const [isLoggedIn] = useState(localStorage.getItem("token") !== null);
   const navigate = useNavigate();
+  const [query, setQuery] = useState("");
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -30,7 +31,8 @@ export function Home({ setIsLoggedIn }) {
       setMessage("Bitte logge dich ein, um zu suchen.");
       return;
     }
-    navigate("/hauptCategorie");
+  
+    navigate(`/suche?query=${query}`);
   };
 
   const handleOfferSubmit = (e) => {
@@ -57,6 +59,8 @@ export function Home({ setIsLoggedIn }) {
             id="search-input"
             className="border border-gray-300 rounded p-2 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="Suche nach Dienstleistung"
             disabled={!isLoggedIn}
           />
@@ -81,6 +85,8 @@ export function Home({ setIsLoggedIn }) {
               <input
                 id="dienst-input"
                 type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
                 placeholder="Fliesenleger"
                 className="w-full border rounded p-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
                 disabled={!isLoggedIn}
@@ -91,7 +97,7 @@ export function Home({ setIsLoggedIn }) {
               className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-100%"
               disabled={!isLoggedIn} 
             >
-              <Link to={isLoggedIn ? "/hauptCategorie" : "#"}>Suchen</Link>
+              <Link to={isLoggedIn ? "/suche" : "#"}>Suchen</Link>
             </button>
           </form>
         </div>
