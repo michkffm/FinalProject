@@ -62,31 +62,31 @@ export function Job({ setIsLoggedIn }) {
       setMessage("Geolocation ist in diesem Browser nicht unterstützt.");
     }
   };
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  if (!token) {
+    setMessage("Sie sind nicht eingeloggt.");
+    return;
+  }
 
-    if (!token) {
-      setMessage("Sie sind nicht eingeloggt.");
-      return;
-    }
-
-    try {
-      const response = await fetch("http://localhost:3000/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(data),
-      });
-
+  fetch("http://localhost:3000/jobs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => {
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || "Ein Fehler ist aufgetreten.");
+        return response.text().then((errorText) => {
+          throw new Error(errorText || "Ein Fehler ist aufgetreten.");
+        });
       }
-
-      const responseData = await response.json();
+      return response.json();
+    })
+    .then((responseData) => {
       setMessage("Job erfolgreich erstellt!");
       console.log("Erstellte Jobdaten:", responseData);
 
@@ -100,12 +100,14 @@ export function Job({ setIsLoggedIn }) {
         contact: "",
       });
 
+      // Navigation nach einer Verzögerung
       setTimeout(() => navigate("/hauptCategorie"), 2000);
-    } catch (error) {
+    })
+    .catch((error) => {
       setMessage("Fehler beim Erstellen des Jobs: " + error.message);
       console.error("Fehler beim Absenden des Formulars:", error);
-    }
-  };
+    });
+};
 
   return (
     <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
