@@ -146,7 +146,8 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 })
 
 app.get('/jobs', async (req, res) => {
-  const { category, distance, longitude, latitude } = req.query;
+  const { category } = req.query;
+
   const allowedCategories = [
     "Beratung",
     "Bildung und Schulung",
@@ -159,26 +160,74 @@ app.get('/jobs', async (req, res) => {
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung"
   ];
+
   try {
     let query = {};
+
+    
     if (category && allowedCategories.includes(category)) {
-      query.category = category;
+      query = { category };
     }
-    if (distance && longitude && latitude) {
-      const maxDistance = parseInt(distance, 10) * 1000;
-      query.location = {
-        $near: {
-          $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
-          $maxDistance: maxDistance,
-        },
-      };
-    }
+
     const jobs = await Job.find(query).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
+app.get('/search/jobs', async (req, res) => {
+  const { category, query, price, location } = req.query;
+
+  const allowedCategories = [
+    "Beratung",
+    "Bildung und Schulung",
+    "Betreuung und Gesundheit",
+    "Finanzen und Versicherungen",
+    "Technologie und IT",
+    "Reparatur und Wartung",
+    "Transport und Logistik",
+    "Reinigung und Pflege",
+    "Bau- und Renovierungsdienste",
+    "Freizeit und Unterhaltung"
+  ];
+
+  try {
+    let filter = {};
+
+    // Filter nach Kategorie, wenn angegeben
+    if (category && allowedCategories.includes(category)) {
+      filter.category = category;
+    }
+
+    // Filter nach Suchbegriff (Titel oder Beschreibung)
+    if (query) {
+      const regex = new RegExp(query, 'i');
+      filter.$or = [
+        { title: { $regex: regex } },
+        { description: { $regex: regex } }
+      ];
+    }
+
+    // Filter nach Preis, wenn angegeben
+    if (price) {
+      const priceRange = price.split('-'); // Beispiel: '50-200'
+      if (priceRange.length === 2) {
+        filter.price = { $gte: parseInt(priceRange[0]), $lte: parseInt(priceRange[1]) };
+      }
+    }
+
+    // Filter nach Standort, wenn angegeben
+    if (location) {
+      filter.location = { $regex: new RegExp(location, 'i') };  // Case insensitive Suche
+    }
+
+    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to search jobs', details: error.message });
+  }
+});
+
 
 
 // alle Anzeigen sortieren
