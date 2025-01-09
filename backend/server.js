@@ -396,7 +396,7 @@ app.get('/chats', authMiddleware, async (req, res) => {
   try {
     const chats = await Chat.find({
       participants: { $in: [userId] },
-    }).populate('participants', 'username email')
+    }).populate('participants', 'username')
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
@@ -407,8 +407,8 @@ app.get('/chats/:chatId', async (req, res) => {
   const { chatId } = req.params;
   try {
     const chat = await Chat.findById(chatId)
-      .populate('messages.sender', 'username email')
-      .populate('participants', 'username email');
+      .populate('messages.sender', 'username')
+      .populate('participants', 'username');
     if (!chat) {
       return res.status(404).json({ error: 'Chat not found' });
     }
