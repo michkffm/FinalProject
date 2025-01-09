@@ -4,8 +4,7 @@ const messageSchema = new mongoose.Schema({
   jobId: { type: mongoose.ObjectId, ref: "Job", required: true }, 
   senderId: { type: mongoose.ObjectId, ref: "User", required: true }, 
   receiverId: { type: mongoose.ObjectId, ref: "User", required: true },
-  content: { type: String, required: true }, 
-  parentMessage: { type: mongoose.ObjectId, ref: "Message", default: null }, //alte Nachricht Id
+  content: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
