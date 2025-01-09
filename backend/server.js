@@ -4,6 +4,7 @@ import User from './models/User.js';
 import Job from './models/Job.js';
 import Rating from './models/Rating.js';
 import Message from './models/Message.js';
+import Chat from './models/Chat.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -314,51 +315,6 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-//Messages
-
-app.post("/messages", authMiddleware, async (req, res) => {
-  const { jobId, receiverId, content, parentMessage } = req.body;
-  const senderId = req.user.userId;
-
-  if (!jobId || !receiverId || !content) {
-    return res.status(400).json({ error: "All fields are required" });
-  }
-
-  try {
-    const message = new Message({ 
-      jobId, 
-      senderId, 
-      receiverId, 
-      content, 
-      parentMessage: parentMessage || null,
-
-     });
-    await message.save();
-
-    res.status(201).json({ message: "Message sent successfully", message });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to send message", details: error.message });
-  }
-});
-
-// Nachrichten zeigen
-
-app.get("/messages/:jobId", authMiddleware, async (req, res) => {
-  const { jobId } = req.params;
-
-  try {
-    const messages = await Message.find({ jobId })
-      .populate("senderId", "username")
-      .populate("receiverId", "username")
-      .populate("parentMessage")
-      .sort({ createdAt: 1 });
-
-    res.status(200).json(messages);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch messages", details: error.message });
-  }
-});
-
 app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
 
@@ -404,6 +360,54 @@ app.delete('/ratings/:id', async (req, res) => {
       res.status(200).json({ message: 'Rating deleted successfully' });
   } catch (error) {
       res.status(500).json({ error: 'Failed to delete rating' });
+  }
+});
+
+app.post('/chats', authMiddleware, async (req, res) => {
+  const { recipientId, message } = req.body;
+  const senderId = req.user.userId;
+  try {
+    let chat = await Chat.findOne({
+      participants: { $all: [senderId, recipientId] },
+    });
+    if (!chat) {
+      chat = new Chat({
+        participants: [senderId, recipientId],
+        messages: [{ content: message, sender: senderId }],
+      });
+    } else {
+      chat.messages.push({ content: message, sender: senderId });
+    }
+    await chat.save();
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to send message', details: error.message });
+  }
+});
+app.get('/chats', authMiddleware, async (req, res) => {
+  const userId = req.user.userId;
+  try {
+    const chats = await Chat.find({
+      participants: { $in: [userId] },
+    }).populate('participants', 'username email')
+      .sort({ updatedAt: -1 });
+    res.status(200).json(chats);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
+  }
+});
+app.get('/chats/:chatId', async (req, res) => {
+  const { chatId } = req.params;
+  try {
+    const chat = await Chat.findById(chatId)
+      .populate('messages.sender', 'username email')
+      .populate('participants', 'username email');
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+    res.status(200).json(chat);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch chat', details: error.message });
   }
 });
 
