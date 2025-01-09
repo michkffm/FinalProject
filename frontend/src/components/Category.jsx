@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
 export function Category() {
-  const [message, setMessage] = useState("");
+  const [setMessage] = useState("");
   const [token] = useState(localStorage.getItem("token"));
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -113,7 +113,7 @@ export function Category() {
         }
         return res.json();
       })
-      .then((data) => {
+      .then(() => {
         setMessage("Nachricht erfolgreich gesendet!");
         setContactMessages((prevMessages) => ({
           ...prevMessages,
