@@ -4,7 +4,7 @@ import User from './models/User.js';
 import Job from './models/Job.js';
 import Rating from './models/Rating.js';
 import Message from './models/Message.js';
-import Chat from './models/Chat.js';
+// import Chat from './models/Chat.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -338,14 +338,14 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
 
 app.post("/ratings", authMiddleware, async (req, res) => {
   const { jobId, rating, content } = req.body;
-  const userId = req.user.userId;
+  const senderId = req.user.userId;
 
   if (!jobId || !rating) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
-    const newRating = new Rating({ jobId, userId, rating, content });
+    const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
 
     res.status(201).json({ message: "Rating added successfully", newRating });

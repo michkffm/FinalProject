@@ -17,6 +17,7 @@ import { HauptCategory } from "./components/HauptCategory.jsx";
 import { Datenschutz } from "./pages/Datenschutz.jsx"; // Importiere die Datenschutz-Komponente
 import { Inbox } from "./components/Inbox.jsx";
 import { Search } from "./components/Search.jsx";
+import { Ratings } from "./components/Ratings.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,6 +41,7 @@ function App() {
         <Route path="/categorie/:name" element={<Category />} />
         <Route path="/hauptCategorie" element={<HauptCategory />} />
         <Route path="/jobs" element={<Job/>} />
+        <Route path="/ratings/:jobId" element={<Ratings/>} />
         <Route path="/suche" element={<Search/>} />
         <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />

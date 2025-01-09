@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { Ratings } from "./Ratings.jsx";
 
 export function Category() {
-  const [setMessage] = useState("");
+  const [message, setMessage] = useState("");
   const [token] = useState(localStorage.getItem("token"));
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -32,6 +33,8 @@ export function Category() {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
+        
         setData(data);
         setFilteredData(data); // Initial gefilterte Daten sind alle Daten
         setMessage("Kategorie erfolgreich geladen!");
@@ -113,7 +116,7 @@ export function Category() {
         }
         return res.json();
       })
-      .then(() => {
+      .then((data) => {
         setMessage("Nachricht erfolgreich gesendet!");
         setContactMessages((prevMessages) => ({
           ...prevMessages,
@@ -129,8 +132,7 @@ export function Category() {
         }
       });
   };
-
-
+  
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
@@ -170,6 +172,7 @@ export function Category() {
         </div>
 
         {/* Gefilterte Jobs anzeigen */}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredData.map((job) => (
             <div
@@ -190,6 +193,9 @@ export function Category() {
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
               </p>
+              <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
+                <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
+              </button>
               <form onSubmit={(e) => handleContactSubmit(e, job._id)} className="mt-4">
                 <textarea
                   name="message"
