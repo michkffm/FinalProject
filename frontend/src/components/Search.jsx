@@ -1,63 +1,47 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
-export function Category() {
-  const [setMessage] = useState("");
-  const [token] = useState(localStorage.getItem("token"));
+export function Search() {
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("query");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const { name } = useParams();
+  const [message, setMessage] = useState("");
   const [filters, setFilters] = useState({
     name: "",
     price: "all",
     location: "",
   });
   const [contactMessages, setContactMessages] = useState({});
+  const [token] = useState(localStorage.getItem("token"));
 
-
-  // Daten abrufen
+  // Récupérer les données de la recherche
   useEffect(() => {
-    fetch(`http://localhost:3000/jobs?category=${name}`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.text().then((text) => {
-            throw new Error(text);
-          });
-        }
-        return res.json();
-      })
-      .then((data) => {
-        setData(data);
-        setFilteredData(data); // Initial gefilterte Daten sind alle Daten
-        setMessage("Kategorie erfolgreich geladen!");
-      })
-      .catch((error) => {
-        try {
-          const err = JSON.parse(error.message);
-          setMessage(err.error || "Unbekannter Fehler.");
-        } catch {
-          setMessage("Fehler beim Laden der Kategorie.");
-        }
-      });
-  }, [name]);
+    if (query) {
+      fetch(`http://localhost:3000/search/jobs?query=${query}`)
+        .then((res) => res.json())
+        .then((data) => {
+          setData(data);
+          setFilteredData(data); // Initialisation de filteredData avec les données récupérées
+        })
+        .catch((error) => {
+          setMessage("Erreur lors du chargement des résultats de recherche: " + error.message);
+        });
+    }
+  }, [query]);
 
-  // Filter anwenden
+  // Appliquer les filtres
   useEffect(() => {
     let filtered = data;
 
-    // Nach Name filtern
+    // Filtre par nom
     if (filters.name) {
       filtered = filtered.filter((job) =>
         job.title.toLowerCase().includes(filters.name.toLowerCase())
       );
     }
 
-    // Nach Preis filtern
+    // Filtre par prix
     if (filters.price !== "all") {
       if (filters.price === "low") {
         filtered = filtered.filter((job) => job.price < 50);
@@ -68,7 +52,7 @@ export function Category() {
       }
     }
 
-    // Nach Standort filtern
+    // Filtre par emplacement
     if (filters.location) {
       filtered = filtered.filter((job) =>
         job.location.toLowerCase().includes(filters.location.toLowerCase())
@@ -82,7 +66,6 @@ export function Category() {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleContactChange = (e, jobId) => {
     const { name, value } = e.target;
     setContactMessages((prevMessages) => ({
@@ -130,12 +113,12 @@ export function Category() {
       });
   };
 
-
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
+        {message && <p className="text-red-500">{message}</p>}
+
         <div className="mb-6 flex flex-wrap gap-4">
-          {/* Name Filter */}
           <input
             type="text"
             name="name"
@@ -145,20 +128,18 @@ export function Category() {
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           />
 
-          {/* Preis Filter */}
           <select
             name="price"
             value={filters.price}
             onChange={handleFilterChange}
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           >
-            <option value="all">Alle Preise</option>
+             <option value="all">Alle Preise</option>
             <option value="low">Unter 50€</option>
             <option value="medium">50€ - 100€</option>
             <option value="high">Über 100€</option>
           </select>
 
-          {/* Standort Filter */}
           <input
             type="text"
             name="location"
@@ -169,28 +150,26 @@ export function Category() {
           />
         </div>
 
-        {/* Gefilterte Jobs anzeigen */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredData.map((job) => (
-            <div
-              key={job._id}
-              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
-            >
-              <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
-              <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
-              <p className="text-gray-600 mt-2">
-                <span className="font-medium text-gray-800">Kontakt:</span>{" "}
-                {job.contact}
-              </p>
-              <p className="text-gray-600 mt-1">{job.description}</p>
-              <p className="text-gray-600 mt-1">
-                <span className="font-medium text-gray-800">Standort:</span>{" "}
-                {job.location}
-              </p>
-              <p className="text-lg font-semibold text-teal-600 mt-3">
-                Preis: {job.price}€
-              </p>
-              <form onSubmit={(e) => handleContactSubmit(e, job._id)} className="mt-4">
+        {filteredData.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {filteredData.map((job) => (
+              <div
+                key={job._id}
+                className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+              >
+                <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
+                <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
+                <p className="text-gray-600 mt-2">
+                  <span className="font-medium text-gray-800">kontakt:</span> {job.contact}
+                </p>
+                <p className="text-gray-600 mt-1">{job.description}</p>
+                <p className="text-gray-600 mt-1">
+                  <span className="font-medium text-gray-800">Location:</span> {job.location}
+                </p>
+                <p className="text-lg font-semibold text-teal-600 mt-3">
+                  Preis: {job.price}€
+                </p>
+                <form onSubmit={(e) => handleContactSubmit(e, job._id)} className="mt-4">
                 <textarea
                   name="message"
                   value={contactMessages[job._id]?.message || ""}
@@ -206,9 +185,12 @@ export function Category() {
                   Nachricht senden
                 </button>
               </form>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center">kein Ergebnis gefunden.</p>
+        )}
       </div>
     </div>
   );

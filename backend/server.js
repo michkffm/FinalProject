@@ -2,8 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import User from './models/User.js';
 import Job from './models/Job.js';
-import Chat from './models/Chat.js';
+import Rating from './models/Rating.js';
 import Message from './models/Message.js';
+import Chat from './models/Chat.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -137,7 +138,14 @@ app.post("/jobs", authMiddleware, async (req, res) => {
   try {
     const job = new Job({ title, description, category, price, location, contact, createdBy: userId });
     await job.save();
-    res.status(201).json({ message: "Job posted successfully" });
+
+    const addUsername = await Job.findById(job._id).populate('createdBy', 'username');
+
+    const testPopulate = await Job.findById(job._id).populate('createdBy');
+
+    console.log(testPopulate.createdBy);
+
+    res.status(201).json({ message: "Job posted successfully", job: addUsername });
 
   } catch (error) {
     console.log(error);
@@ -147,7 +155,8 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 })
 
 app.get('/jobs', async (req, res) => {
-  const { category, distance, longitude, latitude } = req.query;
+  const { category } = req.query;
+
   const allowedCategories = [
     "Beratung",
     "Bildung und Schulung",
@@ -160,26 +169,74 @@ app.get('/jobs', async (req, res) => {
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung"
   ];
+
   try {
     let query = {};
+
+    
     if (category && allowedCategories.includes(category)) {
-      query.category = category;
+      query = { category };
     }
-    if (distance && longitude && latitude) {
-      const maxDistance = parseInt(distance, 10) * 1000;
-      query.location = {
-        $near: {
-          $geometry: { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] },
-          $maxDistance: maxDistance,
-        },
-      };
-    }
+
     const jobs = await Job.find(query).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
+app.get('/search/jobs', async (req, res) => {
+  const { category, query, price, location } = req.query;
+
+  const allowedCategories = [
+    "Beratung",
+    "Bildung und Schulung",
+    "Betreuung und Gesundheit",
+    "Finanzen und Versicherungen",
+    "Technologie und IT",
+    "Reparatur und Wartung",
+    "Transport und Logistik",
+    "Reinigung und Pflege",
+    "Bau- und Renovierungsdienste",
+    "Freizeit und Unterhaltung"
+  ];
+
+  try {
+    let filter = {};
+
+    // Filter nach Kategorie, wenn angegeben
+    if (category && allowedCategories.includes(category)) {
+      filter.category = category;
+    }
+
+    // Filter nach Suchbegriff (Titel oder Beschreibung)
+    if (query) {
+      const regex = new RegExp(query, 'i');
+      filter.$or = [
+        { title: { $regex: regex } },
+        { description: { $regex: regex } }
+      ];
+    }
+
+    // Filter nach Preis, wenn angegeben
+    if (price) {
+      const priceRange = price.split('-'); // Beispiel: '50-200'
+      if (priceRange.length === 2) {
+        filter.price = { $gte: parseInt(priceRange[0]), $lte: parseInt(priceRange[1]) };
+      }
+    }
+
+    // Filter nach Standort, wenn angegeben
+    if (location) {
+      filter.location = { $regex: new RegExp(location, 'i') };  // Case insensitive Suche
+    }
+
+    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+    res.status(200).json(jobs);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to search jobs', details: error.message });
+  }
+});
+
 
 
 // alle Anzeigen sortieren
@@ -265,108 +322,100 @@ app.delete('/users/:id', async (req, res) => {
   }
 });
 
-// //Messages
+app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
+  const { jobId } = req.params;
 
-// app.post("/messages", authMiddleware, async (req, res) => {
-//   const { jobId, receiverId, content} = req.body;
-//   const senderId = req.user.userId;
+  try {
+    const ratings = await Rating.find({ jobId })
+    .populate("userId", "username")
+    .sort({ createdAt: 1 });
 
-//   if (!jobId || !receiverId || !content) {
-//     return res.status(400).json({ error: "All fields are required" });
-//   }
+    res.status(200).json(ratings);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch ratings", details: error.message });
+  }
+});
 
-//   try {
-//     const message = new Message({ 
-//       jobId,
-//       senderId,
-//       receiverId,
-//       content,
-//      });
-//     await message.save();
+app.post("/ratings", authMiddleware, async (req, res) => {
+  const { jobId, rating, content } = req.body;
+  const userId = req.user.userId;
 
-//     res.status(201).json({ message: "Message sent successfully", message });
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to send message", details: error.message });
-//   }
-// });
+  if (!jobId || !rating) {
+    return res.status(400).json({ error: "All fields are required" });
+  }
 
-// // Nachrichten zeigen
+  try {
+    const newRating = new Rating({ jobId, userId, rating, content });
+    await newRating.save();
 
-// app.get("/messages/:jobId", authMiddleware, async (req, res) => {
-//   const { jobId } = req.params;
+    res.status(201).json({ message: "Rating added successfully", newRating });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to add rating", details: error.message });
+  }
+});
 
-//   try {
-//     const messages = await Message.find({ jobId })
-//       .populate("senderId", "username")
-//       .populate("receiverId", "username")
-//       .sort({ createdAt: 1 });
+app.delete('/ratings/:id', async (req, res) => {
+  const { id } = req.params;
 
-//     res.status(200).json(messages);
-//   } catch (error) {
-//     res.status(500).json({ error: "Failed to fetch messages", details: error.message });
-//   }
-// });
+  try {
+      const rating = await Rating.findByIdAndDelete(id);
+
+      if (!rating) {
+          return res.status(404).json({ error: 'Rating not found' });
+      }
+
+      res.status(200).json({ message: 'Rating deleted successfully' });
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to delete rating' });
+  }
+});
 
 app.post('/chats', authMiddleware, async (req, res) => {
   const { recipientId, message } = req.body;
   const senderId = req.user.userId;
-
   try {
-   
     let chat = await Chat.findOne({
       participants: { $all: [senderId, recipientId] },
     });
-
     if (!chat) {
       chat = new Chat({
         participants: [senderId, recipientId],
         messages: [{ content: message, sender: senderId }],
       });
     } else {
-
       chat.messages.push({ content: message, sender: senderId });
     }
-
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
     res.status(500).json({ error: 'Failed to send message', details: error.message });
   }
 });
-
 app.get('/chats', authMiddleware, async (req, res) => {
-  const userId = req.user.userId; 
-
+  const userId = req.user.userId;
   try {
-    
     const chats = await Chat.find({
       participants: { $in: [userId] },
-    }).populate('participants', 'username email') 
-      .sort({ updatedAt: -1 }); 
-
+    }).populate('participants', 'username email')
+      .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
   }
 });
-
 app.get('/chats/:chatId', async (req, res) => {
   const { chatId } = req.params;
-
   try {
     const chat = await Chat.findById(chatId)
       .populate('messages.sender', 'username email')
-      .populate('participants', 'username email'); 
-
+      .populate('participants', 'username email');
     if (!chat) {
       return res.status(404).json({ error: 'Chat not found' });
     }
-
     res.status(200).json(chat);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch chat', details: error.message });
   }
 });
-
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
