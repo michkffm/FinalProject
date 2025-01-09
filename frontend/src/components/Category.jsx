@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Ratings } from "./Ratings.jsx";
+import { JobRatings } from "./JobRatings.jsx";
 
 export function Category() {
   const [message, setMessage] = useState("");
@@ -180,6 +180,7 @@ export function Category() {
               className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
             >
               <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
+              <p>{job.createdBy.username}</p>
               <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
               <p className="text-gray-600 mt-2">
                 <span className="font-medium text-gray-800">Kontakt:</span>{" "}
@@ -212,6 +213,7 @@ export function Category() {
                   Nachricht senden
                 </button>
               </form>
+              <JobRatings jobId={job._id} />
             </div>
           ))}
         </div>
