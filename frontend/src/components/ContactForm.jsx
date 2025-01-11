@@ -107,6 +107,7 @@ export default function ContactForm() {
               name="message"
               rows="5"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
+              placeholder="Beschreibe Dein Anliegen..."
             />
             <ValidationError
               prefix="Message"

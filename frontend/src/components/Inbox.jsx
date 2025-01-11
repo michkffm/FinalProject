@@ -32,7 +32,7 @@ export function Inbox() {
   return (
     <div className="relative">
       <button onClick={toggleDropdown} className="relative">
-        <i className="fa-solid fa-envelope text-white text-2xl"></i>
+        <i className="fa-solid fa-envelope text-teal-600 text-2xl"></i>
         {unreadCount > 0 && (
           <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}
