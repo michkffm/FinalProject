@@ -12,22 +12,22 @@ import freizeit from "../assets/freizeit.jpeg";
 
 export function HauptCategory() {
   return (
-    <div>
+    <div className="flex flex-col sm:mt-24 mt-40 mb-14">
       <div>
-        <Link to="/jobs" className="flex justify-center mt-8">
-          <button className="bg-teal-600 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105 mt-20">
+        <Link to="/jobs" className="flex justify-center">
+          <button className="bg-teal-600 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
             Dienstleistung hinzufugen
           </button>
         </Link>
       </div>
-      <div className="sm:mt-12 mt-32 m-6 flex flex-col items-center mt-20 mb-20">
-        <h1 className="text-4xl font-bold text-center mt-8 mb-6 text-teal-800">
+      <div className="flex flex-col items-center">
+        <h1 className="text-4xl m-10 font-bold text-center text-teal-800">
           Bitte wähle eine Kategorie aus
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
           <Link
             to="/categorie/Beratung"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">Beratung</span>
             <img
@@ -39,7 +39,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Bildung und Schulung"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">Bildung und Schulung</span>
             <img
@@ -51,7 +51,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Betreuung und Gesundheit"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">
               Betreuung und Gesundheit
@@ -65,7 +65,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Finanzen und Versicherungen"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">
               Finanzen und Versicherungen
@@ -79,7 +79,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Technologie und IT"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">Technologie und IT</span>
             <img
@@ -91,7 +91,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Reparatur und Wartung"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">Reparatur und Wartung</span>
             <img
@@ -103,7 +103,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Transport und Logistik"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">
               Transport und Logistik
@@ -117,7 +117,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Reinigung und Pflege"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">Reinigung und Pflege</span>
             <img
@@ -129,7 +129,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Bau- und Renovierungsdienste"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">
               Bau- und Renovierungsdienste
@@ -143,7 +143,7 @@ export function HauptCategory() {
 
           <Link
             to="/categorie/Freizeit und Unterhaltung"
-            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105"
+            className="flex flex-col items-center gap-4 bg-teal-600 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
           >
             <span className="text-lg font-semibold">
               Freizeit und Unterhaltung
