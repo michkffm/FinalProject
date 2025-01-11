@@ -134,7 +134,7 @@ export function Category() {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
+    <div className="min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
         <div className="mb-6 flex flex-wrap gap-4">
           {/* Name Filter */}

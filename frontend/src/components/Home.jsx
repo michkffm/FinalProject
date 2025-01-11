@@ -54,10 +54,10 @@ export function Home() {
           Verbindung zu qualifizierten Dienstleistern für alle Deine Bedürfnisse
         </p>
 
-        <form className="flex flex-col sm:flex-row gap-4 pt-8 items-center sm:items-start" onSubmit={handleSearchSubmit}>
+        <form className="flex flex-col sm:flex-row sm:gap-0 gap-2 pt-8 items-center sm:items-start" onSubmit={handleSearchSubmit}>
           <input
             id="search-input"
-            className="border border-gray-300 rounded p-2 w-full sm:w-2/3 focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="sm:rounded-l p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -66,7 +66,7 @@ export function Home() {
           />
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full sm:w-auto"
+            className="bg-teal-400 text-white py-2 px-7 sm:rounded-r hover:bg-teal-500 w-full sm:w-auto"
             disabled={!isLoggedIn}
           >
             Suchen
