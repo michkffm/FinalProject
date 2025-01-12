@@ -10,13 +10,13 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
 
   return (
     <header>
-      <nav className="bg-teal-600 p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center items-center fixed top-0 left-0 w-full">
-        <div className="text-white text-xl font-bold mb-4 sm:mb-0">
+      <nav className="p-2 flex bg-opacity-50 sm:gap-14 gap-1 bg-white shadow-lg flex-col sm:flex-row sm:justify-center sm:items-center items-center fixed top-0 left-0 w-full">
+        <div className="text-xl font-bold mb-4 sm:mb-0">
           <Link to="/">
             <img src={logogross} alt="logo" className="w-36 sm:w-25" />
           </Link>
         </div>
-        <ul className="flex flex-row sm:flex-row gap-4 sm:gap-8 text-white text-lg">
+        <ul className="flex flex-row sm:flex-row gap-4 sm:gap-10 text-teal-600 text-lg">
           <li>
             <Link
               to="/"

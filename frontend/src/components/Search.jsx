@@ -115,7 +115,7 @@ export function Search() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="container mx-auto mt-20">
+      <div className="container mx-auto sm:mt-20 mt-32">
         {message && <p className="text-red-500">{message}</p>}
 
         <div className="mb-6 flex flex-wrap gap-4">
