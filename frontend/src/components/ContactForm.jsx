@@ -17,7 +17,7 @@ export default function ContactForm() {
   }, [state.succeeded, navigate]);
 
   return (
-    <div className="sm:mt-32 mt-40 px-4 sm:px-0">
+    <div className="sm:mt-32 mt-40 sm:mb-20 mb-5 px-4 sm:px-0">
       {/* Erfolgreich-Nachricht */}
       {state.succeeded ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
@@ -107,6 +107,7 @@ export default function ContactForm() {
               name="message"
               rows="5"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
+              placeholder="Beschreibe Dein Anliegen..."
             />
             <ValidationError
               prefix="Message"

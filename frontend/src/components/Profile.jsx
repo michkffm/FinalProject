@@ -171,13 +171,13 @@ export function Profile() {
   };
 
   return (
-    <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+    <div className="sm:mt-28 mt-32 sm:mb-32 mb-5 bg-gray-50 flex justify-center items-center px-4 py-8">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
         <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
           <img
             src={profileImage}
             alt="profileimage"
-            className="w-100 h-90 ml-6 object-cover rounded-[5%] border border-teal-400"
+            className="w-100 h-90 sm:ml-6 ml-0 object-cover rounded-[5%] border border-teal-400"
           />
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
