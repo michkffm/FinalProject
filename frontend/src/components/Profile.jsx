@@ -13,6 +13,8 @@ export function Profile() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const [profiles, setProfiles] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!token) {
@@ -169,6 +171,34 @@ export function Profile() {
         }
       });
   };
+  const handleDeleteProfile = async (profilId) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/profiles/${profilId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      // Entferne das gelöschte Profil aus der lokalen State-Liste
+      setProfiles((prevProfiles) =>
+        prevProfiles.filter((profil) => profil._id !== profilId)
+      );
+    } catch (err) {
+      // Fehlerbehandlung
+      setError(err.message || "Fehler beim Löschen des Profils.");
+    }
+  };
+
+  console.log(data);
 
   return (
     <div className="sm:mt-28 mt-32 sm:mb-32 mb-5 bg-gray-50 flex justify-center items-center px-4 py-8">
@@ -185,15 +215,15 @@ export function Profile() {
             Profil bearbeiten
           </h2>
 
-         {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
+          {message && (
+            <div
+              className={`mt-4 p-3 text-white ${
+                message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+              }`}
+            >
+              {message}
+            </div>
+          )}
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
@@ -363,6 +393,14 @@ export function Profile() {
           >
             Speichern
           </button>
+          <div className="flex justify-end">
+            <button
+              className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
+              onClick={() => handleDeleteProfile(data._id)}
+            >
+              Profil löschen
+            </button>
+          </div>
         </form>
       </div>
     </div>

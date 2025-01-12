@@ -95,7 +95,7 @@ export function RatingsView() {
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <div className="mt-12 mb-24 p-6 bg-gray-50 rounded-lg shadow-md">
+    <div className="mt-16 mb-96 p-6 bg-gray-50 rounded-lg shadow-md">
       {ratings.length > 0 ? (
         <div>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
@@ -118,12 +118,12 @@ export function RatingsView() {
                   <span>{renderStars(rating.rating)}</span>
                 </div>
                 <p className="text-gray-600 text-sm">{rating.content}</p>
-                <div className="flex justify-end">
+                <div className="flex justify-end relative">
                   <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
                     onClick={() => handleDelete(rating._id)}
                   >
-                    Bewertung löschen
+                    <i className="fa-regular fa-trash-can"></i>
                   </button>
                 </div>
               </li>

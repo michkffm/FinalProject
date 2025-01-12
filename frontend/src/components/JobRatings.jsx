@@ -116,12 +116,12 @@ export function JobRatings({ jobId }) {
                 <strong>{rating.senderId.username}</strong>:{" "}
                 {renderStars(rating.rating)}
                 <p>{rating.content}</p>
-                <div className="flex justify-end">
+                <div className="flex justify-end relative">
                   <button
-                    className="bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
                     onClick={() => handleDelete(rating._id)}
                   >
-                    Bewertung löschen
+                    <i className="fa-regular fa-trash-can"></i>
                   </button>
                 </div>
               </li>

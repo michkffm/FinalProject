@@ -80,7 +80,7 @@ export function Ratings() {
   }, [isFormSubmitted, jobId, userRating, userComment]);
 
   return (
-    <div className="rating-section max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-48">
+    <div className="rating-section max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-48 mb-72">
     <h2 className="text-2xl font-bold text-gray-800 mb-4 ml-32">
       Bewertung hinzufügen
     </h2>
