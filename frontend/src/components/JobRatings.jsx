@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 export function JobRatings({ jobId }) {
   const [ratings, setRatings] = useState([]);
@@ -46,6 +47,38 @@ export function JobRatings({ jobId }) {
     fetchRatings();
   }, [jobId, token]);
 
+  const handleDelete = async (ratingId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/ratings/${ratingId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      // Nach erfolgreicher Löschung: State aktualisieren
+      setRatings((prev) => prev.filter((rating) => rating._id !== ratingId));
+      const remainingRatings = ratings.filter(
+        (rating) => rating._id !== ratingId
+      );
+      const totalRatings = remainingRatings.reduce(
+        (sum, rating) => sum + rating.rating,
+        0
+      );
+      const average = remainingRatings.length > 0
+        ? totalRatings / remainingRatings.length
+        : 0;
+      setAverageRating(average);
+    } catch (err) {
+      setError(err.message || "Fehler beim Löschen der Bewertung.");
+    }
+  };
+
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating - fullStars >= 0.5 ? 1 : 0;
@@ -83,17 +116,25 @@ export function JobRatings({ jobId }) {
                 <strong>{rating.senderId.username}</strong>:{" "}
                 {renderStars(rating.rating)}
                 <p>{rating.content}</p>
+                <div className="flex justify-end">
+                  <button
+                    className="bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
+                    onClick={() => handleDelete(rating._id)}
+                  >
+                    Bewertung löschen
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
           {!showAll && ratings.length > 2 && (
             <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2" onClick={handleLoadMore}>
-                Mehr laden...
+              <Link to={`/ratingsView/${jobId}`}> Mehr laden...</Link>
             </button>
           )}
         </div>
       ) : (
-        <p>Keine Bewertungen für diesen Job verfügbar.</p>
+        <p></p>
       )}
     </div>
   );
