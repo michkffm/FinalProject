@@ -4,7 +4,7 @@ import User from './models/User.js';
 import Job from './models/Job.js';
 import Rating from './models/Rating.js';
 import Message from './models/Message.js';
-// import Chat from './models/Chat.js';
+import Chat from './models/Chat.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -327,7 +327,7 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
 
   try {
     const ratings = await Rating.find({ jobId })
-    .populate("userId", "username")
+    .populate("senderId", "username")
     .sort({ createdAt: 1 });
 
     res.status(200).json(ratings);
