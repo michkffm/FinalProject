@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import User from './models/User.js';
 import Job from './models/Job.js';
 import Rating from './models/Rating.js';
-import Message from './models/Message.js';
 import Chat from './models/Chat.js';
 import cors from 'cors';
 import bcrypt from "bcrypt";
@@ -354,16 +353,17 @@ app.post("/ratings", authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/ratings/:id', async (req, res) => {
+app.delete('/ratings/:id',authMiddleware, async (req, res) => {
   const { id } = req.params;
-
+  const userId = req.user.userId;
   try {
       const rating = await Rating.findByIdAndDelete(id);
-
       if (!rating) {
           return res.status(404).json({ error: 'Rating not found' });
       }
-
+      if (rating.senderId.toString() !== userId) {
+        return res.status(403).json({ error: "Keine Berechtigung, diese Bewertung zu löschen." });
+      }
       res.status(200).json({ message: 'Rating deleted successfully' });
   } catch (error) {
       res.status(500).json({ error: 'Failed to delete rating' });
