@@ -185,7 +185,21 @@ app.get('/jobs', async (req, res) => {
 });
 app.get('/search/jobs', async (req, res) => {
   const { category, query, price, location } = req.query;
-
+  app.delete('/jobs/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+        const job = await Job.findByIdAndDelete(id);
+  
+        if (!job) {
+            return res.status(404).json({ error: 'Job not found' });
+        }
+  
+        res.status(200).json({ message: 'Job deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete job' });
+    }
+  });
   const allowedCategories = [
     "Beratung",
     "Bildung und Schulung",
@@ -237,19 +251,17 @@ app.get('/search/jobs', async (req, res) => {
 });
 
 
-
-// alle Anzeigen sortieren
-
-app.delete('/jobs/:id', async (req, res) => {
+app.delete('/jobs/:id',authMiddleware, async (req, res) => {
   const { id } = req.params;
-
+  const userId = req.user.userId;
   try {
       const job = await Job.findByIdAndDelete(id);
-
       if (!job) {
           return res.status(404).json({ error: 'Job not found' });
       }
-
+      if (job.createdBy.toString() !== userId) {
+        return res.status(403).json({ error: "Keine Berechtigung, diesen Job zu löschen." });
+      }
       res.status(200).json({ message: 'Job deleted successfully' });
   } catch (error) {
       res.status(500).json({ error: 'Failed to delete job' });
