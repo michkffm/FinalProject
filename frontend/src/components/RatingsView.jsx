@@ -11,17 +11,11 @@ export function RatingsView() {
   const token = localStorage.getItem("token");
 
   const decodeToken = (token) => {
-    if (!token) return null; // Si aucun token n'existe
-
-    // Diviser le token en ses trois parties
+    if (!token) return null;
     const payloadBase64 = token.split(".")[1];
-
-    // Décoder le payload en base64
     const payloadDecoded = atob(payloadBase64);
-
-    // Convertir le JSON en objet
     const payload = JSON.parse(payloadDecoded);
-    return payload.userId; // Assurez-vous que le `userId` est dans une propriété `id`
+    return payload.userId;
   };
 
   const userId = decodeToken(token);
