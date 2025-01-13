@@ -7,7 +7,6 @@ export function JobRatings({ jobId }) {
   const [error, setError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
   const [showAll, setShowAll] = useState(false);
-
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -47,38 +46,6 @@ export function JobRatings({ jobId }) {
     fetchRatings();
   }, [jobId, token]);
 
-  const handleDelete = async (ratingId) => {
-    try {
-      const response = await fetch(`http://localhost:3000/ratings/${ratingId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      // Nach erfolgreicher Löschung: State aktualisieren
-      setRatings((prev) => prev.filter((rating) => rating._id !== ratingId));
-      const remainingRatings = ratings.filter(
-        (rating) => rating._id !== ratingId
-      );
-      const totalRatings = remainingRatings.reduce(
-        (sum, rating) => sum + rating.rating,
-        0
-      );
-      const average = remainingRatings.length > 0
-        ? totalRatings / remainingRatings.length
-        : 0;
-      setAverageRating(average);
-    } catch (err) {
-      setError(err.message || "Fehler beim Löschen der Bewertung.");
-    }
-  };
-
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const halfStar = rating - fullStars >= 0.5 ? 1 : 0;
@@ -99,39 +66,18 @@ export function JobRatings({ jobId }) {
 
   if (loading) return <p>Lädt...</p>;
   if (error) return <p>{error}</p>;
-
-  const displayedRatings = showAll ? ratings : ratings.slice(0, 1);
    
   return (
     <div>
       {ratings.length > 0 ? (
         <div>
           <p>
-            Durchschnittsbewertung: {averageRating.toFixed(1)}{" "}
+            Bewertung: {averageRating.toFixed(1)}{" "}
             {renderStars(averageRating)}
           </p>
-          <ul>
-            {displayedRatings.map((rating) => (
-              <li key={rating._id}>
-                <strong>{rating.senderId.username}</strong>:{" "}
-                {renderStars(rating.rating)}
-                <p>{rating.content}</p>
-                <div className="flex justify-end relative">
-                  <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
-                    onClick={() => handleDelete(rating._id)}
-                  >
-                    <i className="fa-regular fa-trash-can"></i>
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          {!showAll && ratings.length > 2 && (
             <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2" onClick={handleLoadMore}>
               <Link to={`/ratingsView/${jobId}`}> Mehr laden...</Link>
             </button>
-          )}
         </div>
       ) : (
         <p></p>

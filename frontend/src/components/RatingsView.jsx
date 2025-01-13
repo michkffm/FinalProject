@@ -10,6 +10,23 @@ export function RatingsView() {
 
   const token = localStorage.getItem("token");
 
+  const decodeToken = (token) => {
+    if (!token) return null; // Si aucun token n'existe
+
+    // Diviser le token en ses trois parties
+    const payloadBase64 = token.split(".")[1];
+
+    // Décoder le payload en base64
+    const payloadDecoded = atob(payloadBase64);
+
+    // Convertir le JSON en objet
+    const payload = JSON.parse(payloadDecoded);
+    return payload.userId; // Assurez-vous que le `userId` est dans une propriété `id`
+  };
+
+  const userId = decodeToken(token);
+  console.log("User ID:", userId);
+
   useEffect(() => {
     const fetchRatings = async () => {
       try {
@@ -61,12 +78,15 @@ export function RatingsView() {
 
   const handleDelete = async (ratingId) => {
     try {
-      const response = await fetch(`http://localhost:3000/ratings/${ratingId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3000/ratings/${ratingId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -82,9 +102,10 @@ export function RatingsView() {
         (sum, rating) => sum + rating.rating,
         0
       );
-      const average = remainingRatings.length > 0
-        ? totalRatings / remainingRatings.length
-        : 0;
+      const average =
+        remainingRatings.length > 0
+          ? totalRatings / remainingRatings.length
+          : 0;
       setAverageRating(average);
     } catch (err) {
       setError(err.message || "Fehler beim Löschen der Bewertung.");
@@ -99,7 +120,7 @@ export function RatingsView() {
       {ratings.length > 0 ? (
         <div>
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Durchschnittsbewertung:
+            Bewertung:
             <span className="text-yellow-500 ml-2">
               {averageRating.toFixed(1)}
             </span>{" "}
@@ -118,14 +139,16 @@ export function RatingsView() {
                   <span>{renderStars(rating.rating)}</span>
                 </div>
                 <p className="text-gray-600 text-sm">{rating.content}</p>
-                <div className="flex justify-end relative">
-                  <button
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
-                    onClick={() => handleDelete(rating._id)}
-                  >
-                    <i className="fa-regular fa-trash-can"></i>
-                  </button>
-                </div>
+                {userId === rating.senderId._id && (
+                  <div className="flex justify-end relative">
+                    <button
+                      className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
+                      onClick={() => handleDelete(rating._id)}
+                    >
+                      <i className="fa-regular fa-trash-can"></i>
+                    </button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
