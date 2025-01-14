@@ -5,6 +5,7 @@ export function Inbox() {
   const [messages, setMessages] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [replyMessage, setReplyMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -22,11 +23,36 @@ export function Inbox() {
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
+        alert("Fehler beim Laden der Nachrichten");
       });
   }, [token]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleReplyChange = (e) => {
+    setReplyMessage(e.target.value);
+  };
+
+  const handleReplySubmit = (msgId) => {
+    fetch(`http://localhost:3000/chats/${msgId}/reply`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ message: replyMessage }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert("Antwort gesendet");
+        setReplyMessage("");
+      })
+      .catch((error) => {
+        console.error("Fehler beim Senden der Antwort:", error);
+        alert("Fehler beim Senden der Antwort");
+      });
   };
 
   return (
@@ -51,7 +77,16 @@ export function Inbox() {
                 <p className="text-sm text-gray-500">
                   Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                 </p>
-                <button className="mt-2 text-blue-500 hover:underline">
+                <textarea
+                  value={replyMessage}
+                  onChange={handleReplyChange}
+                  className="w-full p-2 border rounded mt-2"
+                  placeholder="Antwort schreiben..."
+                ></textarea>
+                <button
+                  onClick={() => handleReplySubmit(msg._id)}
+                  className="mt-2 text-blue-500 hover:underline"
+                >
                   Antworten
                 </button>
               </div>
