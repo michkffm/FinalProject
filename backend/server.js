@@ -8,11 +8,13 @@ import cors from 'cors';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
+import { Resend } from "resend";
 
 await mongoose.connect(process.env.DB_URI);
 
 const app = express();
 const port = process.env.PORT
+const resend = new Resend("re_KyqmAF3D_85kbs7wN1vf1iNrVuM85NEyL");
 
 
 app.use(cors())
@@ -383,26 +385,32 @@ app.delete('/ratings/:id',authMiddleware, async (req, res) => {
 });
 
 app.post('/chats', authMiddleware, async (req, res) => {
-  const { recipientId, message } = req.body;
+  const { recipientId, message, jobId } = req.body;
   const senderId = req.user.userId;
+
   try {
     let chat = await Chat.findOne({
+      jobId,
       participants: { $all: [senderId, recipientId] },
     });
+
     if (!chat) {
       chat = new Chat({
+        jobId,
         participants: [senderId, recipientId],
         messages: [{ content: message, sender: senderId }],
       });
     } else {
       chat.messages.push({ content: message, sender: senderId });
     }
+
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
     res.status(500).json({ error: 'Failed to send message', details: error.message });
   }
 });
+
 app.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -415,19 +423,101 @@ app.get('/chats', authMiddleware, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
   }
 });
-app.get('/chats/:chatId', async (req, res) => {
-  const { chatId } = req.params;
+
+app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
+  const { jobId } = req.params;
+  const userId = req.user.userId;
+
   try {
-    const chat = await Chat.findById(chatId)
-      .populate('messages.sender', 'username')
-      .populate('participants', 'username');
-    if (!chat) {
-      return res.status(404).json({ error: 'Chat not found' });
-    }
-    res.status(200).json(chat);
+    const chats = await Chat.find({
+      jobId,
+      participants: { $in: [userId] },
+    })
+      .populate('participants', 'username') 
+      .populate('messages.sender', 'username') 
+      .sort({ updatedAt: -1 }); 
+
+    res.status(200).json(chats);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch chat', details: error.message });
+    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
   }
 });
+
+app.post("/forgot-password", async (req, res) => {
+  const { email } = req.body;
+  if (!email) {
+    return res.status(400).json({ error: "E-Mail ist erforderlich." });
+  }
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ error: "Benutzer nicht gefunden." });
+    }
+    console.log(user);
+    const resetPasswordToken = crypto.randomBytes(32).toString("hex");
+    const resetPasswordExpires = Date.now() + 1000 * 60 * 60 * 24; // Token gültig für 24 Stunden
+    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordExpires = resetPasswordExpires;
+    await user.save();
+    await resend.emails.send({
+      from: "onboarding@resend.dev",
+      to: user.email,
+      subject: "Passwort zurücksetzen",
+      html: `Please click this link to reset your password: <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}">Reset Password</a>`,
+    });
+    res.status(200).json({
+      message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
+    });
+  } catch (error) {
+    console.error("Fehler beim Zurücksetzen des Passworts:", error);
+    res.status(500).json({
+      error:
+        "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
+    });
+  }
+});
+app.post("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+  if (!password) {
+    return res.status(400).json({ error: "Passwort ist erforderlich." });
+  }
+  try {
+    // Überprüfen, ob der Token existiert und nicht abgelaufen ist
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }, // Token muss noch gültig sein
+    });
+    if (!user) {
+      return res.status(400).json({ error: "Ungültiger oder abgelaufener Token." });
+    }
+    // Neues Passwort setzen
+    user.password = await bcrypt.hash(password, 10); // Passwort-Hashing
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+    res.status(200).json({ message: "Passwort erfolgreich zurückgesetzt." });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ error: "Interner Serverfehler" });
+  }
+});
+app.get("/reset-password/:token", async (req, res) => {
+  const { token } = req.params;
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }, // Token muss gültig sein
+    });
+    if (!user) {
+      return res.status(400).json({ error: "Ungültiger oder abgelaufener Token." });
+    }
+    res.status(200).json({ message: "Token ist gültig" });
+  } catch (error) {
+    console.error("Error in getResetPasswordPage:", error.message);
+    res.status(500).json({ error: "Interner Serverfehler" });
+  }
+});
+
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
