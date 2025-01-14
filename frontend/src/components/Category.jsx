@@ -15,6 +15,15 @@ export function Category() {
   });
   const [contactMessages, setContactMessages] = useState({});
 
+  const decodeToken = (token) => {
+    if (!token) return null;
+    const payloadBase64 = token.split(".")[1];
+    const payloadDecoded = atob(payloadBase64);
+    const payload = JSON.parse(payloadDecoded);
+    return payload.userId;
+  };
+  const userId = decodeToken(token);
+  console.log("Benutzer ID:", userId);
 
   // Daten abrufen
   useEffect(() => {
@@ -34,9 +43,9 @@ export function Category() {
       })
       .then((data) => {
         console.log(data);
-        
+
         setData(data);
-        setFilteredData(data); // Initial gefilterte Daten sind alle Daten
+        setFilteredData(data); // Anfangs sind alle Daten gefiltert
         setMessage("Kategorie erfolgreich geladen!");
       })
       .catch((error) => {
@@ -65,7 +74,9 @@ export function Category() {
       if (filters.price === "low") {
         filtered = filtered.filter((job) => job.price < 50);
       } else if (filters.price === "medium") {
-        filtered = filtered.filter((job) => job.price >= 50 && job.price <= 100);
+        filtered = filtered.filter(
+          (job) => job.price >= 50 && job.price <= 100
+        );
       } else if (filters.price === "high") {
         filtered = filtered.filter((job) => job.price > 100);
       }
@@ -106,7 +117,10 @@ export function Category() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ recipientId: jobId, message: contactMessage.message }),
+      body: JSON.stringify({
+        recipientId: jobId,
+        message: contactMessage.message,
+      }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -132,7 +146,28 @@ export function Category() {
         }
       });
   };
-  
+
+  const handleDelete = async (jobId) => {
+    try {
+      const response = await fetch(`http://localhost:3000/jobs/${jobId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      setData((prevState) => prevState.filter((job) => job._id !== jobId));
+      setMessage("Job erfolgreich gelöscht!");
+    } catch (err) {
+      setMessage(err.message || "Fehler beim Löschen des Jobs.");
+    }
+  };
+
   return (
     <div className="min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
@@ -143,7 +178,7 @@ export function Category() {
             name="name"
             value={filters.name}
             onChange={handleFilterChange}
-            placeholder="Filter nach Name"
+            placeholder="Nach Name filtern"
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           />
 
@@ -166,22 +201,36 @@ export function Category() {
             name="location"
             value={filters.location}
             onChange={handleFilterChange}
-            placeholder="Filter nach Standort"
+            placeholder="Nach Standort filtern"
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           />
         </div>
 
         {/* Gefilterte Jobs anzeigen */}
-
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
           {filteredData.map((job) => (
             <div
               key={job._id}
               className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
             >
-              <h2 className="text-xl font-bold text-gray-700 mb-2">{job.title}</h2>
+              <div className="flex justify-end relative">
+                {userId === job.createdBy && (
+                  <button
+                    className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute"
+                    onClick={() => handleDelete(job._id)}
+                  >
+                    <i className="fa-regular fa-trash-can"></i>
+                  </button>
+                )}
+              </div>
+
+              <h2 className="text-xl font-bold text-gray-700 mb-2">
+                {job.title}
+              </h2>
               <p>{job.createdBy.username}</p>
-              <h3 className="text-sm text-teal-500 font-medium">{job.category}</h3>
+              <h3 className="text-sm text-teal-500 font-medium">
+                {job.category}
+              </h3>
               <p className="text-gray-600 mt-2">
                 <span className="font-medium text-gray-800">Kontakt:</span>{" "}
                 {job.contact}
@@ -197,14 +246,17 @@ export function Category() {
               <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
                 <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
               </button>
-              <form onSubmit={(e) => handleContactSubmit(e, job._id)} className="mt-4">
+              <form
+                onSubmit={(e) => handleContactSubmit(e, job._id)}
+                className="mt-4"
+              >
                 <textarea
                   name="message"
                   value={contactMessages[job._id]?.message || ""}
                   onChange={(e) => handleContactChange(e, job._id)}
                   rows="3"
                   className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Gebe hier deine Nachricht ein..."
+                  placeholder="Gib hier deine Nachricht ein..."
                 ></textarea>
                 <button
                   type="submit"

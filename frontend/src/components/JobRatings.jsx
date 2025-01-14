@@ -6,7 +6,7 @@ export function JobRatings({ jobId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
-
+  const [showAll, setShowAll] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
