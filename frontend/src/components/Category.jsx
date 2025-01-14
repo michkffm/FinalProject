@@ -111,7 +111,7 @@ export function Category() {
   const handleContactSubmit = (e, jobId) => {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
-    fetch("http://localhost:3000/messages", {
+    fetch("http://localhost:3000/chats", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

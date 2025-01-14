@@ -9,7 +9,7 @@ export function Inbox() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:3000/messages", {
+    fetch("http://localhost:3000/chats", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
