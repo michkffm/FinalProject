@@ -9,6 +9,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import { Resend } from "resend";
+import crypto from "crypto";
 
 await mongoose.connect(process.env.DB_URI);
 
