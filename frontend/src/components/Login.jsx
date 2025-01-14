@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 export function Login({ setIsLoggedIn }) {
   const [data, setData] = useState({
@@ -101,6 +101,11 @@ export function Login({ setIsLoggedIn }) {
           >
             Login
           </button>
+          <div>
+          <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
+                <Link to="/passwort-vergessen">passwort vergessen</Link>
+              </button>
+          </div>
         </form>
         {message && (
           <div
