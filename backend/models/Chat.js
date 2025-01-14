@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
+  jobId: { 
+    type: mongoose.ObjectId, 
+    ref: "Job", 
+    required: true 
+  },
     participants: [{
       type: mongoose.ObjectId,
       ref: "User",
