@@ -52,8 +52,8 @@ export function Register() {
   };
 
   return (
-    <div className="sm:mt-48 mt-24 sm:mb-44 mb-20 flex justify-center items-center px-4 py-8">
-      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="border border-gray-300 rounded-md shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">

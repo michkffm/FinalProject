@@ -156,8 +156,8 @@ export function Category() {
     }
   };
   return (
-       <div className="zero-section min-h-screen bg-gray-50 px-4 py-8">
-      <div className="container mx-auto sm:mt-14 mt-4">
+       <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start<">
+      <div className="container mx-auto sm:mt-14 mt-10">
         <div className="mb-6 flex flex-wrap gap-4">
           {/* Name Filter */}
           <input
@@ -191,7 +191,7 @@ export function Category() {
           />
         </div>
         {/* Gefilterte Jobs anzeigen */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredData.map((job) => (
             <div
               key={job._id}

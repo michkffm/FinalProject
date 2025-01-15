@@ -36,7 +36,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
         <ul
           className={`${
             menuOpen ? "flex" : "hidden"
-          } sm:flex flex-col sm:flex-row gap-4 sm:gap-10 text-teal-600 text-lg w-full sm:w-auto`}
+          } sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-10 text-teal-600 text-lg w-full sm:w-auto`}
         >
           <li>
             <Link
@@ -45,7 +45,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
               onClick={() => setMenuOpen(false)}
             >
               <i className="fa-solid fa-house"></i>
-              Home
+              Start
             </Link>
           </li>
           {!isLoggedIn && (
@@ -90,7 +90,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                   className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <i className="fa-solid fa-list"></i>
+                  <i className="fa-solid fa-layer-group"></i>
                   Kategorien
                 </Link>
               </li>
@@ -117,7 +117,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
               className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
               onClick={() => setMenuOpen(false)}
             >
-              <i className="fa-solid fa-question"></i>
+              <i className="fa-solid fa-circle-info"></i>
               Hilfe
             </Link>
           </li>
