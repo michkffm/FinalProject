@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 
 export function Login({ setIsLoggedIn }) {
   const [data, setData] = useState({
@@ -55,7 +55,7 @@ export function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="flex items-center justify-center sm:mt-44 mt-44 mb-4">
+    <div className="sm:mt-52 mt-28 sm:mb-48 mb-24 flex justify-center items-center px-4 py-8">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
@@ -101,6 +101,11 @@ export function Login({ setIsLoggedIn }) {
           >
             Login
           </button>
+          <div>
+          <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
+                <Link to="/passwort-vergessen">passwort vergessen</Link>
+              </button>
+          </div>
         </form>
         {message && (
           <div

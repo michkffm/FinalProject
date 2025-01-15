@@ -74,7 +74,7 @@ export function Home() {
         </form>
       </section>
 
-      <section className="flex justify-center max-w-4xl mx-auto flex-col sm:flex-row sm:gap-50 gap-20 mt-6">
+      <section>
         {/* <div className="bg-white border border-1 rounded-lg shadow sm:p-6 p-4">
           <h2 className="text-lg sm:text-xl font-semibold mb-4">
             Dienstleistung suchen
@@ -93,8 +93,8 @@ export function Home() {
           </form>
         </div> */}
 
-        <div className="bg-white border border-1 rounded-lg shadow sm:p-6 p-4">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">
+        <div className="bg-white border rounded-md shadow p-4">
+          <h2 className="font-semibold mb-2">
             Dienstleistung selber anbieten
           </h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
