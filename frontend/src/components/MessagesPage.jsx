@@ -14,6 +14,7 @@ export function MessagesPage() {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data); // Überprüfe die Struktur der Daten
         setMessages(data);
       })
       .catch((error) => {
@@ -63,13 +64,18 @@ export function MessagesPage() {
       {messages.length === 0 ? (
         <div>Keine Nachrichten</div>
       ) : (
-        messages.map((msg) => (
-          <div key={msg._id} className="p-4 border-b">
-            <h3 className="font-bold">Von: {msg.senderId}</h3>
-            <p>{msg.message}</p>
-            <p className="text-sm text-gray-500">
-              Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-            </p>
+        messages.map((chat) => (
+          <div key={chat._id} className="p-4 border-b">
+            <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
+            {chat.messages.map((msg) => (
+              <div key={msg._id} className="mb-4">
+                <p><strong>Von:</strong> {msg.sender.username}</p>
+                <p>{msg.content}</p>
+                <p className="text-sm text-gray-500">
+                  Gesendet am: {new Date(msg.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
             <textarea
               value={replyMessage}
               onChange={handleReplyChange}
@@ -77,7 +83,7 @@ export function MessagesPage() {
               placeholder="Antwort schreiben..."
             ></textarea>
             <button
-              onClick={() => handleReplySubmit(msg._id)}
+              onClick={() => handleReplySubmit(chat._id)}
               className="mt-2 text-blue-500 hover:underline"
             >
               Antworten
