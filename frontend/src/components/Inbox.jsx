@@ -59,7 +59,7 @@ export function Inbox() {
       <button onClick={handleNavigate} className="flex flex-col sm:flex-row items-center">
         <span className="flex flex-col sm:flex-row items-center gap-1 hover:underline"><i className="fa-solid fa-comments"></i>Nachrichten</span>
         {unreadCount > 0 && (
-          <span className="bg-red-500 text-white font-bold rounded-full px-2">
+          <span className="bg-red-600 text-white font-bold rounded-full px-2">
             {unreadCount}
           </span>
         )}
