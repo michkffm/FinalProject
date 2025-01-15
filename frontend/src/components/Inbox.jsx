@@ -23,37 +23,8 @@ export function Inbox() {
       });
   }, [token]);
 
-<<<<<<< HEAD
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const handleReplyChange = (e) => {
-    setReplyMessage(e.target.value);
-  };
-
-  const handleReplySubmit = (jobId) => {
-    fetch(`http://localhost:3000/chats/${jobId}/reply`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ message: replyMessage }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        alert("Antwort gesendet");
-        setReplyMessage("");
-      })
-      .catch((error) => {
-        console.error("Fehler beim Senden der Antwort:", error);
-        alert("Fehler beim Senden der Antwort");
-      });
-=======
   const handleNavigate = () => {
     navigate("/messages");
->>>>>>> 28f628609074d7aa60568f0757f2ac12ed81617a
   };
 
   return (
