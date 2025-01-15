@@ -51,63 +51,82 @@ export function ResetPassword() {
   };
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <h2 className="text-green-500 text-xl">Passwort erfolgreich zurückgesetzt!</h2>
-          <p>Sie können sich jetzt mit Ihrem neuen Passwort anmelden.</p>
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-green-500 text-white p-2 rounded mt-4"
-          >
-            Zum Login
-          </button>
-        </div>
-      </div>
+      <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+  <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center w-full max-w-sm">
+    <h2 className="text-teal-600 text-2xl font-semibold mb-4">
+      Passwort erfolgreich zurückgesetzt!
+    </h2>
+    <p className="text-gray-700 mb-6">
+      Sie können sich jetzt mit Ihrem neuen Passwort anmelden.
+    </p>
+    <button
+      onClick={() => navigate("/login")}
+      className="bg-teal-500 hover:bg-teal-600 text-white py-2 px-6 rounded-md focus:outline-none focus:ring-4 focus:ring-teal-300"
+    >
+      Zum Login
+    </button>
+  </div>
+</div>
+
     );
   }
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm">
-        <h2 className="text-2xl mb-4 text-center"></h2>
-        {tokenValid === false && <p className="text-red-500 mb-4">token ist abgelaufen</p>}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-            Neues Passwort
-            </label>
-            <input
-              id="newPassword"
-              type="password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 p-2 w-full border rounded-lg"
-              required
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-            Bestätigen Sie das neue Passwort
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              placeholder="Confirm new password"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="mt-1 p-2 w-full border rounded-lg"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className={`w-full p-2 rounded-lg ${loading ? 'bg-gray-400' : 'bg-green-500'} text-white`}
-            disabled={loading}
-          >
-            {loading ? "Loading..." : "Reset password"}
-          </button>
-        </form>
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md w-full max-w-sm">
+    <h2 className="text-2xl font-semibold text-center text-teal-600 mb-6">
+      Passwort zurücksetzen
+    </h2>
+    {tokenValid === false && (
+      <p className="text-red-500 text-center mb-4">
+        Token ist abgelaufen
+      </p>
+    )}
+    <form onSubmit={handleSubmit}>
+      <div className="mb-4">
+        <label
+          htmlFor="newPassword"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Neues Passwort
+        </label>
+        <input
+          id="newPassword"
+          type="password"
+          placeholder="Neues Passwort eingeben"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          required
+        />
       </div>
+      <div className="mb-4">
+        <label
+          htmlFor="confirmPassword"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Bestätigen Sie das neue Passwort
+        </label>
+        <input
+          id="confirmPassword"
+          type="password"
+          placeholder="Neues Passwort bestätigen"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="mt-1 p-3 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          required
+        />
+      </div>
+      <button
+        type="submit"
+        className={`w-full py-3 rounded-md text-white ${
+          loading ? "bg-gray-400" : "bg-teal-500 hover:bg-teal-600"
+        } focus:outline-none focus:ring-4 focus:ring-teal-300`}
+        disabled={loading}
+      >
+        {loading ? "Wird geladen..." : "Passwort zurücksetzen"}
+      </button>
+    </form>
+  </div>
     </div>
   );
 }
