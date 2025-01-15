@@ -9,6 +9,7 @@ export function Job({ setIsLoggedIn }) {
     category: "",
     location: "",
     contact: "",
+    username: "",
   });
 
   const [profileData, setProfileData] = useState({
@@ -22,6 +23,23 @@ export function Job({ setIsLoggedIn }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    // Benutzernamen aus dem localStorage abrufen
+    const username = localStorage.getItem("username");
+    if (username) {
+      setData((prevData) => ({
+        ...prevData,
+        username: username, // Setze den Benutzernamen in den State
+      }));
+    }    // Abrufen der Kategorie aus localStorage
+    const category = localStorage.getItem("selectedCategory");
+    if (category) {
+      setSelectedCategory(category);
+    }
+
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -146,6 +164,7 @@ export function Job({ setIsLoggedIn }) {
           category: "",
           location: "",
           contact: "",
+          username: "",
         });
 
         // Navigation nach einer Verzögerung
@@ -177,6 +196,22 @@ export function Job({ setIsLoggedIn }) {
               value={data.title}
               onChange={handleChange}
               placeholder="Jobtitel eingeben..."
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+              Benutzername:
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={data.username}
+              onChange={handleChange}
+              placeholder="Benutzername eingeben..."
+              readOnly
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>

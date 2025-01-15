@@ -210,6 +210,9 @@ export function Category() {
               <h2 className="text-xl font-bold text-gray-700 mb-2">
                 {job.title}
               </h2>
+              <h2 className="text-xl font-bold text-gray-700 mb-2">
+                {job.username}
+              </h2>
               <p>{job.createdBy.username}</p>
               <h3 className="text-sm text-teal-500 font-medium">
                 {job.category}
