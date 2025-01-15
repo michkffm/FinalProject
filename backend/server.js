@@ -134,11 +134,11 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
 
 // neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
-  const { title, description, category, price, location, contact } = req.body;
+  const { title, description, category, price, location, contact,username } = req.body;
   const userId = req.user.userId;
 
   try {
-    const job = new Job({ title, description, category, price, location, contact, createdBy: userId });
+    const job = new Job({ title, description, category, price, location, contact,username, createdBy: userId });
     await job.save();
 
     const addUsername = await Job.findById(job._id).populate('createdBy', 'username');
@@ -287,7 +287,7 @@ app.put('/jobs/:id', async (req, res) => {
   }
 });
 
-app.get('/users/:id', async (req, res) => {
+app.get('/users/:id',authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -303,7 +303,7 @@ app.get('/users/:id', async (req, res) => {
   }
 });
 
-app.patch('/users/:id', async (req, res) => {
+app.patch('/users/:id',authMiddleware, async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
