@@ -55,7 +55,7 @@ export function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="sm:mt-60 mt-36 sm:mb-56 mb-36 flex justify-center items-center px-4 py-8">
+    <div className="sm:mt-52 mt-28 sm:mb-48 mb-24 flex justify-center items-center px-4 py-8">
       <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
