@@ -464,8 +464,30 @@ app.post("/forgot-password", async (req, res) => {
       from: "onboarding@resend.dev",
       to: user.email,
       subject: "Passwort zurücksetzen",
-      html: `Please click this link to reset your password: <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}">Reset Password</a>`,
+      html: `
+        <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 30px; background-color: #ffffff; border: 1px solid #e0e0e0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);">
+          <h1 style="color: #2d3e50; text-align: center; font-size: 24px; font-weight: 600; margin-bottom: 20px;">
+            Passwort zurücksetzen
+          </h1>
+          <p style="color: #333333; font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 20px;">
+            Sie haben beantragt, Ihr Passwort zurückzusetzen. Bitte klicken Sie auf die Schaltfläche unten, um Ihr Passwort zurückzusetzen:
+          </p>
+          <div style="text-align: center; margin: 30px 0;">
+            <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}" 
+              style="background-color: #4CAF50; color: white; padding: 14px 32px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 8px; display: inline-block; transition: background-color 0.3s;">
+              Passwort zurücksetzen
+            </a>
+          </div>
+          <p style="color: #555555; font-size: 14px; line-height: 1.4; text-align: center;">
+            Wenn Sie kein neues Passwort angefordert haben, ignorieren Sie bitte diese E-Mail.
+          </p>
+          <footer style="text-align: center; font-size: 12px; color: #999999; margin-top: 40px;">
+            <p style="margin: 0;">© 2024 EasyHelfer. Alle Rechte vorbehalten.</p>
+          </footer>
+        </div>
+      `,
     });
+    
     res.status(200).json({
       message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
     });
