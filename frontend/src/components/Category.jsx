@@ -157,11 +157,6 @@ export function Category() {
   return (
        <div className="min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
       <div className="container mx-auto mt-20">
-      {message && (
-      <div className="mb-4 p-4 bg-green-100 text-green-700 rounded">
-    {message}
-     </div>
-    )}
         <div className="mb-6 flex flex-wrap gap-4">
           {/* Name Filter */}
           <input
