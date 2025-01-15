@@ -66,10 +66,14 @@ export function MessagesPage() {
       ) : (
         messages.map((chat) => (
           <div key={chat._id} className="p-4 border-b">
-            <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
             {chat.messages.map((msg) => (
               <div key={msg._id} className="mb-4">
-                <p><strong>Von:</strong> {msg.sender.username}</p>
+                  <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
+                  <div>
+                    {chat.participants.map((participant, index) => (
+                      <p key={index}><strong>Von:</strong> {participant.username}</p>
+                    ))}
+                  </div>
                 <p>{msg.content}</p>
                 <p className="text-sm text-gray-500">
                   Gesendet am: {new Date(msg.createdAt).toLocaleString()}
