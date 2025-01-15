@@ -59,7 +59,7 @@ export function MessagesPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 mt-20 mb-96">
       <h1 className="text-2xl font-bold mb-4">Nachrichten</h1>
       {messages.length === 0 ? (
         <div>Keine Nachrichten</div>
