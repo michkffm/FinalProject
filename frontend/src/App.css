@@ -7,12 +7,21 @@ header {
 }
 
 .hero-section {
-    background-image: url('./assets/handshake-4.jpeg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 93vh;
+  background-image: url('./assets/handshake-4.jpeg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Hintergrund bleibt fixiert */
+  height: 100vh;
   }
+
+  .zero-section {
+      background-image: url('./assets/hintergrund-1.jpeg');
+      background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Hintergrund bleibt fixiert */
+    }
 
   footer {
     box-shadow: 0px -5px 5px 0px #00000052;

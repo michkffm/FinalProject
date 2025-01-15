@@ -17,7 +17,7 @@ export default function ContactForm() {
   }, [state.succeeded, navigate]);
 
   return (
-    <div className="sm:mt-32 mt-40 sm:mb-20 mb-5 px-4 sm:px-0">
+    <div className="zero-section sm:mt-32 mt-40 sm:mb-20 mb-5 px-4 sm:px-0">
       {/* Erfolgreich-Nachricht */}
       {state.succeeded ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
