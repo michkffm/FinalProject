@@ -108,6 +108,7 @@ export function Category() {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
+        jobId,
         recipientId: jobId,
         message: contactMessage.message,
       }),

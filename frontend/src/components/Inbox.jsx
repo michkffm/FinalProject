@@ -35,8 +35,8 @@ export function Inbox() {
     setReplyMessage(e.target.value);
   };
 
-  const handleReplySubmit = (msgId) => {
-    fetch(`http://localhost:3000/chats/${msgId}/reply`, {
+  const handleReplySubmit = (jobId) => {
+    fetch(`http://localhost:3000/chats/${jobId}/reply`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
