@@ -58,7 +58,7 @@ function App() {
           <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
           <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
           <Route path="/inbox" element={<Inbox />} />
-          <Route path="/help" element={<Help />} />
+          <Route path="/hilfe" element={<Help />} />
           <Route path="/messages" element={<MessagesPage />} /> {/* Neue Route für Nachrichten */}
         </Routes>
       </div>
