@@ -13,8 +13,6 @@ export function Profile() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [profiles, setProfiles] = useState([]);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!token) {
@@ -24,6 +22,8 @@ export function Profile() {
   }, [token, navigate]);
 
   useEffect(() => {
+    //wird am Amfang nur einmal ausgeführt
+    //fetch Anfrage an users/profile(Get)
     fetch("http://localhost:3000/users/profile", {
       method: "GET",
       headers: {
@@ -40,11 +40,11 @@ export function Profile() {
       })
       .then((data) => {
         setData({
-          profilePhoto: data.profilePhoto || "",
-          role: data.role || [],
-          profession: data.profession || "",
-          location: data.location || "",
-          description: data.description || "",
+          profilePhoto: data.profilePhoto ? data.profilePhoto : "",
+          role: data.role ? data.role : [],
+          profession: data.profession ? data.profession : "",
+          location: data.location ? data.location : "",
+          description: data.description ? data.description : "",
         });
       })
       .catch((error) => {
@@ -52,24 +52,28 @@ export function Profile() {
           const err = JSON.parse(error.message);
           setMessage(err.error || "Unbekannter Fehler.");
         } catch {
-          setMessage("Fehler beim Abrufen der Profildaten.");
+          setMessage("Fehler beim Erstellen des Profils.");
         }
       });
-  }, [token]);
+  }, []);
 
   const handleChangeRole = (e) => {
     if (e.target.checked) {
       if (!data.role.includes(e.target.value)) {
-        setData((prevData) => ({
-          ...prevData,
-          role: [...prevData.role, e.target.value],
-        }));
+        setData((prevData) => {
+          return {
+            ...prevData, // Kopie des gesamten vorherigen Objekts
+            role: [...prevData.role, e.target.value], // Neue Kopie von `role` mit dem hinzugefügten Wert
+          };
+        });
       }
     } else {
-      setData((prevData) => ({
-        ...prevData,
-        role: prevData.role.filter((role) => role !== e.target.value),
-      }));
+      setData((prevData) => {
+        return {
+          ...prevData, // Kopie des gesamten vorherigen Objekts
+          role: prevData.role.filter((role) => role === e.target.value),
+        };
+      });
     }
   };
 
@@ -78,8 +82,10 @@ export function Profile() {
 
     setData((prevData) => {
       if (type === "file") {
-        return { ...prevData, [name]: files[0] };
+        return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
       }
+
+      // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
       return { ...prevData, [name]: value };
     });
   };
@@ -121,6 +127,15 @@ export function Profile() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // const formData = new FormData();
+    // formData.append("profilePhoto", data.profilePhoto);
+    // formData.append("role", JSON.stringify(data.role));
+    // formData.append("profession", data.profession);
+    // formData.append("location", data.location);
+    // formData.append("description", data.description);
+
+    // console.log([...formData]);
+
     fetch("http://localhost:3000/users/profile", {
       method: "PATCH",
       headers: {
@@ -137,6 +152,7 @@ export function Profile() {
         }
         return res.json();
       })
+
       .then((data) => {
         console.log("Gesendete Daten:", data);
         setMessage("Profil erfolgreich gespeichert!");
@@ -154,33 +170,8 @@ export function Profile() {
       });
   };
 
-  const handleDeleteProfile = async (profilId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/profiles/${profilId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      setProfiles((prevProfiles) =>
-        prevProfiles.filter((profil) => profil._id !== profilId)
-      );
-    } catch (err) {
-      setError(err.message || "Fehler beim Löschen des Profils.");
-    }
-  };
-
   return (
-    <div className="sm:mt-24 mt-14 sm:mb-20 mb-5 flex justify-center items-center px-4 py-8">
+    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 sm:mt-0 mt-8 flex justify-center items-center">
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
         <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
           <img
@@ -194,16 +185,40 @@ export function Profile() {
             Profil bearbeiten
           </h2>
 
-          {message && (
-            <div
-              className={`mt-4 p-3 text-white ${
-                message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-              }`}
-            >
-              {message}
+         {message && (
+          <div
+            className={`mt-4 p-3 text-white ${
+              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+          {/* Profile photo */}
+          {/* <div className="space-y-2">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+              Profile erstellen
+            </h2>
+            <label
+              htmlFor="profilePhoto"
+              className="block text-sm font-medium text-gray-700 text-center "
+            ></label>
+            <div className="relative w-20 h-20 left-48">
+              <input
+                type="file"
+                id="profilePhoto"
+                name="profilePhoto"
+                accept="image/*"
+                onChange={handleChange}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer "
+              />
+              <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-white shadow-md">
+                <span className="text-sm">📷</span>
+              </div>
             </div>
-          )}
+          </div> */}
 
+          {/* Other fields */}
           <div className="space-y-2">
             <label
               htmlFor="profession"
@@ -215,28 +230,60 @@ export function Profile() {
               name="profession"
               id="profession"
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={data.profession}
-              onChange={handleChange}
+              value={data.profession} // Bindung an den State
+              onChange={handleChange} // Handle Change, um den State zu aktualisieren
             >
               <option value="" disabled>
                 Bitte wähle einen Beruf Dienstleistung
               </option>
               <option value="Beratung">Beratung</option>
               <option value="Bildung und Schulung">Bildung und Schulung</option>
-              <option value="Betreuung und Gesundheit">
+              <option
+                value="Betreuung und Gesundheit
+"
+              >
                 Betreuung und Gesundheit
               </option>
-              <option value="Finanzen und Versicherungen">
+              <option
+                value="Finanzen und Versicherungen
+"
+              >
                 Finanzen und Versicherungen
               </option>
-              <option value="Technologie und IT">Technologie und IT</option>
-              <option value="Reparatur und Wartung">Reparatur und Wartung</option>
-              <option value="Transport und Logistik">Transport und Logistik</option>
-              <option value="Reinigung und Pflege">Reinigung und Pflege</option>
-              <option value="Bau- und Renovierungsdienste">
+              <option
+                value="Technologie und IT
+"
+              >
+                Technologie und IT
+              </option>
+              <option
+                value="Reparatur und Wartung
+"
+              >
+                Reparatur und Wartung
+              </option>
+              <option
+                value="Transport und Logistik
+"
+              >
+                Transport und Logistik
+              </option>
+              <option
+                value="Reinigung und Pflege
+"
+              >
+                Reinigung und Pflege
+              </option>
+              <option
+                value="Bau- und Renovierungsdienste
+"
+              >
                 Bau- und Renovierungsdienste
               </option>
-              <option value="Freizeit und Unterhaltung">
+              <option
+                value="Freizeit und Unterhaltung
+"
+              >
                 Freizeit und Unterhaltung
               </option>
             </select>
@@ -316,14 +363,6 @@ export function Profile() {
           >
             Speichern
           </button>
-          <div className="flex justify-end">
-            <button
-              className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
-              onClick={() => handleDeleteProfile(data._id)}
-            >
-              Profil löschen
-            </button>
-          </div>
         </form>
       </div>
     </div>

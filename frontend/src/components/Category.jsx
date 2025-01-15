@@ -156,8 +156,8 @@ export function Category() {
     }
   };
   return (
-       <div className="min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
-      <div className="container mx-auto mt-20">
+       <div className="zero-section min-h-screen bg-gray-50 px-4 py-8">
+      <div className="container mx-auto sm:mt-14 mt-4">
         <div className="mb-6 flex flex-wrap gap-4">
           {/* Name Filter */}
           <input
@@ -226,7 +226,7 @@ export function Category() {
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
               </p>
-              <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
+              <button className="w-8/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
                 <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
               </button>
               <form
