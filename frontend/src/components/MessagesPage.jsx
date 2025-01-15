@@ -6,6 +6,10 @@ export function MessagesPage() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    fetchMessages();
+  }, [token]);
+
+  const fetchMessages = () => {
     fetch("http://localhost:3000/chats", {
       method: "GET",
       headers: {
@@ -14,43 +18,46 @@ export function MessagesPage() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data); // Überprüfe die Struktur der Daten
         setMessages(data);
+        markAllAsRead(); // Mark all messages as read after fetching
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
         alert("Fehler beim Laden der Nachrichten");
       });
-  }, [token]);
-
-  const handleReplyChange = (e) => {
-    setReplyMessage(e.target.value);
   };
 
-  const handleReplySubmit = (msgId) => {
-    fetch(`http://localhost:3000/chats/${msgId}/reply`, {
-      method: "POST",
+  const markAllAsRead = () => {
+    fetch("http://localhost:3000/chats/read-all", {
+      method: "PATCH",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ message: replyMessage }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        alert("Antwort gesendet");
+      .catch((error) => {
+        console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
+        alert("Fehler beim Markieren der Nachrichten als gelesen");
+      });
+  };
+
+  const handleReplyChange = (event) => {
+    setReplyMessage(event.target.value);
+  };
+
+  const handleReplySubmit = (chatId) => {
+    fetch(`http://localhost:3000/chats/${chatId}/reply`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: replyMessage }),
+    })
+      .then((res) => res.json())
+      .then(() => {
         setReplyMessage("");
-        // Nachrichten erneut laden, um die Antwort anzuzeigen
-        fetch("http://localhost:3000/chats", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setMessages(data);
-          });
+        fetchMessages(); // Refresh messages after sending a reply
       })
       .catch((error) => {
         console.error("Fehler beim Senden der Antwort:", error);
@@ -68,12 +75,12 @@ export function MessagesPage() {
           <div key={chat._id} className="p-4 border-b">
             {chat.messages.map((msg) => (
               <div key={msg._id} className="mb-4">
-                  <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
-                  <div>
-                    {chat.participants.map((participant, index) => (
-                      <p key={index}><strong>Von:</strong> {participant.username}</p>
-                    ))}
-                  </div>
+                <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
+                <div>
+                  {chat.participants.map((participant, index) => (
+                    <p key={index}><strong>Von:</strong> {participant.username}</p>
+                  ))}
+                </div>
                 <p>{msg.content}</p>
                 <p className="text-sm text-gray-500">
                   Gesendet am: {new Date(msg.createdAt).toLocaleString()}
