@@ -80,11 +80,12 @@ export function Ratings() {
   }, [isFormSubmitted, jobId, userRating, userComment]);
 
   return (
-    <div className="rating-section max-w-xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-48 mb-72">
-    <h2 className="text-2xl font-bold text-gray-800 mb-4 ml-32">
+    <main className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
+    <div className="flex flex-col justify-between items-center bg-white shadow-md rounded-md p-6 max-w-xl w-full">
+    <h2 className="text-2xl font-bold text-gray-800 mb-4 ">
       Bewertung hinzufügen
     </h2>
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 w-full">
       <div className="flex flex-col items-center">
         <StarRatings
           rating={userRating}
@@ -123,5 +124,6 @@ export function Ratings() {
       </p>
     )}
   </div>
+  </main>
   );
 }
