@@ -111,8 +111,8 @@ export function Help() {
   ];
 
   return (
-    <div className="faq-container bg-gray-50 p-8 rounded-lg shadow-md mt-20">
-      <h2 className="text-2xl font-bold mb-6 text-center">Häufige Fragen (FAQ)</h2>
+    <div className="zero-section faq-container p-8 sm:mt-0 mt-12">
+      <h2 className="text-2xl font-bold mb-4 text-center p-10">Häufige Fragen (FAQ)</h2>
       {faqItems.map((section, sectionIndex) => (
         <div key={sectionIndex} className="mb-6">
           <h3 className="text-xl font-semibold mb-4">{section.title}</h3>

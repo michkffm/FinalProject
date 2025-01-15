@@ -17,7 +17,7 @@ export default function ContactForm() {
   }, [state.succeeded, navigate]);
 
   return (
-    <div className="zero-section sm:mt-32 mt-40 sm:mb-20 mb-5 px-4 sm:px-0">
+    <div className="flex justify-center items-center flex-col zero-section min-h-screen px-4 py-8">
       {/* Erfolgreich-Nachricht */}
       {state.succeeded ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
@@ -26,7 +26,7 @@ export default function ContactForm() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="border max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg"
+          className="border border-gray-300 rounded-md shadow-lg mt-14 p-8 bg-white w-full max-w-4xl"
         >
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-teal-600">
             Kontaktformular
