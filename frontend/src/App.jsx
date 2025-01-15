@@ -19,6 +19,8 @@ import { Inbox } from "./components/Inbox.jsx";
 import { Search } from "./components/Search.jsx";
 import { Ratings } from "./components/Ratings.jsx";
 import { RatingsView } from "./components/RatingsView.jsx";
+import { ForgotPassword } from "./components/ForgotPassword.jsx";
+import { ResetPassword } from "./components/ResetPassword.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -47,6 +49,8 @@ function App() {
         <Route path="/suche" element={<Search/>} />
         <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
         <Route path="/impressum" element={<Impressum />} />
+        <Route path="/passwort-vergessen" element={<ForgotPassword />} />
+        <Route path="/passwort-reset/:token" element={<ResetPassword />} />
         <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
         <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
         <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}

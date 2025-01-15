@@ -9,7 +9,9 @@ const userSchema = new mongoose.Schema({
   profession: { type: String },
   location: { type: String },
   description: { type: String },
-  profilePhoto: { type: String }
+  profilePhoto: { type: String },
+  resetPasswordToken: { type: String }, 
+  resetPasswordExpires: { type: Date }
 });
 
 userSchema.methods.toJSON = function () {
