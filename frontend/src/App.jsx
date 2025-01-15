@@ -21,6 +21,7 @@ import { Ratings } from "./components/Ratings.jsx";
 import { RatingsView } from "./components/RatingsView.jsx";
 import { ForgotPassword } from "./components/ForgotPassword.jsx";
 import { ResetPassword } from "./components/ResetPassword.jsx";
+import { Help } from "./components/Help.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -55,6 +56,7 @@ function App() {
         <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
         <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
         <Route path="/inbox" element={<Inbox />} />
+        <Route path="/hilfe" element={<Help />} />
       </Routes>
       <Footer /> {/* Footer immer sichtbar */}
     </>
