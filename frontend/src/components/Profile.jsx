@@ -180,7 +180,7 @@ export function Profile() {
   };
 
   return (
-    <div className="sm:mt-28 mt-32 sm:mb-32 mb-5 bg-gray-50 flex justify-center items-center px-4 py-8">
+    <div className="sm:mt-24 mt-14 sm:mb-20 mb-5 flex justify-center items-center px-4 py-8">
       <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
         <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
           <img
