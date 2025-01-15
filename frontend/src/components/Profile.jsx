@@ -13,8 +13,16 @@ export function Profile() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [profiles, setProfiles] = useState([]);
   const [error, setError] = useState(null);
+  const decodeToken = (token) => {
+    if (!token) return null;
+    const payloadBase64 = token.split(".")[1];
+    const payloadDecoded = atob(payloadBase64);
+    const payload = JSON.parse(payloadDecoded);
+    return payload.userId;
+  };
+  const userId = decodeToken(token);
+  console.log("Benutzer ID:", userId);
 
   useEffect(() => {
     if (!token) {
@@ -140,6 +148,7 @@ export function Profile() {
       .then((data) => {
         console.log("Gesendete Daten:", data);
         setMessage("Profil erfolgreich gespeichert!");
+        localStorage.setItem("selectedCategory", data.profession)
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -154,29 +163,29 @@ export function Profile() {
       });
   };
 
-  const handleDeleteProfile = async (profilId) => {
-    try {
-      const response = await fetch(
-        `http://localhost:3000/profiles/${profilId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+  const handleDeleteProfile = () => {
+    fetch(`http://localhost:3000/users/${userId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
         }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-
-      setProfiles((prevProfiles) =>
-        prevProfiles.filter((profil) => profil._id !== profilId)
-      );
-    } catch (err) {
-      setError(err.message || "Fehler beim Löschen des Profils.");
-    }
+        return res.json();
+      })
+      .then(() => {
+        setMessage("Profil erfolgreich gelöscht.");
+        navigate("/register");
+      })
+      .catch((error) => {
+        setMessage("Fehler beim Löschen des Profils: " + error.message);
+        console.error("Fehler beim Löschen des Profils:", error);
+      });
   };
 
   return (
@@ -230,8 +239,12 @@ export function Profile() {
                 Finanzen und Versicherungen
               </option>
               <option value="Technologie und IT">Technologie und IT</option>
-              <option value="Reparatur und Wartung">Reparatur und Wartung</option>
-              <option value="Transport und Logistik">Transport und Logistik</option>
+              <option value="Reparatur und Wartung">
+                Reparatur und Wartung
+              </option>
+              <option value="Transport und Logistik">
+                Transport und Logistik
+              </option>
               <option value="Reinigung und Pflege">Reinigung und Pflege</option>
               <option value="Bau- und Renovierungsdienste">
                 Bau- und Renovierungsdienste
@@ -319,7 +332,7 @@ export function Profile() {
           <div className="flex justify-end">
             <button
               className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500"
-              onClick={() => handleDeleteProfile(data._id)}
+              onClick={handleDeleteProfile}
             >
               Profil löschen
             </button>
