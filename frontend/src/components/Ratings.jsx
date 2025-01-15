@@ -82,6 +82,15 @@ export function Ratings() {
   return (
     <main className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
     <div className="flex flex-col justify-between items-center bg-white shadow-md rounded-md p-6 max-w-xl w-full">
+    {message && (
+      <p
+        className={`mt-4 text-center font-medium ${
+          message.includes("erfolgreich") ? "text-green-600" : "text-red-600"
+        }`}
+      >
+        {message}
+      </p>
+    )}
     <h2 className="text-2xl font-bold text-gray-800 mb-4 ">
       Bewertung hinzufügen
     </h2>
@@ -114,15 +123,6 @@ export function Ratings() {
         {isSubmitting ? "Senden..." : "Senden"}
       </button>
     </form>
-    {message && (
-      <p
-        className={`mt-4 text-center font-medium ${
-          message.includes("erfolgreich") ? "text-green-600" : "text-red-600"
-        }`}
-      >
-        {message}
-      </p>
-    )}
   </div>
   </main>
   );

@@ -111,7 +111,7 @@ export function Home() {
           </form>
         </div>
       </section>
-        {message && <p className="text-red-500 mt-10">{message}</p>}
+        {message && <p className="text-red-500 text-2xl mt-10">{message}</p>}
     </main>
   );
 }

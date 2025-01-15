@@ -53,79 +53,88 @@ export function Register() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="border border-gray-300 rounded-md shadow-lg p-8 bg-white w-full max-w-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-          <h2 className="text-lg sm:text-xl font-semibold mb-4">
-            Registrierung
-          </h2>
-            <label
-              htmlFor="username"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Benutzername:
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={data.username}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              E-Mail:
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={data.email}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Passwort:
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
-          >
-            Registrieren
-          </button>
-        </form>
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
+      <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
+    <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 text-teal-600">
+      Registrieren Sie sich
+    </h2>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <label
+          htmlFor="username"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Benutzername
+        </label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={data.username}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          placeholder="Dein Benutzername"
+        />
       </div>
+      <div className="space-y-2">
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          E-Mail
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={data.email}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          placeholder="name@example.com"
+        />
+      </div>
+      <div className="space-y-2">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Passwort
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={data.password}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+          placeholder="********"
+        />
+      </div>
+      <button
+        type="submit"
+        className="bg-teal-500 text-white py-3 px-6 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300 w-full font-medium"
+      >
+        Registrieren
+      </button>
+    </form>
+    {message && (
+      <div
+        className={`mt-4 p-3 text-white rounded-md ${
+          message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+        }`}
+      >
+        {message}
+      </div>
+    )}
+    <p className="text-center text-sm text-gray-600 mt-4">
+      Bereits registriert?{" "}
+      <a href="/login" className="text-teal-600 hover:underline">
+        Anmelden
+      </a>
+    </p>
+  </div>
     </div>
   );
 }

@@ -74,83 +74,83 @@ export function Login({ setIsLoggedIn }) {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="border border-gray-300 rounded-md shadow-lg p-8 bg-white w-full max-w-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
-              Login
-            </h2>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              E-Mail:
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={email}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Passwort:
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              name="rememberMe"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-              className="w-4 h-4 text-teal-500 focus:ring-teal-500 border-gray-300 rounded"
-            />
-            <label
-              htmlFor="rememberMe"
-              className="ml-2 block text-sm text-gray-700"
-            >
-              Angemeldet bleiben
-            </label>
-          </div>
-          <button
-            type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
-          >
-            Login
-          </button>
-          <div>
-          <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
-                <Link to="/passwort-vergessen">passwort vergessen</Link>
-              </button>
-          </div>
-        </form>
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
+      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg bg-opacity-70">
+    <form onSubmit={handleSubmit} className="space-y-6">
+    {message && (
+      <div
+        className={`mt-4 p-3 text-white ${
+          message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+        }`}
+      >
+        {message}
       </div>
+    )}
+      <div className="space-y-2">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center text-gray-800">
+          Login
+        </h2>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          E-Mail:
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+      <div className="space-y-2">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Passwort:
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="rememberMe"
+          name="rememberMe"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="w-4 h-4 text-teal-500 focus:ring-teal-500 border-gray-300 rounded"
+        />
+        <label
+          htmlFor="rememberMe"
+          className="ml-2 block text-sm text-gray-700"
+        >
+          Angemeldet bleiben
+        </label>
+      </div>
+      <button
+        type="submit"
+        className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full"
+      >
+        Login
+      </button>
+      <div>
+        <button className="w-full bg-teal-400 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
+          <Link to="/passwort-vergessen">Passwort vergessen?</Link>
+        </button>
+      </div>
+    </form>
+  </div>
     </div>
   );
 }
