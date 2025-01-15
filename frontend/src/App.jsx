@@ -22,6 +22,7 @@ import { RatingsView } from "./components/RatingsView.jsx";
 import { ForgotPassword } from "./components/ForgotPassword.jsx";
 import { ResetPassword } from "./components/ResetPassword.jsx";
 import { Help } from "./components/Help.jsx";
+import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die neue Nachrichten-Seite
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,28 +37,31 @@ function App() {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} /> {/* Header immer sichtbar */}
-      <Routes>
-        {/* Hauptseiten-Routen */}
-        <Route path="/" element={<Home />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/categorie/:name" element={<Category />} />
-        <Route path="/hauptCategorie" element={<HauptCategory />} />
-        <Route path="/jobs" element={<Job/>} />
-        <Route path="/ratings/:jobId" element={<Ratings/>} />
-        <Route path="/ratingsView/:jobId" element={<RatingsView/>} />
-        <Route path="/suche" element={<Search/>} />
-        <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
-        <Route path="/impressum" element={<Impressum />} />
-        <Route path="/passwort-vergessen" element={<ForgotPassword />} />
-        <Route path="/passwort-reset/:token" element={<ResetPassword />} />
-        <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
-        <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
-        <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
-        <Route path="/inbox" element={<Inbox />} />
-        <Route path="/hilfe" element={<Help />} />
-      </Routes>
+      <div className="content">
+        <Routes>
+          {/* Hauptseiten-Routen */}
+          <Route path="/" element={<Home />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/categorie/:name" element={<Category />} />
+          <Route path="/hauptCategorie" element={<HauptCategory />} />
+          <Route path="/jobs" element={<Job/>} />
+          <Route path="/ratings/:jobId" element={<Ratings/>} />
+          <Route path="/ratingsView/:jobId" element={<RatingsView/>} />
+          <Route path="/suche" element={<Search/>} />
+          <Route path="/profile/profileDelete/:id" element={<ProfileDelete />} />
+          <Route path="/impressum" element={<Impressum />} />
+          <Route path="/passwort-vergessen" element={<ForgotPassword />} />
+          <Route path="/passwort-reset/:token" element={<ResetPassword />} />
+          <Route path="/agb" element={<TermsAndConditions />} /> {/* Route für AGB */}
+          <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
+          <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
+          <Route path="/inbox" element={<Inbox />} />
+          <Route path="/help" element={<Help />} />
+          <Route path="/messages" element={<MessagesPage />} /> {/* Neue Route für Nachrichten */}
+        </Routes>
+      </div>
       <Footer /> {/* Footer immer sichtbar */}
     </>
   );
