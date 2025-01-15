@@ -16,7 +16,7 @@ export function HauptCategory() {
       <div>
         <Link to="/jobs" className="flex justify-center">
           <button className="bg-teal-600 text-white p-4 sm:mt-14 mt-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
-            Dienstleistung hinzufugen
+            Dienstleistung hinzufügen
           </button>
         </Link>
       </div>
