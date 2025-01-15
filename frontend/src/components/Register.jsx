@@ -40,6 +40,7 @@ export function Register() {
       .then((data) => {
         setMessage("Registrierung erfolgreich!");
         console.log("Registrierung erfolgreich", data);
+        localStorage.setItem("username", data.username);
         setTimeout(() => {
           navigate("/login");
         }, 2000);
