@@ -95,7 +95,7 @@ export function Home() {
 
         <div className="bg-white border rounded-md shadow p-4">
           <h2 className="font-semibold mb-2">
-            Dienstleistung selber anbieten
+            Dienstleistung anbieten
           </h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
             <div>
