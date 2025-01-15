@@ -23,7 +23,7 @@ export function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (newPassword !== confirmPassword) {
-      setError("Passwords don't match");
+      setError("Passwörter stimmen nicht überein");
       return;
     }
     setLoading(true);
@@ -38,14 +38,14 @@ export function ResetPassword() {
       });
       const data = await response.json();
       if (!response.ok) {
-        setError(data.error || "Failed to reset password. Try again.");
+        setError(data.error || "Das Passwort konnte nicht zurückgesetzt werden. Versuchen Sie es erneut.");
         setLoading(false);
         return;
       }
       setSuccess(true);
       setLoading(false);
     } catch (err) {
-      setError("An error has occurred. Please try again.");
+      setError("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut");
       setLoading(false);
     }
   };
@@ -53,13 +53,13 @@ export function ResetPassword() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="bg-white p-6 rounded-lg shadow-md text-center">
-          <h2 className="text-green-500 text-xl">Password reset successfully!</h2>
-          <p>You can now log in with your new password.</p>
+          <h2 className="text-green-500 text-xl">Passwort erfolgreich zurückgesetzt!</h2>
+          <p>Sie können sich jetzt mit Ihrem neuen Passwort anmelden.</p>
           <button
             onClick={() => navigate("/login")}
             className="bg-green-500 text-white p-2 rounded mt-4"
           >
-            Go to Login
+            Zum Login
           </button>
         </div>
       </div>
@@ -73,7 +73,7 @@ export function ResetPassword() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-              New password
+            Neues Passwort
             </label>
             <input
               id="newPassword"
@@ -87,7 +87,7 @@ export function ResetPassword() {
           </div>
           <div className="mb-4">
             <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-              Confirm new password
+            Bestätigen Sie das neue Passwort
             </label>
             <input
               id="confirmPassword"
