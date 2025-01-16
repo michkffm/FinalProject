@@ -111,25 +111,32 @@ export function Help() {
   ];
 
   return (
-    <div className="zero-section faq-container p-8 sm:mt-0 mt-12">
-      <h2 className="text-2xl font-bold mb-4 text-center p-10">Häufige Fragen (FAQ)</h2>
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+    <div className="faq-container bg-white bg-opacity-80 p-8 rounded-lg shadow-lg w-full max-w-4xl mt-10">
+      <h2 className="text-3xl font-bold mb-8 text-center text-teal-600">
+        Häufige Fragen (FAQ)
+      </h2>
       {faqItems.map((section, sectionIndex) => (
-        <div key={sectionIndex} className="mb-6">
-          <h3 className="text-xl font-semibold mb-4">{section.title}</h3>
+        <div key={sectionIndex} className="mb-8">
+          <h3 className="text-2xl font-semibold mb-6 text-teal-600">
+            {section.title}
+          </h3>
           <ul className="space-y-4">
             {section.items.map((item, index) => (
               <li key={index} className="border-b border-gray-300 pb-4">
                 <button
                   onClick={() => toggleQuestion(`${sectionIndex}-${index}`)}
-                  className="w-full flex justify-between items-center text-left text-lg font-medium text-gray-800 focus:outline-none"
+                  className="w-full flex justify-between items-center text-left text-lg font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-teal-300"
                 >
                   {item.question}
-                  <span className="ml-2 text-gray-500">
-                    {activeQuestion === `${sectionIndex}-${index}` ? "-" : "+"}
+                  <span className="ml-2 text-teal-500">
+                    {activeQuestion === `${sectionIndex}-${index}`
+                      ? "-"
+                      : "+"}
                   </span>
                 </button>
                 {activeQuestion === `${sectionIndex}-${index}` && (
-                  <p className="mt-2 text-gray-700">{item.answer}</p>
+                  <p className="mt-3 text-gray-700">{item.answer}</p>
                 )}
               </li>
             ))}
@@ -137,5 +144,6 @@ export function Help() {
         </div>
       ))}
     </div>
+  </div>
   );
 }
