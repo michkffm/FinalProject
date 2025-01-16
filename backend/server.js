@@ -412,12 +412,15 @@ app.post('/chats', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/chats', authMiddleware, async (req, res) => {
+aapp.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
     const chats = await Chat.find({
       participants: { $in: [userId] },
-    }).populate('participants', 'username')
+    })
+      .populate('participants', 'username')
+      .populate('messages.sender', 'username')
+      .populate('jobId', 'title')
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
