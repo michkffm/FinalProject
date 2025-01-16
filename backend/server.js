@@ -412,11 +412,12 @@ app.post('/chats', authMiddleware, async (req, res) => {
   }
 });
 
-aapp.get('/chats', authMiddleware, async (req, res) => {
+app.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
     const chats = await Chat.find({
       participants: { $in: [userId] },
+<<<<<<< HEAD
 <<<<<<< HEAD
     }).populate('participants', 'username')
     .populate('messages.sender', 'username')
@@ -426,6 +427,9 @@ aapp.get('/chats', authMiddleware, async (req, res) => {
       .populate('messages.sender', 'username')
       .populate('jobId', 'title')
 >>>>>>> 148de1ae1dd9fa2e0f3b43e5ae3ecb0764c42ec1
+=======
+    }).populate('participants', 'username')
+>>>>>>> c7546149ab8625e683c6671492ed68e2aae642ca
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
