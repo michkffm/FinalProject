@@ -56,12 +56,10 @@ export function Inbox() {
 
   return (
     <div className="relative">
-      <button onClick={handleNavigate} className="relative">
-        <i className="fa-solid fa-envelope">
-          <span className="flex flex-col sm:flex-row items-center gap-1 font-sans hover:underline">Nachrichten</span>
-        </i>
+      <button onClick={handleNavigate} className="flex flex-col sm:flex-row items-center">
+        <span className="flex flex-col sm:flex-row items-center gap-1 hover:underline"><i className="fa-solid fa-comments"></i>Nachrichten</span>
         {unreadCount > 0 && (
-          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
+          <span className="bg-red-600 text-white font-bold rounded-full px-2">
             {unreadCount}
           </span>
         )}
