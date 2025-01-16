@@ -1,7 +1,7 @@
 export function TermsAndConditions() {
   return (
-    <div className="flex items-center justify-center py-12 px-4 sm:py-24 bg-gray-50">
-      <div className="sm:mt-0 mt-28 border border-gray-200 rounded-lg shadow-lg bg-white w-full max-w-4xl p-6 sm:p-12">
+    <div className="flex justify-center items-center flex-col zero-section min-h-screen px-4 py-8">
+      <div className="mt-14 border border-gray-200 rounded-lg shadow-lg bg-white w-full max-w-4xl p-6 sm:p-12">
         {/* Header */}
         <h1 className="text-3xl font-bold text-center mb-8 text-teal-600">
           Allgemeine Geschäftsbedingungen (AGB)

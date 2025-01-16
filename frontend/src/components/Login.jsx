@@ -1,33 +1,51 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate,Link } from "react-router-dom";
 
 export function Login({ setIsLoggedIn }) {
-  const [data, setData] = useState({
-    email: "",
-    password: "",
-  });
+  const [email, setEmail] = useState(""); // Zustand für Email
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
 
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
+    if (name === "email") {
+      setEmail(value);
+    } else if (name === "password") {
+      setPassword(value);
+    }
   };
+
+  useEffect(() => {
+   const saveEmail = localStorage.getItem("email");
+   const savePassword = localStorage.getItem("password");
+    if (saveEmail && savePassword) {
+      setEmail(saveEmail);
+      setPassword(savePassword);
+      setRememberMe(true);
+    }
+  },[]);
   
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if(rememberMe) {
+      localStorage.setItem("email", email);
+      localStorage.setItem("password", password);
+    }else {
+      localStorage.removeItem("email");
+      localStorage.removeItem("password");
+    }
 
     fetch("http://localhost:3000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({email, password}),
     })
       .then((res) => {
         if (!res.ok) {
@@ -55,68 +73,84 @@ export function Login({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="sm:mt-52 mt-28 sm:mb-48 mb-24 flex justify-center items-center px-4 py-8">
-      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
-              Login
-            </h2>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              E-Mail:
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={data.email}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Passwort:
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={data.password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 ml-44"
-          >
-            Login
-          </button>
-          <div>
-          <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
-                <Link to="/passwort-vergessen">passwort vergessen</Link>
-              </button>
-          </div>
-        </form>
-        {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg bg-opacity-70">
+    <form onSubmit={handleSubmit} className="space-y-6">
+    {message && (
+      <div
+        className={`mt-4 p-3 text-white ${
+          message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+        }`}
+      >
+        {message}
       </div>
+    )}
+      <div className="space-y-2">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center text-gray-800">
+          Login
+        </h2>
+        <label
+          htmlFor="email"
+          className="block text-sm font-medium text-gray-700"
+        >
+          E-Mail:
+        </label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          value={email}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+      <div className="space-y-2">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
+          Passwort:
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={password}
+          onChange={handleChange}
+          required
+          className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+      <div className="flex items-center">
+        <input
+          type="checkbox"
+          id="rememberMe"
+          name="rememberMe"
+          checked={rememberMe}
+          onChange={(e) => setRememberMe(e.target.checked)}
+          className="w-4 h-4 text-teal-500 focus:ring-teal-500 border-gray-300 rounded"
+        />
+        <label
+          htmlFor="rememberMe"
+          className="ml-2 block text-sm text-gray-700"
+        >
+          Angemeldet bleiben
+        </label>
+      </div>
+      <button
+        type="submit"
+        className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full"
+      >
+        Login
+      </button>
+      <div>
+        <button className="w-full bg-teal-400 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
+          <Link to="/passwort-vergessen">Passwort vergessen?</Link>
+        </button>
+      </div>
+    </form>
+  </div>
     </div>
   );
 }
