@@ -418,6 +418,7 @@ app.get('/chats', authMiddleware, async (req, res) => {
     const chats = await Chat.find({
       participants: { $in: [userId] },
     }).populate('participants', 'username')
+    .populate('messages.sender', 'username')
       .sort({ updatedAt: -1 });
     res.status(200).json(chats);
   } catch (error) {
@@ -431,8 +432,8 @@ app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
 
   try {
     const chats = await Chat.find({
-      jobId,
-      participants: { $in: [userId] },
+      jobId: mongoose.Types.ObjectId(jobId),
+      participants: { $in: [mongoose.Types.ObjectId(userId)] },
     })
       .populate('participants', 'username') 
       .populate('messages.sender', 'username') 
