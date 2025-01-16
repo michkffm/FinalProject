@@ -412,7 +412,7 @@ app.post('/chats', authMiddleware, async (req, res) => {
   }
 });
 
-aapp.get('/chats', authMiddleware, async (req, res) => {
+app.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
     const chats = await Chat.find({
