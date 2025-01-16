@@ -415,32 +415,21 @@ app.post('/chats', authMiddleware, async (req, res) => {
 app.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
-    const chats = await Chat.find({
-      participants: { $in: [userId] },
-    }).populate('participants', 'username')
+    const chats = await Chat.find({ participants: { $in: [userId] } })
+      .populate('participants', 'username')
+      .populate('messages.sender', 'username')
+      .populate('jobId', 'title')
       .sort({ updatedAt: -1 });
-    res.status(200).json(chats);
+    res.status(200).json({
+      success: true,
+      data: chats,
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
-  }
-});
-
-app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
-  const { jobId } = req.params;
-  const userId = req.user.userId;
-
-  try {
-    const chats = await Chat.find({
-      jobId,
-      participants: { $in: [userId] },
-    })
-      .populate('participants', 'username') 
-      .populate('messages.sender', 'username') 
-      .sort({ updatedAt: -1 }); 
-
-    res.status(200).json(chats);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
+    res.status(500).json({
+      success: false,
+      error: 'Fehler beim Abrufen der Chats',
+      details: error.message,
+    });
   }
 });
 
