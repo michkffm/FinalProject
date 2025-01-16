@@ -6,6 +6,10 @@ export function MessagesPage() {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    fetchMessages();
+  }, [token]);
+
+  const fetchMessages = () => {
     fetch("http://localhost:3000/chats", {
       method: "GET",
       headers: {
@@ -15,41 +19,45 @@ export function MessagesPage() {
       .then((res) => res.json())
       .then((data) => {
         setMessages(data);
+        markAllAsRead(); // Mark all messages as read after fetching
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
         alert("Fehler beim Laden der Nachrichten");
       });
-  }, [token]);
-
-  const handleReplyChange = (e) => {
-    setReplyMessage(e.target.value);
   };
 
-  const handleReplySubmit = (msgId) => {
-    fetch(`http://localhost:3000/chats/${msgId}/reply`, {
-      method: "POST",
+  const markAllAsRead = () => {
+    fetch("http://localhost:3000/chats/read-all", {
+      method: "PATCH",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ message: replyMessage }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        alert("Antwort gesendet");
+      .catch((error) => {
+        console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
+        alert("Fehler beim Markieren der Nachrichten als gelesen");
+      });
+  };
+
+  const handleReplyChange = (event) => {
+    setReplyMessage(event.target.value);
+  };
+
+  const handleReplySubmit = (chatId) => {
+    fetch(`http://localhost:3000/chats/${chatId}/reply`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ content: replyMessage }),
+    })
+      .then((res) => res.json())
+      .then(() => {
         setReplyMessage("");
-        // Nachrichten erneut laden, um die Antwort anzuzeigen
-        fetch("http://localhost:3000/chats", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((res) => res.json())
-          .then((data) => {
-            setMessages(data);
-          });
+        fetchMessages(); // Refresh messages after sending a reply
       })
       .catch((error) => {
         console.error("Fehler beim Senden der Antwort:", error);
@@ -58,18 +66,27 @@ export function MessagesPage() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Nachrichten</h1>
+    <div className="zero-section flex justify-center flex-col px-4 py-8">
+      <h1 className="text-2xl font-bold mt-16 mb-4">Nachrichten</h1>
       {messages.length === 0 ? (
         <div>Keine Nachrichten</div>
       ) : (
-        messages.map((msg) => (
-          <div key={msg._id} className="p-4 border-b">
-            <h3 className="font-bold">Von: {msg.senderId}</h3>
-            <p>{msg.message}</p>
-            <p className="text-sm text-gray-500">
-              Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-            </p>
+        messages.map((chat) => (
+          <div key={chat._id} className="p-4 border-b">
+            {chat.messages.map((msg) => (
+              <div key={msg._id} className="mb-4">
+                <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
+                <div>
+                  {chat.participants.map((participant, index) => (
+                    <p key={index}><strong>Von:</strong> {participant.username}</p>
+                  ))}
+                </div>
+                <p>{msg.content}</p>
+                <p className="text-sm text-gray-500">
+                  Gesendet am: {new Date(msg.createdAt).toLocaleString()}
+                </p>
+              </div>
+            ))}
             <textarea
               value={replyMessage}
               onChange={handleReplyChange}
@@ -77,7 +94,7 @@ export function MessagesPage() {
               placeholder="Antwort schreiben..."
             ></textarea>
             <button
-              onClick={() => handleReplySubmit(msg._id)}
+              onClick={() => handleReplySubmit(chat._id)}
               className="mt-2 text-blue-500 hover:underline"
             >
               Antworten

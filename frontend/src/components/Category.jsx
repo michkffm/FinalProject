@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { JobRatings } from "./JobRatings.jsx";
 
-
 export function Category() {
   const [message, setMessage] = useState("");
   const [token] = useState(localStorage.getItem("token"));
@@ -23,8 +22,7 @@ export function Category() {
     return payload.userId;
   };
   const userId = decodeToken(token);
-  console.log("Benutzer ID:", userId);
-  // Daten abrufen
+
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {
       method: "GET",
@@ -41,9 +39,8 @@ export function Category() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         setData(data);
-        setFilteredData(data); // Anfangs sind alle Daten gefiltert
+        setFilteredData(data);
         setMessage("Kategorie erfolgreich geladen!");
       })
       .catch((error) => {
@@ -55,16 +52,14 @@ export function Category() {
         }
       });
   }, [name]);
-  // Filter anwenden
+
   useEffect(() => {
     let filtered = data;
-    // Nach Name filtern
     if (filters.name) {
       filtered = filtered.filter((job) =>
         job.title.toLowerCase().includes(filters.name.toLowerCase())
       );
     }
-    // Nach Preis filtern
     if (filters.price !== "all") {
       if (filters.price === "low") {
         filtered = filtered.filter((job) => job.price < 50);
@@ -76,7 +71,6 @@ export function Category() {
         filtered = filtered.filter((job) => job.price > 100);
       }
     }
-    // Nach Standort filtern
     if (filters.location) {
       filtered = filtered.filter((job) =>
         job.location.toLowerCase().includes(filters.location.toLowerCase())
@@ -84,10 +78,12 @@ export function Category() {
     }
     setFilteredData(filtered);
   }, [filters, data]);
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
+
   const handleContactChange = (e, jobId) => {
     const { name, value } = e.target;
     setContactMessages((prevMessages) => ({
@@ -98,6 +94,7 @@ export function Category() {
       },
     }));
   };
+
   const handleContactSubmit = (e, jobId) => {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
@@ -121,7 +118,7 @@ export function Category() {
         }
         return res.json();
       })
-      .then((data) => {
+      .then(() => {
         setMessage("Nachricht erfolgreich gesendet!");
         setContactMessages((prevMessages) => ({
           ...prevMessages,
@@ -137,6 +134,7 @@ export function Category() {
         }
       });
   };
+
   const handleDelete = async (jobId) => {
     try {
       const response = await fetch(`http://localhost:3000/jobs/${jobId}`, {
@@ -155,11 +153,23 @@ export function Category() {
       setMessage(err.message || "Fehler beim Löschen des Jobs.");
     }
   };
+
   return (
-       <div className="min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
-      <div className="container mx-auto mt-20">
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
+      <div className="container mx-auto sm:mt-14 mt-10">
+        {/* Message Anzeige */}
+        {/* {message && (
+  <div
+    className={`mt-4 p-3 text-white ${
+      message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+    }`}
+  >
+    {message}
+  </div>
+)} */}
+
+        {/* Filter und Jobanzeigen */}
         <div className="mb-6 flex flex-wrap gap-4">
-          {/* Name Filter */}
           <input
             type="text"
             name="name"
@@ -168,7 +178,6 @@ export function Category() {
             placeholder="Nach Name filtern"
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           />
-          {/* Preis Filter */}
           <select
             name="price"
             value={filters.price}
@@ -180,7 +189,6 @@ export function Category() {
             <option value="medium">50€ - 100€</option>
             <option value="high">Über 100€</option>
           </select>
-          {/* Standort Filter */}
           <input
             type="text"
             name="location"
@@ -190,8 +198,7 @@ export function Category() {
             className="p-2 border border-gray-300 rounded-md shadow-sm"
           />
         </div>
-        {/* Gefilterte Jobs anzeigen */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredData.map((job) => (
             <div
               key={job._id}
@@ -210,7 +217,6 @@ export function Category() {
               <h2 className="text-xl font-bold text-gray-700 mb-2">
                 {job.title}
               </h2>
-              <p>{job.createdBy.username}</p>
               <h3 className="text-sm text-teal-500 font-medium">
                 {job.category}
               </h3>
@@ -226,7 +232,7 @@ export function Category() {
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
               </p>
-              <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2 ml-40">
+              <button className="w-8/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
                 <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
               </button>
               <form

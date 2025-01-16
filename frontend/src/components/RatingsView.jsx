@@ -110,9 +110,9 @@ export function RatingsView() {
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <div className="mt-16 mb-96 p-6 bg-gray-50 rounded-lg shadow-md">
+    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-start">
       {ratings.length > 0 ? (
-        <div>
+        <div className="sm:mt-14 mt-10">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
             Bewertung:
             <span className="text-yellow-500 ml-2">
@@ -136,7 +136,7 @@ export function RatingsView() {
                 {userId === rating.senderId._id && (
                   <div className="flex justify-end relative">
                     <button
-                      className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-2"
+                      className="px-3 py-1 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-7"
                       onClick={() => handleDelete(rating._id)}
                     >
                       <i className="fa-regular fa-trash-can"></i>

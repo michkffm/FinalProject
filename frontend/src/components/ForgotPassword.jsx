@@ -36,32 +36,40 @@ export function ForgotPassword() {
     }
   };
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-semibold mb-6 text-center">Passwort vergessen?</h2>
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-        {message && <p className="text-green-500 text-center mb-4">{message}</p>}
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="email" className="block text-lg font-medium">
-            E-Mail
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg mt-2 focus:outline-none focus:ring-2 focus:ring-teal-500"
-            placeholder="E-Mail eingeben"
-            required
-          />
-          <button
-            type="submit"
-            className="w-full py-3 mt-4 bg-teal-500 text-white rounded-lg hover:bg-teal-600"
-          >
-            Senden
-          </button>
-        </form>
-      </div>
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg w-full max-w-md">
+    <h2 className="text-2xl font-semibold text-center text-teal-600 mb-6">
+      Passwort vergessen?
+    </h2>
+    {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+    {message && <p className="text-green-500 text-center mb-4">{message}</p>}
+    <form onSubmit={handleSubmit}>
+      <label htmlFor="email" className="block text-lg font-medium text-gray-700">
+        E-Mail
+      </label>
+      <input
+        id="email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        className="w-full p-3 border border-gray-300 rounded-md mt-2 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+        placeholder="E-Mail eingeben"
+        required
+      />
+      <button
+        type="submit"
+        className="w-full py-3 mt-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
+      >
+        Senden
+      </button>
+    </form>
+    <p className="text-center text-sm text-gray-600 mt-4">
+      Zurück zur{" "}
+      <a href="/login" className="text-teal-600 hover:underline">
+        Anmeldung
+      </a>
+    </p>
+  </div>
     </div>
   );
 }

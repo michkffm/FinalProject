@@ -12,11 +12,11 @@ import freizeit from "../assets/freizeit.jpeg";
 
 export function HauptCategory() {
   return (
-    <div className="flex flex-col sm:mt-24 mt-40 mb-14">
+    <div className="zero-section min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
       <div>
         <Link to="/jobs" className="flex justify-center">
-          <button className="bg-teal-600 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
-            Dienstleistung hinzufugen
+          <button className="bg-teal-600 text-white p-4 sm:mt-14 mt-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
+            Dienstleistung hinzufügen
           </button>
         </Link>
       </div>

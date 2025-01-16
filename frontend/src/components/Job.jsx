@@ -9,6 +9,7 @@ export function Job({ setIsLoggedIn }) {
     category: "",
     location: "",
     contact: "",
+    username: "",
   });
 
   const [profileData, setProfileData] = useState({
@@ -22,6 +23,22 @@ export function Job({ setIsLoggedIn }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState("");
+
+  useEffect(() => {
+    // Benutzernamen aus dem localStorage abrufen
+    const username = localStorage.getItem("username");
+    if (username) {
+      setData((prevData) => ({
+        ...prevData,
+        username: username, // Setze den Benutzernamen in den State
+      }));
+    } // Abrufen der Kategorie aus localStorage
+    const category = localStorage.getItem("selectedCategory");
+    if (category) {
+      setSelectedCategory(category);
+    }
+  }, []);
 
   useEffect(() => {
     if (!token) {
@@ -146,6 +163,7 @@ export function Job({ setIsLoggedIn }) {
           category: "",
           location: "",
           contact: "",
+          username: "",
         });
 
         // Navigation nach einer Verzögerung
@@ -158,16 +176,29 @@ export function Job({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="sm:mt-0 mt-32 min-h-screen bg-gray-50 flex justify-center items-center px-4 py-8">
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:mt-14 mt-12 items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
         <form className="space-y-6 w-full" onSubmit={handleSubmit}>
-          <h2 className="text-2xl font-bold mb-6 text-center">Dienstleistung erstellen</h2>
+          <h2 className="text-2xl font-bold mb-6 text-center">
+            Dienstleistung erstellen
+          </h2>
 
-          {message && <p className="text-center text-red-500">{message}</p>}
+          {message && (
+            <div
+              className={`mt-4 p-3 text-white ${
+                message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
+              }`}
+            >
+              {message}
+            </div>
+          )}
 
           {/* Titel */}
           <div className="space-y-2">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700"
+            >
               Titel:
             </label>
             <input
@@ -181,9 +212,31 @@ export function Job({ setIsLoggedIn }) {
             />
           </div>
 
+          <div className="space-y-2">
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Benutzername:
+            </label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              value={data.username}
+              onChange={handleChange}
+              placeholder="Benutzername eingeben..."
+              readOnly
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+
           {/* Beschreibung */}
           <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
               Beschreibung:
             </label>
             <textarea
@@ -199,7 +252,10 @@ export function Job({ setIsLoggedIn }) {
 
           {/* Preis */}
           <div className="space-y-2">
-            <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="price"
+              className="block text-sm font-medium text-gray-700"
+            >
               Preis:
             </label>
             <input
@@ -215,7 +271,10 @@ export function Job({ setIsLoggedIn }) {
 
           {/* Kategorie */}
           <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-gray-700"
+            >
               Kategorie:
             </label>
             <select
@@ -230,20 +289,35 @@ export function Job({ setIsLoggedIn }) {
               </option>
               <option value="Beratung">Beratung</option>
               <option value="Bildung und Schulung">Bildung und Schulung</option>
-              <option value="Betreuung und Gesundheit">Betreuung und Gesundheit</option>
-              <option value="Finanzen und Versicherungen">Finanzen und Versicherungen</option>
+              <option value="Betreuung und Gesundheit">
+                Betreuung und Gesundheit
+              </option>
+              <option value="Finanzen und Versicherungen">
+                Finanzen und Versicherungen
+              </option>
               <option value="Technologie und IT">Technologie und IT</option>
-              <option value="Reparatur und Wartung">Reparatur und Wartung</option>
-              <option value="Transport und Logistik">Transport und Logistik</option>
+              <option value="Reparatur und Wartung">
+                Reparatur und Wartung
+              </option>
+              <option value="Transport und Logistik">
+                Transport und Logistik
+              </option>
               <option value="Reinigung und Pflege">Reinigung und Pflege</option>
-              <option value="Bau- und Renovierungsdienste">Bau- und Renovierungsdienste</option>
-              <option value="Freizeit und Unterhaltung">Freizeit und Unterhaltung</option>
+              <option value="Bau- und Renovierungsdienste">
+                Bau- und Renovierungsdienste
+              </option>
+              <option value="Freizeit und Unterhaltung">
+                Freizeit und Unterhaltung
+              </option>
             </select>
           </div>
 
           {/* Standort */}
           <div className="space-y-2">
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="location"
+              className="block text-sm font-medium text-gray-700"
+            >
               Standort:
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
@@ -265,32 +339,34 @@ export function Job({ setIsLoggedIn }) {
               </button>
             </div>
           </div>
-        
 
-  {/* Kontakt */}
-  <div className="space-y-2">
-    <label htmlFor="contact" className="block text-sm font-medium text-gray-700">
-      Kontakt:
-    </label>
-    <input
-      type="text"
-      name="contact"
-      id="contact"
-      value={data.contact}
-      onChange={handleChange}
-      placeholder="Kontaktdaten eingeben..."
-      className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-    />
-  </div>
+          {/* Kontakt */}
+          <div className="space-y-2">
+            <label
+              htmlFor="contact"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Kontakt:
+            </label>
+            <input
+              type="text"
+              name="contact"
+              id="contact"
+              value={data.contact}
+              onChange={handleChange}
+              placeholder="Kontaktdaten eingeben..."
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
 
-  {/* Speichern-Button */}
-  <button
-    type="submit"
-    className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
-  >
-    Speichern
-  </button>
-</form>
+          {/* Speichern-Button */}
+          <button
+            type="submit"
+            className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
+          >
+            Speichern
+          </button>
+        </form>
       </div>
     </div>
   );
