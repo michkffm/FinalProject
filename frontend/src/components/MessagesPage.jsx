@@ -23,7 +23,6 @@ export function MessagesPage() {
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
-        alert("Fehler beim Laden der Nachrichten");
       });
   };
 
@@ -37,7 +36,6 @@ export function MessagesPage() {
       .then((res) => res.json())
       .catch((error) => {
         console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
-        alert("Fehler beim Markieren der Nachrichten als gelesen");
       });
   };
 
@@ -61,7 +59,6 @@ export function MessagesPage() {
       })
       .catch((error) => {
         console.error("Fehler beim Senden der Antwort:", error);
-        alert("Fehler beim Senden der Antwort");
       });
   };
   
