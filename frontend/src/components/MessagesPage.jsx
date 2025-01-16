@@ -23,7 +23,6 @@ export function MessagesPage() {
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
-        alert("Fehler beim Laden der Nachrichten");
       });
   };
 
@@ -37,7 +36,6 @@ export function MessagesPage() {
       .then((res) => res.json())
       .catch((error) => {
         console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
-        alert("Fehler beim Markieren der Nachrichten als gelesen");
       });
   };
 
@@ -61,10 +59,10 @@ export function MessagesPage() {
       })
       .catch((error) => {
         console.error("Fehler beim Senden der Antwort:", error);
-        alert("Fehler beim Senden der Antwort");
       });
   };
-
+  
+  
   return (
     <div className="zero-section flex justify-center flex-col px-4 py-8">
       <h1 className="text-2xl font-bold mt-16 mb-4">Nachrichten</h1>
@@ -72,10 +70,12 @@ export function MessagesPage() {
         <div>Keine Nachrichten</div>
       ) : (
         messages.map((chat) => (
+          console.log(chat),
+          
           <div key={chat._id} className="p-4 border-b">
             {chat.messages.map((msg) => (
               <div key={msg._id} className="mb-4">
-                <h3 className="font-bold">Chat für Job: {chat.jobId}</h3>
+                <h3 className="font-bold">Chat für Job: {chat.title}</h3>
                 <div>
                   {chat.participants.map((participant, index) => (
                     <p key={index}><strong>Von:</strong> {participant.username}</p>

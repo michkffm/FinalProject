@@ -154,6 +154,9 @@ export function Category() {
     }
   };
 
+  console.log(data);
+  
+
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
       <div className="container mx-auto sm:mt-14 mt-10">
@@ -216,6 +219,9 @@ export function Category() {
               </div>
               <h2 className="text-xl font-bold text-gray-700 mb-2">
                 {job.title}
+              </h2>
+              <h2 className="text-xl font-bold text-teal-500 mb-2">
+                {job.username}
               </h2>
               <h3 className="text-sm text-teal-500 font-medium">
                 {job.category}

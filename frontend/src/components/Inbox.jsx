@@ -15,11 +15,12 @@ export function Inbox() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUnreadCount(data.filter((msg) => !msg.read).length);
+        setUnreadCount(data.reduce((count, chat) => {
+          return count + chat.messages.filter((msg) => !msg.read).length;
+        }, 0));
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
-        alert("Fehler beim Laden der Nachrichten");
       });
   };
 
@@ -50,7 +51,6 @@ export function Inbox() {
       })
       .catch((error) => {
         console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
-        alert("Fehler beim Markieren der Nachrichten als gelesen");
       });
   };
 
