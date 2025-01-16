@@ -39,9 +39,7 @@ export function Inbox() {
       </button>
     </div>
   );
-}
-11:57 Uhr
-import { useState, useEffect } from "react";
+};
 
 export function MessagesPage() {
   const [messages, setMessages] = useState([]);
