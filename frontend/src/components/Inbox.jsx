@@ -15,11 +15,12 @@ export function Inbox() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUnreadCount(data.filter((msg) => !msg.read).length);
+        setUnreadCount(data.reduce((count, chat) => {
+          return count + chat.messages.filter((msg) => !msg.read).length;
+        }, 0));
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
-        alert("Fehler beim Laden der Nachrichten");
       });
   };
 
@@ -50,16 +51,17 @@ export function Inbox() {
       })
       .catch((error) => {
         console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
-        alert("Fehler beim Markieren der Nachrichten als gelesen");
       });
   };
 
   return (
     <div className="relative">
-      <button onClick={handleNavigate} className="flex flex-col sm:flex-row items-center">
-        <span className="flex flex-col sm:flex-row items-center gap-1 hover:underline"><i className="fa-solid fa-comments"></i>Nachrichten</span>
+      <button onClick={handleNavigate} className="relative">
+        <i className="fa-solid fa-envelope">
+          <span className="flex flex-col sm:flex-row items-center gap-1 font-sans hover:underline">Nachrichten</span>
+        </i>
         {unreadCount > 0 && (
-          <span className="bg-red-600 text-white font-bold rounded-full px-2">
+          <span className="absolute top-0 right-0 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}
           </span>
         )}
