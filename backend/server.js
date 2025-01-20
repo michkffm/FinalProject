@@ -1,10 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
-import User from './models/User.js';
-import Job from './models/Job.js';
-import Rating from './models/Rating.js';
-import Chat from './models/Chat.js';
-import cors from 'cors';
+import User from "./models/User.js";
+import Job from "./models/Job.js";
+import Rating from "./models/Rating.js";
+import Chat from "./models/Chat.js";
+import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
@@ -14,66 +14,61 @@ import crypto from "crypto";
 await mongoose.connect(process.env.DB_URI);
 
 const app = express();
-const port = process.env.PORT
+const port = process.env.PORT;
 const resend = new Resend("re_KyqmAF3D_85kbs7wN1vf1iNrVuM85NEyL");
 
-
-app.use(cors())
+app.use(cors());
 
 app.use(express.json());
 
 app.post("/register", async (req, res) => {
-    const { username, email, password } = req.body;
-  
-    if (!email || !password || !username) {
-      return res.status(400).json({error: 'Invalid registration'});
-    }
-  
-    try {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const user = await User.create({
-        username,
-        email,
-        password: hashedPassword,
-      })
-  
-  
-      res.status(201).json(user);
-    } catch (error) {
-      res.status(500).json({error: error.message})
-    }
-    
-  })
+  const { username, email, password } = req.body;
 
-  app.post("/login", async (req, res) => {
-    const { email, password } = req.body;
+  if (!email || !password || !username) {
+    return res.status(400).json({ error: "Invalid registration" });
+  }
 
-    if (!email || !password) {
-        return res.status(400).json({ error: 'Invalid login' });
-    }
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
 
-    try {
-        const user = await User.findOne({ email: email });
-        if (!user) {
-            return res.status(401).json({ error: 'User not found' });
-        }
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
-        const isValidPassword = await bcrypt.compare(password, user.password);
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-        if (!isValidPassword) {
-            return res.status(401).json({ error: 'Invalid credentials' });
-        }
+  if (!email || !password) {
+    return res.status(400).json({ error: "Invalid login" });
+  }
 
-        const payload = { userId: user._id };
-        const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-
-        res.json({ user: user, token: token });
-
-    } catch (error) {
-        res.status(500).json({ error: error.message });
+  try {
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(401).json({ error: "User not found" });
     }
 
-})
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(401).json({ error: "Invalid credentials" });
+    }
+
+    const payload = { userId: user._id };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+
+    res.json({ user: user, token: token });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.patch("/users/profile", authMiddleware, async (req, res) => {
   const { role, profession, location, description, profilePhoto } = req.body;
@@ -102,12 +97,15 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    res.status(200).json({ message: "Profile updated successfully", updatedUser });
+    res
+      .status(200)
+      .json({ message: "Profile updated successfully", updatedUser });
   } catch (error) {
-    res.status(500).json({ error: "Failed to update profile", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to update profile", details: error.message });
   }
 });
-
 
 app.get("/users/profile", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
@@ -127,36 +125,53 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch user profile", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch user profile", details: error.message });
   }
 });
 
-
 // neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
-  const { title, description, category, price, location, contact,username } = req.body;
+  const { title, description, category, price, location, contact, username } =
+    req.body;
   const userId = req.user.userId;
 
   try {
-    const job = new Job({ title, description, category, price, location, contact,username, createdBy: userId });
+    const job = new Job({
+      title,
+      description,
+      category,
+      price,
+      location,
+      contact,
+      username,
+      createdBy: userId,
+    });
     await job.save();
 
-    const addUsername = await Job.findById(job._id).populate('createdBy', 'username');
+    const addUsername = await Job.findById(job._id).populate(
+      "createdBy",
+      "username"
+    );
 
-    const testPopulate = await Job.findById(job._id).populate('createdBy', 'username');
+    const testPopulate = await Job.findById(job._id).populate(
+      "createdBy",
+      "username"
+    );
 
     console.log(testPopulate.createdBy);
 
-    res.status(201).json({ message: "Job posted successfully", job: addUsername });
-
+    res
+      .status(201)
+      .json({ message: "Job posted successfully", job: addUsername });
   } catch (error) {
     console.log(error);
-      res.status(500).json({ error: "Failed to post job" });
+    res.status(500).json({ error: "Failed to post job" });
   }
+});
 
-})
-
-app.get('/jobs', async (req, res) => {
+app.get("/jobs", async (req, res) => {
   const { category } = req.query;
 
   const allowedCategories = [
@@ -169,42 +184,39 @@ app.get('/jobs', async (req, res) => {
     "Transport und Logistik",
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
-    "Freizeit und Unterhaltung"
+    "Freizeit und Unterhaltung",
   ];
 
   try {
     let query = {};
 
-    
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
 
     const jobs = await Job.find(query)
-    .populate('createdBy', 'username')
-    .sort({ createdAt: -1 });
+      .populate("createdBy", "username")
+      .sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch jobs' });
+    res.status(500).json({ error: "Failed to fetch jobs" });
   }
 });
-
-
-app.get('/search/jobs', async (req, res) => {
+app.get("/search/jobs", async (req, res) => {
   const { category, query, price, location } = req.query;
-  app.delete('/jobs/:id', async (req, res) => {
+  app.delete("/jobs/:id", async (req, res) => {
     const { id } = req.params;
-  
+
     try {
-        const job = await Job.findByIdAndDelete(id);
-  
-        if (!job) {
-            return res.status(404).json({ error: 'Job not found' });
-        }
-  
-        res.status(200).json({ message: 'Job deleted successfully' });
+      const job = await Job.findByIdAndDelete(id);
+
+      if (!job) {
+        return res.status(404).json({ error: "Job not found" });
+      }
+
+      res.status(200).json({ message: "Job deleted successfully" });
     } catch (error) {
-        res.status(500).json({ error: 'Failed to delete job' });
+      res.status(500).json({ error: "Failed to delete job" });
     }
   });
   const allowedCategories = [
@@ -217,7 +229,7 @@ app.get('/search/jobs', async (req, res) => {
     "Transport und Logistik",
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
-    "Freizeit und Unterhaltung"
+    "Freizeit und Unterhaltung",
   ];
 
   try {
@@ -230,97 +242,103 @@ app.get('/search/jobs', async (req, res) => {
 
     // Filter nach Suchbegriff (Titel oder Beschreibung)
     if (query) {
-      const regex = new RegExp(query, 'i');
+      const regex = new RegExp(query, "i");
       filter.$or = [
         { title: { $regex: regex } },
-        { description: { $regex: regex } }
+        { description: { $regex: regex } },
       ];
     }
 
     // Filter nach Preis, wenn angegeben
     if (price) {
-      const priceRange = price.split('-'); // Beispiel: '50-200'
+      const priceRange = price.split("-"); // Beispiel: '50-200'
       if (priceRange.length === 2) {
-        filter.price = { $gte: parseInt(priceRange[0]), $lte: parseInt(priceRange[1]) };
+        filter.price = {
+          $gte: parseInt(priceRange[0]),
+          $lte: parseInt(priceRange[1]),
+        };
       }
     }
 
     // Filter nach Standort, wenn angegeben
     if (location) {
-      filter.location = { $regex: new RegExp(location, 'i') };  // Case insensitive Suche
+      filter.location = { $regex: new RegExp(location, "i") }; // Case insensitive Suche
     }
 
     const jobs = await Job.find(filter).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to search jobs', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to search jobs", details: error.message });
   }
 });
 
-
-app.delete('/jobs/:id',authMiddleware, async (req, res) => {
+app.delete("/jobs/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
   try {
-      const job = await Job.findByIdAndDelete(id);
-      if (!job) {
-          return res.status(404).json({ error: 'Job not found' });
-      }
-      if (job.createdBy.toString() !== userId) {
-        return res.status(403).json({ error: "Keine Berechtigung, diesen Job zu löschen." });
-      }
-      res.status(200).json({ message: 'Job deleted successfully' });
+    const job = await Job.findByIdAndDelete(id);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+    if (job.createdBy.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ error: "Keine Berechtigung, diesen Job zu löschen." });
+    }
+    res.status(200).json({ message: "Job deleted successfully" });
   } catch (error) {
-      res.status(500).json({ error: 'Failed to delete job' });
+    res.status(500).json({ error: "Failed to delete job" });
   }
 });
 
-app.put('/jobs/:id', async (req, res) => {
+app.put("/jobs/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-      const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
+    const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
 
-      if (!job) {
-          return res.status(404).json({ error: 'Job not found' });
-      }
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
 
-      res.status(200).json(job);
+    res.status(200).json(job);
   } catch (error) {
-      res.status(500).json({ error: 'Failed to update job' });
+    res.status(500).json({ error: "Failed to update job" });
   }
 });
 
-app.get('/users/:id',authMiddleware, async (req, res) => {
+app.get("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   try {
-      const user = await User.findById(id);
+    const user = await User.findById(id);
 
-      if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-      }
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-      res.status(200).json(user);
+    res.status(200).json(user);
   } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch user' });
+    res.status(500).json({ error: "Failed to fetch user" });
   }
 });
 
-app.patch('/users/:id',authMiddleware, async (req, res) => {
+app.patch("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
 
   try {
-      const user = await User.findByIdAndUpdate(id, updates, { new: true });
+    const user = await User.findByIdAndUpdate(id, updates, { new: true });
 
-      if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-      }
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-      res.status(200).json(user);
+    res.status(200).json(user);
   } catch (error) {
-      res.status(500).json({ error: 'Failed to update user' });
+    res.status(500).json({ error: "Failed to update user" });
   }
 });
 
@@ -344,12 +362,14 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
 
   try {
     const ratings = await Rating.find({ jobId })
-    .populate("senderId", "username")
-    .sort({ createdAt: 1 });
+      .populate("senderId", "username")
+      .sort({ createdAt: 1 });
 
     res.status(200).json(ratings);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch ratings", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch ratings", details: error.message });
   }
 });
 
@@ -367,39 +387,36 @@ app.post("/ratings", authMiddleware, async (req, res) => {
 
     res.status(201).json({ message: "Rating added successfully", newRating });
   } catch (error) {
-    res.status(500).json({ error: "Failed to add rating", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to add rating", details: error.message });
   }
 });
 
-app.delete('/ratings/:id',authMiddleware, async (req, res) => {
+app.delete("/ratings/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
   try {
-      const rating = await Rating.findByIdAndDelete(id);
-      if (!rating) {
-          return res.status(404).json({ error: 'Rating not found' });
-      }
-      if (rating.senderId.toString() !== userId) {
-        return res.status(403).json({ error: "Keine Berechtigung, diese Bewertung zu löschen." });
-      }
-      res.status(200).json({ message: 'Rating deleted successfully' });
+    const rating = await Rating.findByIdAndDelete(id);
+    if (!rating) {
+      return res.status(404).json({ error: "Rating not found" });
+    }
+    if (rating.senderId.toString() !== userId) {
+      return res
+        .status(403)
+        .json({ error: "Keine Berechtigung, diese Bewertung zu löschen." });
+    }
+    res.status(200).json({ message: "Rating deleted successfully" });
   } catch (error) {
-      res.status(500).json({ error: 'Failed to delete rating' });
+    res.status(500).json({ error: "Failed to delete rating" });
   }
 });
 
-app.post('/chats', authMiddleware, async (req, res) => {
-  const { message, jobId } = req.body;
+app.post("/chats", authMiddleware, async (req, res) => {
+  const { recipientId, message, jobId } = req.body;
   const senderId = req.user.userId;
 
   try {
-
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ error: "Job not found" });
-    }
-    const recipientId = job.createdBy;
-
     let chat = await Chat.findOne({
       jobId,
       participants: { $all: [senderId, recipientId] },
@@ -418,17 +435,19 @@ app.post('/chats', authMiddleware, async (req, res) => {
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to send message', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to send message", details: error.message });
   }
 });
 
-app.get('/chats', authMiddleware, async (req, res) => {
+app.get("/chats", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
     const chats = await Chat.find({ participants: { $in: [userId] } })
-      .populate('participants', 'username')
-      .populate('messages.sender', 'username')
-      .populate('jobId', 'title')
+      .populate("participants", "username")
+      .populate("messages.sender", "username")
+      .populate("jobId", "title")
       .sort({ updatedAt: -1 });
     res.status(200).json({
       success: true,
@@ -437,14 +456,14 @@ app.get('/chats', authMiddleware, async (req, res) => {
   } catch (error) {
     res.status(500).json({
       success: false,
-      error: 'Fehler beim Abrufen der Chats',
+      error: "Fehler beim Abrufen der Chats",
       details: error.message,
     });
   }
 });
 
-app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
-  const { jobId } = req.params; 
+app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
+  const { jobId } = req.params;
   const userId = req.user.userId;
 
   try {
@@ -452,39 +471,47 @@ app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
       jobId,
       participants: { $in: [userId] },
     })
-      .populate('participants', 'username') 
-      .populate('messages.sender', 'username') 
+      .populate("participants", "username")
+      .populate("messages.sender", "username")
       .sort({ updatedAt: -1 });
 
     res.status(200).json(chats);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
+    res
+      .status(500)
+      .json({ error: "Failed to fetch chats", details: error.message });
   }
 });
 
-app.patch('/chats/:chatId/messages/:messageId', authMiddleware, async (req, res) => {
-  const { chatId, messageId } = req.params;
+app.patch(
+  "/chats/:chatId/messages/:messageId",
+  authMiddleware,
+  async (req, res) => {
+    const { chatId, messageId } = req.params;
 
-  try {
-    const chat = await Chat.findById(chatId);
+    try {
+      const chat = await Chat.findById(chatId);
 
-    if (!chat) {
-      return res.status(404).json({ error: 'Chat not found' });
+      if (!chat) {
+        return res.status(404).json({ error: "Chat not found" });
+      }
+
+      const message = chat.messages.id(messageId);
+      if (!message) {
+        return res.status(404).json({ error: "Message not found" });
+      }
+
+      message.read = true;
+      await chat.save();
+
+      res.status(200).json({ success: true, message });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ error: "Failed to update message", details: error.message });
     }
-
-    const message = chat.messages.id(messageId);
-    if (!message) {
-      return res.status(404).json({ error: 'Message not found' });
-    }
-
-    message.read = true;
-    await chat.save();
-
-    res.status(200).json({ success: true, message });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to update message', details: error.message });
   }
-});
+);
 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
@@ -529,7 +556,7 @@ app.post("/forgot-password", async (req, res) => {
         </div>
       `,
     });
-    
+
     res.status(200).json({
       message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
     });
@@ -554,7 +581,9 @@ app.post("/reset-password/:token", async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() }, // Token muss noch gültig sein
     });
     if (!user) {
-      return res.status(400).json({ error: "Ungültiger oder abgelaufener Token." });
+      return res
+        .status(400)
+        .json({ error: "Ungültiger oder abgelaufener Token." });
     }
     // Neues Passwort setzen
     user.password = await bcrypt.hash(password, 10); // Passwort-Hashing
@@ -575,7 +604,9 @@ app.get("/reset-password/:token", async (req, res) => {
       resetPasswordExpires: { $gt: Date.now() }, // Token muss gültig sein
     });
     if (!user) {
-      return res.status(400).json({ error: "Ungültiger oder abgelaufener Token." });
+      return res
+        .status(400)
+        .json({ error: "Ungültiger oder abgelaufener Token." });
     }
     res.status(200).json({ message: "Token ist gültig" });
   } catch (error) {
@@ -583,6 +614,5 @@ app.get("/reset-password/:token", async (req, res) => {
     res.status(500).json({ error: "Interner Serverfehler" });
   }
 });
-
 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
