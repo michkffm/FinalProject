@@ -23,7 +23,7 @@ export function Category() {
     return payload.userId;
   };
   const userId = decodeToken(token);
-  console.log("username",username);
+  console.log("username", username);
 
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {
@@ -42,7 +42,7 @@ export function Category() {
       })
       .then((data) => {
         console.log(data);
-        
+
         setData(data);
         setFilteredData(data);
         setMessage("Kategorie erfolgreich geladen!");
@@ -188,8 +188,7 @@ export function Category() {
             name="price"
             value={filters.price}
             onChange={handleFilterChange}
-            className="p-2 border border-gray-300 rounded-md shadow-sm"
-          >
+            className="p-2 border border-gray-300 rounded-md shadow-sm">
             <option value="all">Alle Preise</option>
             <option value="low">Unter 50€</option>
             <option value="medium">50€ - 100€</option>
@@ -208,14 +207,12 @@ export function Category() {
           {filteredData.map((job) => (
             <div
               key={job._id}
-              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
-            >
+              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow">
               <div className="flex justify-end relative">
                 {job.createdBy && username === job.createdBy.username && (
                   <button
                     className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute"
-                    onClick={() => handleDelete(job._id)}
-                  >
+                    onClick={() => handleDelete(job._id)}>
                     <i className="fa-regular fa-trash-can"></i>
                   </button>
                 )}
@@ -252,29 +249,30 @@ export function Category() {
                 Preis: {job.price}€
               </p>
               <div className="flex justify-between mt-2">
-              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
-                <Link to={`/ratings/${job._id}`}>Bewerten</Link>
-              </button>
-              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
-                <Link to={`/PaymentMethods/${job._id}`}>Buchen</Link>
-              </button>
+                <Link to={`/ratings/${job._id}`} className="w-5/12">
+                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                    Bewerten
+                    </button>
+                </Link>
+                <Link to={`/PaymentMethods/${job._id}`} className="w-5/12">
+                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                    Buchen
+                  </button>
+                </Link>
               </div>
               <form
                 onSubmit={(e) => handleContactSubmit(e, job._id)}
-                className="mt-4"
-              >
+                className="mt-4">
                 <textarea
                   name="message"
                   value={contactMessages[job._id]?.message || ""}
                   onChange={(e) => handleContactChange(e, job._id)}
                   rows="3"
                   className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Gib hier deine Nachricht ein..."
-                ></textarea>
+                  placeholder="Gib hier deine Nachricht ein..."></textarea>
                 <button
                   type="submit"
-                  className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2"
-                >
+                  className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
                   Nachricht senden
                 </button>
               </form>

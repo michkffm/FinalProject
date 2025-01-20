@@ -128,12 +128,13 @@ export function RatingsView() {
               >
                 <div className="flex items-center mb-2">
                   <strong className="text-gray-700 mr-2">
-                    {rating.senderId.username}
+                    {rating.senderId ? rating.senderId.username : "Unbekannt"}
                   </strong>
                   <span>{renderStars(rating.rating)}</span>
                 </div>
+
                 <p className="text-gray-600 text-sm">{rating.content}</p>
-                {userId === rating.senderId._id && (
+                {rating.senderId && userId === rating.senderId._id && (
                   <div className="flex justify-end relative">
                     <button
                       className="px-3 py-1 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-7"

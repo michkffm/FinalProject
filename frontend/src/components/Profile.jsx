@@ -198,7 +198,9 @@ export function Profile() {
       })
       .then(() => {
         setMessage("Profil erfolgreich gelöscht.");
-        navigate("/register");
+        setTimeout(() => {
+          navigate("/register");
+        }, 2000);
       })
       .catch((error) => {
         setMessage("Fehler beim Löschen des Profils: " + error.message);
