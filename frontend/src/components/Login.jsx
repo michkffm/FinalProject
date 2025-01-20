@@ -5,7 +5,6 @@ export function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState(""); // Zustand für Email
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
-
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -17,6 +16,7 @@ export function Login({ setIsLoggedIn }) {
       setPassword(value);
     }
   };
+
 
   useEffect(() => {
    const saveEmail = localStorage.getItem("email");
@@ -58,7 +58,9 @@ export function Login({ setIsLoggedIn }) {
       .then((data) => {
         setMessage("Login erfolgreich!");
         localStorage.setItem("token", data.token);
-        localStorage.setItem("username", data.username);
+        localStorage.setItem("username", data.user.username);
+        console.log(data.user.username);
+        
         setIsLoggedIn(true);
         console.log("Login erfolgreich", data);
       
