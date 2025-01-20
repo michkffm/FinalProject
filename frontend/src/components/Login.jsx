@@ -58,6 +58,7 @@ export function Login({ setIsLoggedIn }) {
       .then((data) => {
         setMessage("Login erfolgreich!");
         localStorage.setItem("token", data.token);
+        localStorage.setItem("username", data.username);
         setIsLoggedIn(true);
         console.log("Login erfolgreich", data);
       

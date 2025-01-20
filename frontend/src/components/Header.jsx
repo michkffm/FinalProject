@@ -8,7 +8,8 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
 
   const handleLogout = () => {
     setIsLoggedIn(false);
-    localStorage.removeItem("token"); // Token beim Ausloggen entfernen
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
   };
 
   const toggleMenu = () => {
