@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 
 export function MessagesPage() {
   const [messages, setMessages] = useState([]);
-  const [replyMessage, setReplyMessage] = useState("");
+  const [replyMessages, setReplyMessages] = useState({});
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -17,33 +17,27 @@ export function MessagesPage() {
       },
     })
       .then((res) => res.json())
-      .then((data) => {
-        setMessages(data.data || []);
-        markAllAsRead(); // Mark all messages as read after fetching
+      .then((response) => {
+        if (response.success && Array.isArray(response.data)) {
+          setMessages(response.data);
+        } else {
+          console.error("Fehler beim Laden der Nachrichten: Daten sind kein Array", response);
+        }
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
       });
   };
 
-  const markAllAsRead = () => {
-    fetch("http://localhost:3000/chats/read-all", {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => res.json())
-      .catch((error) => {
-        console.error("Fehler beim Markieren der Nachrichten als gelesen:", error);
-      });
-  };
-
-  const handleReplyChange = (event) => {
-    setReplyMessage(event.target.value);
+  const handleReplyChange = (chatId, event) => {
+    setReplyMessages({
+      ...replyMessages,
+      [chatId]: event.target.value,
+    });
   };
 
   const handleReplySubmit = (chatId) => {
+    const replyMessage = replyMessages[chatId];
     fetch(`http://localhost:3000/chats/${chatId}/reply`, {
       method: "POST",
       headers: {
@@ -54,7 +48,10 @@ export function MessagesPage() {
     })
       .then((res) => res.json())
       .then(() => {
-        setReplyMessage("");
+        setReplyMessages({
+          ...replyMessages,
+          [chatId]: "",
+        });
         fetchMessages(); // Refresh messages after sending a reply
       })
       .catch((error) => {
@@ -68,9 +65,9 @@ export function MessagesPage() {
       {Array.isArray(messages) && messages.length > 0 ? (
         messages.map((chat) => (
           <div key={chat._id} className="p-4 border-b">
+            <h3 className="font-bold">Chat für Job: {chat.jobId?.title || "Unbekannt"}</h3>
             {chat.messages.map((msg) => (
               <div key={msg._id} className="mb-4">
-                <h3 className="font-bold">Chat für Job: {chat.jobId?.title || "Unbekannt"}</h3>
                 <div>
                   {chat.participants.map((participant, index) => (
                     <p key={index}>
@@ -85,8 +82,8 @@ export function MessagesPage() {
               </div>
             ))}
             <textarea
-              value={replyMessage}
-              onChange={handleReplyChange}
+              value={replyMessages[chat._id] || ""}
+              onChange={(e) => handleReplyChange(chat._id, e)}
               className="w-full p-2 border rounded mt-2"
               placeholder="Antwort schreiben..."
             ></textarea>

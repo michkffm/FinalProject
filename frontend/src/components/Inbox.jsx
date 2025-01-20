@@ -15,9 +15,13 @@ export function Inbox() {
     })
       .then((res) => res.json())
       .then((data) => {
-        setUnreadCount(data.reduce((count, chat) => {
-          return count + chat.messages.filter((msg) => !msg.read).length;
-        }, 0));
+        if (Array.isArray(data)) {
+          setUnreadCount(data.reduce((count, chat) => {
+            return count + chat.messages.filter((msg) => !msg.read).length;
+          }, 0));
+        } else {
+          console.error("Fehler beim Laden der Nachrichten: Daten sind kein Array", data);
+        }
       })
       .catch((error) => {
         console.error("Fehler beim Laden der Nachrichten:", error);
@@ -57,9 +61,9 @@ export function Inbox() {
   return (
     <div className="relative">
       <button onClick={handleNavigate} className="flex flex-col sm:flex-row items-center">
-        <span className="flex flex-col sm:flex-row items-center gap-1 hover:underline"><i className="fa-solid fa-comments"></i>Nachrichten</span>
+        <span className="text-lg font-bold">Inbox</span>
         {unreadCount > 0 && (
-          <span className="bg-red-600 text-white font-bold rounded-full px-2">
+          <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}
           </span>
         )}
