@@ -14,6 +14,7 @@ const chatSchema = new mongoose.Schema({
   messages: [{
     content: { type: String, required: true },
     sender: { type: mongoose.ObjectId, ref: "User", required: true },
+    read: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
   }],
 }, { timestamps: true });
