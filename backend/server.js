@@ -180,12 +180,16 @@ app.get('/jobs', async (req, res) => {
       query = { category };
     }
 
-    const jobs = await Job.find(query).sort({ createdAt: -1 });
+    const jobs = await Job.find(query)
+    .populate('createdBy', 'username')
+    .sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
+
+
 app.get('/search/jobs', async (req, res) => {
   const { category, query, price, location } = req.query;
   app.delete('/jobs/:id', async (req, res) => {
