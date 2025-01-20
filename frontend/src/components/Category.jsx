@@ -23,7 +23,7 @@ export function Category() {
     return payload.userId;
   };
   const userId = decodeToken(token);
-  console.log(username);
+  console.log("username",username);
 
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {
@@ -41,6 +41,8 @@ export function Category() {
         return res.json();
       })
       .then((data) => {
+        console.log(data);
+        
         setData(data);
         setFilteredData(data);
         setMessage("Kategorie erfolgreich geladen!");
@@ -156,7 +158,7 @@ export function Category() {
     }
   };
 
-  console.log(data);
+  console.log(userId);
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
@@ -209,7 +211,7 @@ export function Category() {
               className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex justify-end relative">
-                {userId === job.createdBy && (
+                {job.createdBy && username === job.createdBy.username && (
                   <button
                     className="px-4 py-2 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute"
                     onClick={() => handleDelete(job._id)}
@@ -218,17 +220,18 @@ export function Category() {
                   </button>
                 )}
               </div>
+
               <h2 className="text-xl font-bold text-gray-700 mb-2">
                 {job.title}
               </h2>
               <div>
                 {job.createdBy && job.createdBy.username ? (
                   <p className="text-xl font-bold text-teal-500 mb-2">
-                     {job.createdBy.username}
+                    {job.createdBy.username}
                   </p>
                 ) : (
                   <p className="text-xl font-bold text-teal-500 mb-2">
-                     Unbekannter Ersteller
+                    Unbekannter Ersteller
                   </p>
                 )}
               </div>
@@ -248,9 +251,14 @@ export function Category() {
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
               </p>
-              <button className="w-8/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
-                <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
+              <div className="flex justify-between mt-2">
+              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                <Link to={`/ratings/${job._id}`}>Bewerten</Link>
               </button>
+              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                <Link to={`/PaymentMethods/${job._id}`}>Buchen</Link>
+              </button>
+              </div>
               <form
                 onSubmit={(e) => handleContactSubmit(e, job._id)}
                 className="mt-4"
