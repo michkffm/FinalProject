@@ -399,9 +399,8 @@ app.post('/chats', authMiddleware, async (req, res) => {
     if (!job) {
       return res.status(404).json({ error: "Job not found" });
     }
-
     const recipientId = job.createdBy;
-    
+
     let chat = await Chat.findOne({
       jobId,
       participants: { $all: [senderId, recipientId] },
