@@ -143,7 +143,7 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 
     const addUsername = await Job.findById(job._id).populate('createdBy', 'username');
 
-    const testPopulate = await Job.findById(job._id).populate('createdBy');
+    const testPopulate = await Job.findById(job._id).populate('createdBy', 'username');
 
     console.log(testPopulate.createdBy);
 
@@ -415,44 +415,64 @@ app.post('/chats', authMiddleware, async (req, res) => {
 app.get('/chats', authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
-    const chats = await Chat.find({
-      participants: { $in: [userId] },
-<<<<<<< HEAD
-<<<<<<< HEAD
-    }).populate('participants', 'username')
-    .populate('messages.sender', 'username')
-=======
-    })
+    const chats = await Chat.find({ participants: { $in: [userId] } })
       .populate('participants', 'username')
       .populate('messages.sender', 'username')
       .populate('jobId', 'title')
->>>>>>> 148de1ae1dd9fa2e0f3b43e5ae3ecb0764c42ec1
-=======
-    }).populate('participants', 'username')
->>>>>>> c7546149ab8625e683c6671492ed68e2aae642ca
       .sort({ updatedAt: -1 });
+    res.status(200).json({
+      success: true,
+      data: chats,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: 'Fehler beim Abrufen der Chats',
+      details: error.message,
+    });
+  }
+});
+
+app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
+  const { jobId } = req.params; 
+  const userId = req.user.userId;
+
+  try {
+    const chats = await Chat.find({
+      jobId,
+      participants: { $in: [userId] },
+    })
+      .populate('participants', 'username') 
+      .populate('messages.sender', 'username') 
+      .sort({ updatedAt: -1 });
+
     res.status(200).json(chats);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
   }
 });
 
-app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
-  const { jobId } = req.params;
-  const userId = req.user.userId;
+app.patch('/chats/:chatId/messages/:messageId', authMiddleware, async (req, res) => {
+  const { chatId, messageId } = req.params;
 
   try {
-    const chats = await Chat.find({
-      jobId: mongoose.Types.ObjectId(jobId),
-      participants: { $in: [mongoose.Types.ObjectId(userId)] },
-    })
-      .populate('participants', 'username') 
-      .populate('messages.sender', 'username') 
-      .sort({ updatedAt: -1 }); 
+    const chat = await Chat.findById(chatId);
 
-    res.status(200).json(chats);
+    if (!chat) {
+      return res.status(404).json({ error: 'Chat not found' });
+    }
+
+    const message = chat.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({ error: 'Message not found' });
+    }
+
+    message.read = true;
+    await chat.save();
+
+    res.status(200).json({ success: true, message });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch chats', details: error.message });
+    res.status(500).json({ error: 'Failed to update message', details: error.message });
   }
 });
 
