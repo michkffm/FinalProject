@@ -324,19 +324,18 @@ app.patch('/users/:id',authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/users/:id', async (req, res) => {
+app.delete('/users/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
-
+  const userId = req.user.userId;
   try {
-      const user = await User.findByIdAndDelete(id);
-
-      if (!user) {
-          return res.status(404).json({ error: 'User not found' });
-      }
-
-      res.status(200).json({ message: 'User deleted successfully' });
+    await Job.deleteMany({ createdBy: userId });
+    const user = await User.findByIdAndDelete(id);
+    if (!user) {
+      return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+    }
+    res.status(200).json({ message: 'Benutzer und alle zugehörigen Jobs wurden erfolgreich gelöscht' });
   } catch (error) {
-      res.status(500).json({ error: 'Failed to delete user' });
+    res.status(500).json({ error: 'Fehler beim Löschen des Benutzers und der Jobs' });
   }
 });
 
