@@ -75,7 +75,7 @@ export function JobRatings({ jobId }) {
             Bewertung: {averageRating.toFixed(1)}{" "}
             {renderStars(averageRating)}
           </p>
-            <button className="w-6/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2" onClick={handleLoadMore}>
+            <button className="text-teal-300 rounded hover:text-teal-500 transition-colors" onClick={handleLoadMore}>
               <Link to={`/ratingsView/${jobId}`}> Mehr laden...</Link>
             </button>
         </div>

@@ -23,6 +23,7 @@ import { ForgotPassword } from "./components/ForgotPassword.jsx";
 import { ResetPassword } from "./components/ResetPassword.jsx";
 import { Help } from "./components/Help.jsx";
 import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die neue Nachrichten-Seite
+import { PaymentMethods } from "./components/PaymentMethods.jsx"; // hinzugefügt von Bilal
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -45,6 +46,7 @@ function App() {
           <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/categorie/:name" element={<Category />} />
+          <Route path="/payment/:jobId" element={<PaymentMethods />} /> {/* hinzugefügt von Bilal */}
           <Route path="/hauptCategorie" element={<HauptCategory />} />
           <Route path="/jobs" element={<Job/>} />
           <Route path="/ratings/:jobId" element={<Ratings/>} />
