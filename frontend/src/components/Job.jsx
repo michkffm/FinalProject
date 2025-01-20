@@ -212,25 +212,6 @@ export function Job({ setIsLoggedIn }) {
             />
           </div>
 
-          <div className="space-y-2">
-            <label
-              htmlFor="title"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Benutzername:
-            </label>
-            <input
-              type="text"
-              id="username"
-              name="username"
-              value={data.username}
-              onChange={handleChange}
-              placeholder="Benutzername eingeben..."
-              readOnly
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
           {/* Beschreibung */}
           <div className="space-y-2">
             <label
