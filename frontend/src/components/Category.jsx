@@ -237,9 +237,14 @@ export function Category() {
               <p className="text-lg font-semibold text-teal-600 mt-3">
                 Preis: {job.price}€
               </p>
-              <button className="w-8/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
-                <Link to={`/ratings/${job._id}`}>Bewertung abgeben</Link>
+              <div className="flex justify-between mt-2">
+              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                <Link to={`/ratings/${job._id}`}>Bewerten</Link>
               </button>
+              <button className="w-5/12 bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                <Link to={`/PaymentMethods/${job._id}`}>Buchen</Link>
+              </button>
+              </div>
               <form
                 onSubmit={(e) => handleContactSubmit(e, job._id)}
                 className="mt-4"
