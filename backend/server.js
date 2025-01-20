@@ -390,10 +390,18 @@ app.delete('/ratings/:id',authMiddleware, async (req, res) => {
 });
 
 app.post('/chats', authMiddleware, async (req, res) => {
-  const { recipientId, message, jobId } = req.body;
+  const { message, jobId } = req.body;
   const senderId = req.user.userId;
 
   try {
+
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    const recipientId = job.createdBy;
+    
     let chat = await Chat.findOne({
       jobId,
       participants: { $all: [senderId, recipientId] },
