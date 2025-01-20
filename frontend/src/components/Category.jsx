@@ -5,6 +5,7 @@ import { JobRatings } from "./JobRatings.jsx";
 export function Category() {
   const [message, setMessage] = useState("");
   const [token] = useState(localStorage.getItem("token"));
+  const username = localStorage.getItem("username");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const { name } = useParams();
@@ -22,6 +23,7 @@ export function Category() {
     return payload.userId;
   };
   const userId = decodeToken(token);
+  console.log(username);
 
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {
@@ -219,9 +221,18 @@ export function Category() {
               <h2 className="text-xl font-bold text-gray-700 mb-2">
                 {job.title}
               </h2>
-              <h2 className="text-xl font-bold text-teal-500 mb-2">
-                {job.username}
-              </h2>
+              <div>
+                {job.createdBy && job.createdBy.username ? (
+                  <p className="text-xl font-bold text-teal-500 mb-2">
+                     {job.createdBy.username}
+                  </p>
+                ) : (
+                  <p className="text-xl font-bold text-teal-500 mb-2">
+                     Unbekannter Ersteller
+                  </p>
+                )}
+              </div>
+
               <h3 className="text-sm text-teal-500 font-medium">
                 {job.category}
               </h3>
