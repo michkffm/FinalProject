@@ -180,16 +180,12 @@ app.get('/jobs', async (req, res) => {
       query = { category };
     }
 
-    const jobs = await Job.find(query)
-    .populate('createdBy', 'username')
-    .sort({ createdAt: -1 });
+    const jobs = await Job.find(query).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch jobs' });
   }
 });
-
-
 app.get('/search/jobs', async (req, res) => {
   const { category, query, price, location } = req.query;
   app.delete('/jobs/:id', async (req, res) => {
@@ -390,17 +386,10 @@ app.delete('/ratings/:id',authMiddleware, async (req, res) => {
 });
 
 app.post('/chats', authMiddleware, async (req, res) => {
-  const { message, jobId } = req.body;
+  const { recipientId, message, jobId } = req.body;
   const senderId = req.user.userId;
 
   try {
-
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ error: "Job not found" });
-    }
-    const recipientId = job.createdBy;
-
     let chat = await Chat.findOne({
       jobId,
       participants: { $all: [senderId, recipientId] },
