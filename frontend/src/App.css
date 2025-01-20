@@ -7,7 +7,7 @@ header {
 }
 
 .hero-section {
-  background-image: url('./assets/handshake-4.jpeg');
+  background-image: url('./assets/Hintergrund-5.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -15,12 +15,22 @@ header {
   height: 100vh;
   }
 
+  .handshake-section {
+    background-image: url('./assets/handshake-PNG.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* Hintergrund bleibt fixiert */
+    height: 100vh;
+    }
+
   .zero-section {
       background-image: url('./assets/hintergrund-3.jpeg');
       background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed; /* Hintergrund bleibt fixiert */
+  min-height: 100vh;
     }
 
   footer {
