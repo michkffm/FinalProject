@@ -411,6 +411,32 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Failed to delete rating" });
   }
 });
+app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
+  const { chatId } = req.params;
+  const { content } = req.body;
+
+  try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ error: "Chat nicht gefunden" });
+    }
+
+    // Erstelle eine neue Antwort
+    const reply = {
+      sender: req.user.userId, // oder ein anderes Feld für den Absender
+      content,
+      timestamp: new Date(),
+    };
+
+    chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
+    await chat.save();
+
+    res.status(201).json({ message: "Antwort erfolgreich gesendet" });
+  } catch (error) {
+    res.status(500).json({ error: "Fehler beim Senden der Antwort" });
+  }
+});
+
 
 app.post("/chats", authMiddleware, async (req, res) => {
   const { recipientId, message, jobId } = req.body;

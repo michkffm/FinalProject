@@ -7,6 +7,8 @@ export function MessagesPage() {
 
   useEffect(() => {
     fetchMessages();
+    const interval = setInterval(fetchMessages, 60000); // 60000 ms = 1 Minute
+    return () => clearInterval(interval); // Cleanup function to clear the interval
   }, [token]);
 
   const fetchMessages = () => {
@@ -71,7 +73,7 @@ export function MessagesPage() {
                 <div>
                   {chat.participants.map((participant, index) => (
                     <p key={index}>
-                      <strong>Von:</strong> {participant.username}
+                      <strong>An:</strong> {participant.username}
                     </p>
                   ))}
                 </div>
