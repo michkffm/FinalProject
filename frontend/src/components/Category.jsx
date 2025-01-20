@@ -155,7 +155,6 @@ export function Category() {
   };
 
   console.log(data);
-  
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
