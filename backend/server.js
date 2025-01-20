@@ -462,6 +462,28 @@ app.get('/chats/job/:jobId', authMiddleware, async (req, res) => {
   }
 });
 
+app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
+  const { chatId } = req.params;
+  const { content } = req.body;
+  try {
+    const chat = await Chat.findById(chatId);
+    if (!chat) {
+      return res.status(404).json({ error: "Chat nicht gefunden" });
+    }
+    // Erstelle eine neue Antwort
+    const reply = {
+      sender: req.user.userId, // oder ein anderes Feld für den Absender
+      content,
+      timestamp: new Date(),
+    };
+    chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
+    await chat.save();
+    res.status(201).json({ message: "Antwort erfolgreich gesendet" });
+  } catch (error) {
+    res.status(500).json({ error: "Fehler beim Senden der Antwort" });
+  }
+});
+
 app.patch('/chats/:chatId/messages/:messageId', authMiddleware, async (req, res) => {
   const { chatId, messageId } = req.params;
 
