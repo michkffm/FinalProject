@@ -78,13 +78,14 @@ export function MessagesPage() {
   };
 
   return (
-    <div className="zero-section flex justify-center flex-col px-4 py-8">
-      <h1 className="text-2xl font-bold mt-16 mb-4">Nachrichten</h1>
+    <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
+      <div className="flex flex-col justify-center items-center min-h-screen sm:w-3/6 w-3/8">
+      {/* <h1 className="flex justify-center text-4xl font-bold mt-16 mb-4">Nachrichten</h1> */}
       {Array.isArray(messages) && messages.length > 0 ? (
         messages.map((chat) => (
           <div key={chat._id} className="p-4 border-b">
-            <h3 className="font-bold">
-              Chat für Job: {chat.jobId?.title || "Unbekannt"}
+            <h3 className="flex justify-center text-2xl text-teal-600 p-1 bg-white border rounded-lg bg-opacity-60 sm:w-2/6 w-3/8 mt-16 mb-10 font-bold">
+              Chat für {chat.jobId?.title || "Unbekannt"}
             </h3>
             {chat.messages.map((msg) => (
               <div key={msg._id} className={`mb-4 message-standard ${username === msg.sender.username ?  "message-me" : ""}`}>
@@ -126,6 +127,7 @@ export function MessagesPage() {
       ) : (
         <div>Lade Nachrichten...</div>
       )}
+      </div>
     </div>
   );
 }
