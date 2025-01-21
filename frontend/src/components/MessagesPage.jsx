@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 
 export function MessagesPage() {
@@ -79,54 +78,66 @@ export function MessagesPage() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
-      <div className="flex flex-col justify-center items-center min-h-screen sm:w-3/6 w-3/8">
-      {/* <h1 className="flex justify-center text-4xl font-bold mt-16 mb-4">Nachrichten</h1> */}
-      {Array.isArray(messages) && messages.length > 0 ? (
-        messages.map((chat) => (
-          <div key={chat._id} className="p-4 border-b">
-            <h3 className="flex justify-center text-2xl text-teal-600 p-1 bg-white border rounded-lg bg-opacity-60 sm:w-2/6 w-3/8 mt-16 mb-10 font-bold">
-              Chat für {chat.jobId?.title || "Unbekannt"}
-            </h3>
-            {chat.messages.map((msg) => (
-              <div key={msg._id} className={`mb-4 message-standard ${username === msg.sender.username ?  "message-me" : ""}`}>
-                <p>
-                  {username === msg.sender
-                    ? chat.participants
-                        .filter(
-                          (participant) => participant.username !== username
-                        )
-                        .map((participant) => participant.username)
-                        .join(", ")
-                    : typeof msg.sender === "object"
-                    ? msg.sender.username
-                    : msg.sender}{" "}
-                  {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
-                </p>
-
-                <p>{msg.content}</p>
-                <p className="text-sm text-gray-500">
-                  Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-                </p>
-              </div>
-            ))}
-
-            <textarea
-              value={replyMessages[chat._id] || ""}
-              onChange={(e) => handleReplyChange(chat._id, e)}
-              className="w-full p-2 border rounded mt-2"
-              placeholder="Antwort schreiben..."
-            ></textarea>
-            <button
-              onClick={() => handleReplySubmit(chat._id)}
-              className="mt-2 text-blue-500 hover:underline"
+      <div className="flex flex-col justify-center items-center min-h-screen sm:w-3/6 w-full mt-6">
+        {Array.isArray(messages) && messages.length > 0 ? (
+          messages.map((chat) => (
+            <div
+              key={chat._id}
+              className="p-6 mb-6 w-full bg-white shadow-lg rounded-lg border border-teal-300"
             >
-              Antworten
-            </button>
-          </div>
-        ))
-      ) : (
-        <div>Lade Nachrichten...</div>
-      )}
+              <div className="flex justify-center items-center py-6">
+                <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 sm:w-2/6 w-3/4 mb-6 flex items-center justify-center border border-teal-300">
+                  Chat für {chat.jobId?.title || "Unbekannt"}
+                </h3>
+              </div>
+
+              {/* Textarea für Nachrichtenantwort */}
+              {chat.messages.map((msg) => (
+                <div
+                  key={msg._id}
+                  className={`mb-4 message-standard ${
+                    username === msg.sender.username ? "message-me" : ""
+                  }`}
+                >
+                  <p>
+                    {username === msg.sender
+                      ? chat.participants
+                          .filter(
+                            (participant) => participant.username !== username
+                          )
+                          .map((participant) => participant.username)
+                          .join(", ")
+                      : typeof msg.sender === "object"
+                      ? msg.sender.username
+                      : msg.sender}{" "}
+                    {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
+                  </p>
+
+                  <p>{msg.content}</p>
+                  <p className="text-sm text-gray-500">
+                    Gesendet am: {new Date(msg.createdAt).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+              <textarea
+                value={replyMessages[chat._id] || ""}
+                onChange={(e) => handleReplyChange(chat._id, e)}
+                className="w-full p-3 border rounded-lg mt-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
+                placeholder="Antwort schreiben..."
+              ></textarea>
+
+              {/* Antwort Button */}
+              <button
+                onClick={() => handleReplySubmit(chat._id)}
+                className="mt-4 w-full py-2 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+              >
+                Antworten
+              </button>
+            </div>
+          ))
+        ) : (
+          <div className="text-gray-500 text-lg">Lade Nachrichten...</div>
+        )}
       </div>
     </div>
   );
