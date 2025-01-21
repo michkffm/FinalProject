@@ -40,8 +40,7 @@ header {
 .message-standard {
   background: #2a4b47; /* Helles Grau für die Standardnachricht */
   color: #ffffff; /* Dunkler Text für gute Lesbarkeit */
-  width: auto;
-  max-width: 70%; /* Begrenzung der maximalen Breite */
+  max-width: 80%; /* Begrenzung der maximalen Breite */
   margin: 5px 0; /* Abstand zwischen den Nachrichten */
   padding: 10px 15px; /* Innenabstand für eine bessere Darstellung */
   border-radius: 10px; /* Abgerundete Ecken */
