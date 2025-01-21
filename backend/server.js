@@ -438,11 +438,19 @@ app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
 });
 
 
-app.post("/chats", authMiddleware, async (req, res) => {
-  const { recipientId, message, jobId } = req.body;
+app.post('/chats', authMiddleware, async (req, res) => {
+  const { jobId, message } = req.body; 
   const senderId = req.user.userId;
 
   try {
+  
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    const recipientId = job.createdBy; 
+
     let chat = await Chat.findOne({
       jobId,
       participants: { $all: [senderId, recipientId] },
@@ -455,15 +463,15 @@ app.post("/chats", authMiddleware, async (req, res) => {
         messages: [{ content: message, sender: senderId }],
       });
     } else {
+    
       chat.messages.push({ content: message, sender: senderId });
     }
 
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Failed to send message", details: error.message });
+    console.error(error);
+    res.status(500).json({ error: "Failed to send message", details: error.message });
   }
 });
 
