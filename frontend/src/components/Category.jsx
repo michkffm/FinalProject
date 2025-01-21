@@ -14,6 +14,7 @@ export function Category() {
     price: "all",
     location: "",
   });
+  
   const [contactMessages, setContactMessages] = useState({});
   const decodeToken = (token) => {
     if (!token) return null;
@@ -254,8 +255,8 @@ export function Category() {
                     Bewerten
                     </button>
                 </Link>
-                <Link to={`/PaymentMethods/${job._id}`} className="w-5/12">
-                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                <Link to={`/payment/${job._id}?price=${job.price}`} className="w-5/12">
+                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors ">
                     Buchen
                   </button>
                 </Link>

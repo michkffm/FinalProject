@@ -4,6 +4,17 @@ export function MessagesPage() {
   const [messages, setMessages] = useState([]);
   const [replyMessages, setReplyMessages] = useState({});
   const token = localStorage.getItem("token");
+  const decodeToken = (token) => {
+    if (!token) return null;
+    const payloadBase64 = token.split(".")[1];
+    const payloadDecoded = atob(payloadBase64);
+    const payload = JSON.parse(payloadDecoded);
+    return payload.userId;
+  };
+  const userId = decodeToken(token);
+  const username = localStorage.getItem("username");
+  console.log("username", username);
+  console.log("userId", userId);
 
   useEffect(() => {
     fetchMessages();
@@ -22,8 +33,12 @@ export function MessagesPage() {
       .then((response) => {
         if (response.success && Array.isArray(response.data)) {
           setMessages(response.data);
+          console.log(response.data);
         } else {
-          console.error("Fehler beim Laden der Nachrichten: Daten sind kein Array", response);
+          console.error(
+            "Fehler beim Laden der Nachrichten: Daten sind kein Array",
+            response
+          );
         }
       })
       .catch((error) => {
@@ -67,22 +82,33 @@ export function MessagesPage() {
       {Array.isArray(messages) && messages.length > 0 ? (
         messages.map((chat) => (
           <div key={chat._id} className="p-4 border-b">
-            <h3 className="font-bold">Chat für Job: {chat.jobId?.title || "Unbekannt"}</h3>
+            <h3 className="font-bold">
+              Chat für Job: {chat.jobId?.title || "Unbekannt"}
+            </h3>
             {chat.messages.map((msg) => (
               <div key={msg._id} className="mb-4">
-                <div>
-                  {chat.participants.map((participant, index) => (
-                    <p key={index}>
-                      <strong>An:</strong> {participant.username}
-                    </p>
-                  ))}
-                </div>
+                <p>
+                  <strong>{username === msg.sender ? "An:" : "von:"}</strong>{" "}
+                  {username === msg.sender
+                    ? chat.participants
+                        .filter(
+                          (participant) => participant.username !== username
+                        )
+                        .map((participant) => participant.username)
+                        .join(", ")
+                    : typeof msg.sender === "object"
+                    ? msg.sender.username
+                    : msg.sender}{" "}
+                  {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
+                </p>
+
                 <p>{msg.content}</p>
                 <p className="text-sm text-gray-500">
                   Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                 </p>
               </div>
             ))}
+
             <textarea
               value={replyMessages[chat._id] || ""}
               onChange={(e) => handleReplyChange(chat._id, e)}
