@@ -37,11 +37,28 @@ header {
     box-shadow: 0px -5px 5px 0px #00000052;
 }
 
-.message-standard{
-  background: red;
-  width: 20%;
+.message-standard {
+  background: #2a4b47; /* Helles Grau für die Standardnachricht */
+  color: #ffffff; /* Dunkler Text für gute Lesbarkeit */
+  width: auto;
+  max-width: 70%; /* Begrenzung der maximalen Breite */
+  margin: 5px 0; /* Abstand zwischen den Nachrichten */
+  padding: 10px 15px; /* Innenabstand für eine bessere Darstellung */
+  border-radius: 10px; /* Abgerundete Ecken */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Schatten für eine leichte Tiefe */
+  word-wrap: break-word; /* Zeilenumbruch bei langen Wörtern */
 }
-.message-standard.message-me{
-  background: blue;
-  margin-left: auto;
+
+.message-standard.message-me {
+  background: #14b8a6; /* Blau für eigene Nachrichten */
+  color: #fff; /* Weißer Text für Kontrast */
+  margin-left: auto; /* Nach rechts ausrichten */
+}
+
+@media (max-width: 768px) {
+  .message-standard {
+    max-width: 85%; /* Mehr Platz auf kleineren Bildschirmen */
+    font-size: 14px; /* Kleinere Schriftgröße für kleinere Geräte */
+    padding: 8px 12px; /* Reduzierte Innenabstände */
+  }
 }
