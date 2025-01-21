@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 
 export function MessagesPage() {
@@ -86,9 +87,8 @@ export function MessagesPage() {
               Chat für Job: {chat.jobId?.title || "Unbekannt"}
             </h3>
             {chat.messages.map((msg) => (
-              <div key={msg._id} className="mb-4">
+              <div key={msg._id} className={`mb-4 message-standard ${username === msg.sender.username ?  "message-me" : ""}`}>
                 <p>
-                  <strong>{username === msg.sender ? "An:" : "von:"}</strong>{" "}
                   {username === msg.sender
                     ? chat.participants
                         .filter(

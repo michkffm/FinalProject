@@ -111,7 +111,6 @@ export function Category() {
       },
       body: JSON.stringify({
         jobId,
-        recipientId: jobId,
         message: contactMessage.message,
       }),
     })
