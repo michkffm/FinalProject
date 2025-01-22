@@ -30,6 +30,10 @@ app.post("/register", async (req, res) => {
     return res.status(400).json({ error: "Invalid registration" });
   }
 
+  if (password.length < 8) {
+    return res.status(400).json({ error: "Password must be at least 8 characters long" });
+  }
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
