@@ -620,7 +620,7 @@ app.delete("/chats/:chatId/messages/:messageId", authMiddleware, async (req, res
       return res.status(403).json({ error: "You can only delete your own messages" });
     }
 
-    message.remove();
+    chat.messages.pull(messageId);
     await chat.save();
 
     res.status(200).json({ success: true, message: "Message deleted successfully" });
