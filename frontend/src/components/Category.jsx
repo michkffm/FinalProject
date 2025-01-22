@@ -205,7 +205,7 @@ export function Category() {
           {filteredData.map((job) => (
             <div
               key={job._id}
-              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+              className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex justify-end relative">
                 {job.createdBy && username === job.createdBy.username && (

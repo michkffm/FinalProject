@@ -139,7 +139,7 @@ export function MessagesPage() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
-      <div className="flex flex-col justify-center items-center min-h-screen sm:w-3/6 w-full mt-6">
+      <div className="flex flex-col justify-center sm:mt-16 mt-10 items-center min-h-screen sm:w-3/6 w-full mt-6">
         {Array.isArray(messages) && messages.length > 0 ? (
           messages.map((chat) => (
             <div
