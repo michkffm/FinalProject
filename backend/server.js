@@ -473,15 +473,27 @@ app.get("/chats", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
     const chats = await Chat.find({ participants: { $in: [userId] } })
-      .populate("participants", "username")
-      .populate("messages.sender", "username")
-      .populate("jobId", "title")
-      .sort({ updatedAt: -1 });
+      .populate("participants", "username") // Nur den Benutzernamen der Teilnehmer
+      .populate("messages.sender", "username") // Nur den Benutzernamen des Senders
+      .populate("jobId", "title") // Nur den Titel des Jobs
+      .sort({ updatedAt: -1 }) // Zuletzt aktualisierte Chats zuerst
+      .lean(); // Gibt ein einfaches JavaScript-Objekt zurück, um Änderungen vorzunehmen
+    // Berechnung der ungelesenen Nachrichten für den aktuellen Benutzer
+    const chatsWithUnreadCount = chats.map((chat) => {
+      const unreadCount = chat.messages.filter(
+        (msg) => !msg.read && msg.sender._id.toString() !== userId // Ungelesene Nachrichten, nicht vom Benutzer gesendet
+      ).length;
+      return {
+        ...chat, // Alle vorhandenen Chat-Daten
+        unreadCount, // Neues Feld für ungelesene Nachrichten
+      };
+    });
     res.status(200).json({
       success: true,
-      data: chats,
+      data: chatsWithUnreadCount,
     });
   } catch (error) {
+    console.error("Fehler beim Abrufen der Chats:", error);
     res.status(500).json({
       success: false,
       error: "Fehler beim Abrufen der Chats",
@@ -562,6 +574,56 @@ app.patch(
     }
   }
 );
+
+
+app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
+  const { chatId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const chat = await Chat.findOne({ _id: chatId, participants: { $in: [userId] } });
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found or access denied" });
+    }
+
+    await Chat.findByIdAndDelete(chatId);
+
+    res.status(200).json({ success: true, message: "Chat deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting chat:", error);
+    res.status(500).json({ error: "Failed to delete chat", details: error.message });
+  }
+});
+
+app.delete("/chats/:chatId/messages/:messageId", authMiddleware, async (req, res) => {
+  const { chatId, messageId } = req.params;
+  const userId = req.user.userId;
+
+  try {
+    const chat = await Chat.findOne({ _id: chatId, participants: { $in: [userId] } });
+
+    if (!chat) {
+      return res.status(404).json({ error: "Chat not found or access denied" });
+    }
+
+    const message = chat.messages.id(messageId);
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    if (message.sender.toString() !== userId) {
+      return res.status(403).json({ error: "You can only delete your own messages" });
+    }
+
+    message.remove();
+    await chat.save();
+
+    res.status(200).json({ success: true, message: "Message deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    res.status(500).json({ error: "Failed to delete message", details: error.message });
+  }
+});
 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
