@@ -162,33 +162,6 @@ export function MessagesPage() {
                 {chat.messages.map((msg) => (
                   <div
                     key={msg._id}
-                    className={`mb-4 message-standard ${
-                      username === msg.sender.username ? "message-me" : ""
-                    }`}
-                  >
-                    <p>
-                      {username === msg.sender
-                        ? chat.participants
-                            .filter(
-                              (participant) => participant.username !== username
-                            )
-                            .map((participant) => participant.username)
-                            .join(", ")
-                        : typeof msg.sender === "object"
-                        ? msg.sender.username
-                        : msg.sender}{" "}
-                      {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
-                    </p>
-
-                    <p>{msg.content}</p>
-                    <p className="text-sm text-gray-500">
-                      Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-                    </p>
-                  </div>
-                ))}
-                {chat.messages.map((msg) => (
-                  <div
-                    key={msg._id}
                     className={`mb-4 message-standard relative ${
                       username === msg.sender.username ? "message-me" : ""
                     }`}
