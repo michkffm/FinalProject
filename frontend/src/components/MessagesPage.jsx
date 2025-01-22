@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 export function MessagesPage() {
   const [messages, setMessages] = useState([]);
   const [replyMessages, setReplyMessages] = useState({});
+  const [data, setData] = useState([]);
+  const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const decodeToken = (token) => {
     if (!token) return null;
@@ -76,6 +78,32 @@ export function MessagesPage() {
       });
   };
 
+  const handleDelete = async (chatId) => {
+    try {
+      const chatIdString = chatId._id || chatId;
+
+      const response = await fetch(
+        `http://localhost:3000/chats/${chatIdString}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+
+      // Nach erfolgreichem Löschen, Daten erneut abrufen
+      fetchMessages();
+    } catch (err) {
+      setError(err.message || "Fehler beim Löschen des Chats.");
+    }
+  };
+
   return (
     <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
       <div className="flex flex-col justify-center items-center min-h-screen sm:w-3/6 w-full mt-6">
@@ -85,40 +113,79 @@ export function MessagesPage() {
               key={chat._id}
               className="p-6 mb-6 w-full bg-green shadow-lg rounded-lg border border-teal-300"
             >
-              <div className="flex justify-center items-center py-6">
+              <div className="flex justify-center items-center py-6 relative">
                 <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 sm:w-2/6 w-3/4 mb-6 flex items-center justify-center border border-teal-300">
                   Chat für {chat.jobId?.title || "Unbekannt"}
                 </h3>
+                <div className="absolute top-8 right-80">
+                  <button onClick={() => handleDelete(chat._id)}>
+                    <i className="fa-solid fa-trash-can"></i>
+                  </button>
+                </div>
               </div>
 
               {/* Textarea für Nachrichtenantwort */}
-              {chat.messages.map((msg) => (
-                <div
-                  key={msg._id}
-                  className={`mb-4 message-standard ${
-                    username === msg.sender.username ? "message-me" : ""
-                  }`}
-                >
-                  <p>
-                    {username === msg.sender
-                      ? chat.participants
-                          .filter(
-                            (participant) => participant.username !== username
-                          )
-                          .map((participant) => participant.username)
-                          .join(", ")
-                      : typeof msg.sender === "object"
-                      ? msg.sender.username
-                      : msg.sender}{" "}
-                    {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
-                  </p>
+              <div>
+                {chat.messages.map((msg) => (
+                  <div
+                    key={msg._id}
+                    className={`mb-4 message-standard ${
+                      username === msg.sender.username ? "message-me" : ""
+                    }`}
+                  >
+                    <p>
+                      {username === msg.sender
+                        ? chat.participants
+                            .filter(
+                              (participant) => participant.username !== username
+                            )
+                            .map((participant) => participant.username)
+                            .join(", ")
+                        : typeof msg.sender === "object"
+                        ? msg.sender.username
+                        : msg.sender}{" "}
+                      {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
+                    </p>
 
-                  <p>{msg.content}</p>
-                  <p className="text-sm text-gray-500">
-                    Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                    <p>{msg.content}</p>
+                    <p className="text-sm text-gray-500">
+                      Gesendet am: {new Date(msg.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+                {chat.messages.map((msg) => (
+                  <div
+                    key={msg._id}
+                    className={`mb-4 message-standard relative ${
+                      username === msg.sender.username ? "message-me" : ""
+                    }`}
+                  >
+                    <p>
+                      {username === msg.sender
+                        ? chat.participants
+                            .filter(
+                              (participant) => participant.username !== username
+                            )
+                            .map((participant) => participant.username)
+                            .join(", ")
+                        : typeof msg.sender === "object"
+                        ? msg.sender.username
+                        : msg.sender}{" "}
+                      {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
+                    </p>
+
+                    <p>{msg.content}</p>
+                    <p className="text-sm text-gray-500">
+                      Gesendet am: {new Date(msg.createdAt).toLocaleString()}
+                    </p>
+                    <div className="absolute right-5 top-8">
+                      <button>
+                        <i className="fa-solid fa-trash-can"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
               <textarea
                 value={replyMessages[chat._id] || ""}
                 onChange={(e) => handleReplyChange(chat._id, e)}
