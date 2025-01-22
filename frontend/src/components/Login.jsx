@@ -77,7 +77,7 @@ export function Login({ setIsLoggedIn }) {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-white w-full max-w-lg bg-opacity-70">
+      <div className="border-2 border-gray-300 rounded-lg shadow-lg p-8 bg-green border border-teal-300 w-full max-w-lg bg-opacity-70">
     <form onSubmit={handleSubmit} className="space-y-6">
     {message && (
       <div
