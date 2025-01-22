@@ -81,7 +81,7 @@ export function Ratings() {
 
   return (
     <main className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
-    <div className="flex flex-col justify-between items-center bg-white shadow-md rounded-md p-6 max-w-xl w-full">
+    <div className="flex flex-col justify-between items-center bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-md p-6 max-w-xl w-full">
     {message && (
       <p
         className={`mt-4 text-center font-medium ${
