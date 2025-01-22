@@ -176,8 +176,8 @@ export function Job({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
-      <div className="flex flex-col sm:flex-row justify-between sm:mt-14 mt-12 items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:mt-14 mt-12 items-center border-2 border-teal-300 bg-white bg-opacity-40 shadow-lg rounded-lg p-6 max-w-4xl w-full">
         <form className="space-y-6 w-full" onSubmit={handleSubmit}>
           <h2 className="text-2xl font-bold mb-6 text-center">
             Dienstleistung erstellen

@@ -26,7 +26,7 @@ export default function ContactForm() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="border border-gray-300 rounded-md shadow-lg mt-14 p-8 bg-white w-full max-w-4xl"
+          className="bg-white bg-opacity-40 border-2 border-teal-300 shadow-lg mt-14 p-8 w-full max-w-4xl"
         >
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-teal-600">
             Kontaktformular

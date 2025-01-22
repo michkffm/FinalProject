@@ -209,8 +209,8 @@ export function Profile() {
   };
 
   return (
-    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 sm:mt-0 mt-8 flex justify-center items-center">
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
+    <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex justify-center items-center">
+      <div className="flex flex-col bg-white bg-opacity-40 sm:flex-row justify-between items-center border-2 border-teal-300 shadow-md rounded-lg p-6 max-w-2xl w-full">
         <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
           <img
             src={profileImage}
