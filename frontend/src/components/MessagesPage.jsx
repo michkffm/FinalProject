@@ -96,11 +96,44 @@ export function MessagesPage() {
         const errorText = await response.text();
         throw new Error(errorText);
       }
-
-      // Nach erfolgreichem Löschen, Daten erneut abrufen
       fetchMessages();
     } catch (err) {
       setError(err.message || "Fehler beim Löschen des Chats.");
+    }
+  };
+  const handleDeleteMessage = async (chatId, messageId) => {
+    try {
+      const chatIdString = chatId._id || chatId;
+      const messageIdString = messageId._id || messageId;
+
+      // API-Request zum Löschen der Nachricht
+      const response = await fetch(
+        `http://localhost:3000/chats/${chatIdString}/messages/${messageIdString}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText);
+      }
+      setMessages((prevMessages) =>
+        prevMessages.map((chat) =>
+          chat._id === chatIdString
+            ? {
+                ...chat,
+                messages: chat.messages.filter(
+                  (msg) => msg._id !== messageIdString
+                ),
+              }
+            : chat
+        )
+      );
+    } catch (err) {
+      setError(err.message || "Fehler beim Löschen der Nachricht.");
     }
   };
 
@@ -179,7 +212,11 @@ export function MessagesPage() {
                       Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                     </p>
                     <div className="absolute right-5 top-8">
-                      <button>
+                      <button
+                        onClick={() =>
+                          handleDeleteMessage(chat._id, msg._id)
+                        }
+                      >
                         <i className="fa-solid fa-trash-can"></i>
                       </button>
                     </div>
@@ -203,7 +240,7 @@ export function MessagesPage() {
             </div>
           ))
         ) : (
-          <div className="text-gray-500 text-lg">Lade Nachrichten...</div>
+          <div className="text-gray-500 text-lg">Keine Nachrichten...</div>
         )}
       </div>
     </div>
