@@ -47,10 +47,10 @@ export function Home() {
   return (
     <main className="hero-section flex flex-col items-center sm:pt-28 sm:pb-40 pt-20 pb-10 sm:gap-20 gap-0">
       <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
-        <h1 className="bg-white bg-opacity-50 pl-2 pr-2 rounded text-xl sm:text-3xl font-bold">
+        <h1 className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-xl sm:text-4xl text-teal-500 font-bold">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
-        <p className="bg-white bg-opacity-50 pl-2 pr-2 rounded text-gray-600 mt-2">
+        <p className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-gray-600 mt-2">
           Verbindung zu qualifizierten Dienstleistern für alle Deine Bedürfnisse
         </p>
 
@@ -93,7 +93,7 @@ export function Home() {
           </form>
         </div> */}
 
-        <div className="bg-white border rounded-md shadow p-4">
+        <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4">
           <h2 className="font-semibold mb-2">
             Dienstleistung anbieten
           </h2>

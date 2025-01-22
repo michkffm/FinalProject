@@ -53,7 +53,7 @@ export function Register() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
+      <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
     <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 text-teal-600">
       Registrieren Sie sich
     </h2>

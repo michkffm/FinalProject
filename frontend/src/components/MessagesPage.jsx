@@ -144,7 +144,7 @@ export function MessagesPage() {
           messages.map((chat) => (
             <div
               key={chat._id}
-              className="p-6 mb-6 w-full bg-green shadow-lg rounded-lg border border-teal-300"
+              className="p-6 mb-6 w-full bg-green shadow-lg rounded-lg bg-white bg-opacity-40 border-2 border-teal-300"
             >
               <div className="flex justify-center items-center py-6 relative">
                 <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 sm:w-2/6 w-3/4 mb-6 flex items-center justify-center border border-teal-300">
