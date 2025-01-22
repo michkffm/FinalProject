@@ -11,6 +11,8 @@ import authMiddleware from "./middlewares/authMiddleware.js";
 import { Resend } from "resend";
 import crypto from "crypto";
 
+const { ObjectId } = mongoose.Types;
+
 await mongoose.connect(process.env.DB_URI);
 
 const app = express();
@@ -579,19 +581,22 @@ app.patch(
 app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const userId = req.user.userId;
-
+  // Überprüfe, ob die chatId eine gültige ObjectId ist
+  if (!ObjectId.isValid(chatId)) {
+    return res.status(400).json({ error: "Ungültige chatId" });
+  }
   try {
-    const chat = await Chat.findOne({ _id: chatId, participants: { $in: [userId] } });
+    // Wandelt chatId in ObjectId um, um sicherzustellen, dass sie korrekt behandelt wird
+    const chat = await Chat.findOne({ _id: new ObjectId(chatId), participants: { $in: [userId] } });
     if (!chat) {
-      return res.status(404).json({ error: "Chat not found or access denied" });
+      return res.status(404).json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
     }
-
+    // Lösche den Chat
     await Chat.findByIdAndDelete(chatId);
-
-    res.status(200).json({ success: true, message: "Chat deleted successfully" });
+    res.status(200).json({ success: true, message: "Chat erfolgreich gelöscht" });
   } catch (error) {
-    console.error("Error deleting chat:", error);
-    res.status(500).json({ error: "Failed to delete chat", details: error.message });
+    console.error("Fehler beim Löschen des Chats:", error);
+    res.status(500).json({ error: "Fehler beim Löschen des Chats", details: error.message });
   }
 });
 
