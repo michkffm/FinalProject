@@ -175,7 +175,7 @@ export function Category() {
 )} */}
 
         {/* Filter und Jobanzeigen */}
-        <div className="mb-6 flex flex-wrap gap-4">
+        <div className="mb-6 flex flex-wrap gap-4 ">
           <input
             type="text"
             name="name"
