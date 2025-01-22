@@ -53,7 +53,16 @@ export function Register() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
+      <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
+      {message && (
+            <div
+              className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+                message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
+              }`}
+            >
+              {message}
+            </div>
+          )}
     <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 text-teal-600">
       Registrieren Sie sich
     </h2>
@@ -119,15 +128,6 @@ export function Register() {
         Registrieren
       </button>
     </form>
-    {message && (
-      <div
-        className={`mt-4 p-3 text-white rounded-md ${
-          message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-        }`}
-      >
-        {message}
-      </div>
-    )}
     <p className="text-center text-sm text-gray-600 mt-4">
       Bereits registriert?{" "}
       <a href="/login" className="text-teal-600 hover:underline">

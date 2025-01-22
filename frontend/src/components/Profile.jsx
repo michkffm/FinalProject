@@ -166,7 +166,7 @@ export function Profile() {
       .then((data) => {
         console.log("Gesendete Daten:", data);
         setMessage("Profil erfolgreich gespeichert!");
-        localStorage.setItem("selectedCategory", data.profession)
+        localStorage.setItem("selectedCategory", data.profession);
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -222,16 +222,16 @@ export function Profile() {
           <h2 className="text-2xl font-bold mb-6 text-center">
             Profil bearbeiten
           </h2>
+          {message && (
+            <div
+              className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+                message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
+              }`}
+            >
+              {message}
+            </div>
+          )}
 
-         {message && (
-          <div
-            className={`mt-4 p-3 text-white ${
-              message.includes("Fehler") ? "bg-red-500" : "bg-green-500"
-            }`}
-          >
-            {message}
-          </div>
-        )}
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
