@@ -314,7 +314,7 @@ export function Job({ setIsLoggedIn }) {
               <button
                 type="button"
                 onClick={handleLocation}
-                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
+                className="bg-teal-500 text-white px-4 py-2 rounded duration-300 hover:bg-teal-600 transition-colors"
               >
                 Abrufen
               </button>
@@ -343,7 +343,7 @@ export function Job({ setIsLoggedIn }) {
           {/* Speichern-Button */}
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
+            className="w-full bg-teal-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors"
           >
             Speichern
           </button>

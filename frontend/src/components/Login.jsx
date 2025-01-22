@@ -141,12 +141,12 @@ export function Login({ setIsLoggedIn }) {
           </div>
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-4 rounded hover:bg-teal-500 w-full"
+            className="bg-teal-400 text-white py-2 px-4 rounded duration-300 hover:bg-teal-500 w-full"
           >
             Login
           </button>
           <div>
-            <button className="w-full bg-teal-400 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
+            <button className="w-full bg-teal-400 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2">
               <Link to="/passwort-vergessen">Passwort vergessen?</Link>
             </button>
           </div>

@@ -68,14 +68,14 @@ export function ForgotPassword() {
           />
           <button
             type="submit"
-            className="w-full py-3 mt-4 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
+            className="w-full py-3 mt-4 bg-teal-500 text-white rounded-md duration-300 hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300"
           >
             Senden
           </button>
         </form>
         <p className="text-center text-sm text-gray-600 mt-4">
           Zurück zur{" "}
-          <a href="/login" className="text-teal-600 hover:underline">
+          <a href="/login" className="text-teal-600 duration-300 hover:underline">
             Anmeldung
           </a>
         </p>
