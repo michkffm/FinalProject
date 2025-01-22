@@ -206,7 +206,7 @@ export function MessagesPage() {
               {/* Antwort Button */}
               <button
                 onClick={() => handleReplySubmit(chat._id)}
-                className="mt-4 w-full py-2 px-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                className="mt-4 w-full py-2 px-4 bg-teal-600 text-white rounded-lg duration-300 hover:bg-teal-700 transition-colors"
               >
                 Antworten
               </button>
