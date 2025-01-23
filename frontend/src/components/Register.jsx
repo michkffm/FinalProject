@@ -53,12 +53,11 @@ export function Register() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-<<<<<<< HEAD
       <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
         {message && (
           <div
-            className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
-              message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
+            className={`fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+              message.includes("Fehler") ? "bg-red-600" : "bg-green-600"
             }`}
           >
             {message}
@@ -72,14 +71,6 @@ export function Register() {
             <label
               htmlFor="username"
               className="block text-sm font-medium text-gray-700"
-=======
-      <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
-      {message && (
-            <div
-              className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
-                message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
-              }`}
->>>>>>> eee5a63c6bbbaf242bab0d600c2ad5d95e6cec3d
             >
               Benutzername
             </label>
