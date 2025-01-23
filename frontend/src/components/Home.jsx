@@ -2,6 +2,7 @@ import "../App.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { HomeSlider } from "./HomeSlider";
+import { Footer } from "./Footer";
 
 export function Home() {
   const [message, setMessage] = useState("");
@@ -53,7 +54,7 @@ export function Home() {
   };
 
   return (
-    <main className="zero-section flex flex-col items-center sm:pt-28 sm:pb-40 pt-20 pb-10 sm:gap-20 gap-0">
+    <main className="zero-section flex flex-col items-center sm:pt-28 sm:pb-40 pb-10 sm:gap-20 gap-0 mt-[-50px]">
       <div className="handshake-section absolute inset-0 z-5">
         {message && (
           <p className="flex justify-center text-red-500 text-2xl mt-20 z-10">
@@ -92,7 +93,7 @@ export function Home() {
         </form>
       </section>
 
-      <section className="z-10">
+      <section className="z-10 mt-[-60px]">
         <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4 duration-300 hover:bg-opacity-50">
           <h2 className="font-semibold mb-2">Dienstleistung anbieten</h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
@@ -110,7 +111,7 @@ export function Home() {
         </div>
       </section>
       <section>
-      <HomeSlider />
+        <HomeSlider />
       </section>
     </main>
   );
