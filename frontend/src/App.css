@@ -1,5 +1,6 @@
 body {
   background-color: rgb(248, 248, 248);
+  overflow-x: hidden;
 }
 
 header {
@@ -20,14 +21,13 @@ header {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    background-attachment: fixed;
     height: 100vh;
 
-    /* Übergangseffekte */
     opacity: 0;
     transition: opacity 1s ease-in;
 }
 
-/* Sichtbare Klasse */
 .handshake-section.visible {
     opacity: 1;
 }
@@ -37,7 +37,7 @@ header {
       background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; /* Hintergrund bleibt fixiert */
+  background-attachment: fixed; 
   min-height: 100vh;
     }
 
@@ -70,7 +70,49 @@ header {
   }
 }
 .category-images {
-  position: relative; /* Bilder über dem Hintergrund */
-  z-index: 15; /* Höher als der Hintergrund */
+  position: relative; 
+  z-index: 15; 
+}
+
+@keyframes slide-left {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.animate-slide-left {
+  display: flex;
+  animation: slide-left 60s linear infinite;
+  white-space: nowrap;
+}
+
+.slider-container {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  z-index: 10;
+}
+
+.slider-item {
+  flex: 0 0 auto;
+  margin: 10px;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.slider-item:hover {
+  transform: scale(1.05);
+  background-color: rgba(28, 153, 133, 0.7);
+}
+
+.background-image {
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0.375rem;
 }
 
