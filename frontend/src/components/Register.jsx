@@ -56,8 +56,8 @@ export function Register() {
       <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
         {message && (
           <div
-            className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
-              message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
+            className={`fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+              message.includes("Fehler") ? "bg-red-600" : "bg-green-600"
             }`}
           >
             {message}
