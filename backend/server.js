@@ -10,6 +10,8 @@ import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import { Resend } from "resend";
 import crypto from "crypto";
+import cookieParser from "cookie-parser";
+
 
 const { ObjectId } = mongoose.Types;
 
@@ -22,6 +24,8 @@ const resend = new Resend("re_KyqmAF3D_85kbs7wN1vf1iNrVuM85NEyL");
 app.use(cors());
 
 app.use(express.json());
+
+app.use(cookieParser());
 
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
@@ -69,6 +73,12 @@ app.post("/login", async (req, res) => {
 
     const payload = { userId: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
+    res.cookie('jwt', token, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 2592000000,
+      sameSite: "none"
+    });
 
     res.json({ user: user, token: token });
   } catch (error) {
