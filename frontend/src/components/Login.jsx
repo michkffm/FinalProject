@@ -4,18 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 export function Login({ setIsLoggedIn }) {
   const [email, setEmail] = useState(""); // Zustand für Email
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (name === "email") {
-      setEmail(value);
-    } else if (name === "password") {
-      setPassword(value);
-    }
-  };
 
   useEffect(() => {
     const saveEmail = localStorage.getItem("email");
@@ -57,19 +49,15 @@ export function Login({ setIsLoggedIn }) {
         setMessage("Login erfolgreich!");
         localStorage.setItem("token", data.token);
         localStorage.setItem("username", data.user.username);
-        console.log(data.user.username);
 
         setIsLoggedIn(true);
-        console.log("Login erfolgreich", data);
 
         setTimeout(() => {
           navigate("/profile");
         }, 2000);
       })
-
       .catch((error) => {
         setMessage("Fehler beim Login: " + error.message);
-        console.error("Fehler beim Login", error);
       });
   };
 
@@ -101,7 +89,7 @@ export function Login({ setIsLoggedIn }) {
               id="email"
               name="email"
               value={email}
-              onChange={handleChange}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
             />
@@ -113,15 +101,28 @@ export function Login({ setIsLoggedIn }) {
             >
               Passwort:
             </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={password}
-              onChange={handleChange}
-              required
-              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-teal-500 hover:text-teal-600"
+              >
+                {showPassword ? (
+                  <i className="fa-regular fa-eye-slash"></i>
+                ) : (
+                  <i className="fa-regular fa-eye"></i>
+                )}
+              </button>
+            </div>
           </div>
           <div className="flex items-center">
             <input
@@ -146,9 +147,12 @@ export function Login({ setIsLoggedIn }) {
             Login
           </button>
           <div>
-            <button className="w-full bg-teal-400 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2">
-              <Link to="/passwort-vergessen">Passwort vergessen?</Link>
-            </button>
+            <Link
+              to="/passwort-vergessen"
+              className="block text-teal-500 text-center mt-2 hover:underline"
+            >
+              Passwort vergessen?
+            </Link>
           </div>
         </form>
       </div>
