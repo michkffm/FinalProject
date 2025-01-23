@@ -14,9 +14,14 @@ export default {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        slideLeft: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
       },
       animation: {
         spin360: 'spin360 1s linear infinite',
+        slideLeft: 'slideLeft 10s linear infinite',
       },
     },
   },
