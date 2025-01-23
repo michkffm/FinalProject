@@ -110,7 +110,7 @@ export function RatingsView() {
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
   return (
-    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-start">
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
       {ratings.length > 0 ? (
         <div className="sm:mt-14 mt-10">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
@@ -124,7 +124,7 @@ export function RatingsView() {
             {ratings.map((rating) => (
               <li
                 key={rating._id}
-                className="p-4 bg-white rounded-lg shadow-sm border border-gray-200"
+                className="p-4 bg-white bg-opacity-80 border-2 border-teal-300 rounded-lg shadow-sm"
               >
                 <div className="flex items-center mb-2">
                   <strong className="text-gray-700 mr-2">
