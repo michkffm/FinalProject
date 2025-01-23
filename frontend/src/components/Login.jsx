@@ -147,18 +147,9 @@ export function Login({ setIsLoggedIn }) {
             Login
           </button>
           <div>
-<<<<<<< HEAD
-            <Link
-              to="/passwort-vergessen"
-              className="block text-teal-500 text-center mt-2 hover:underline"
-            >
-              Passwort vergessen?
-            </Link>
-=======
             <button className="w-full bg-teal-400 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2">
               <Link to="/passwort-vergessen">Passwort vergessen?</Link>
             </button>
->>>>>>> eee5a63c6bbbaf242bab0d600c2ad5d95e6cec3d
           </div>
         </form>
       </div>
