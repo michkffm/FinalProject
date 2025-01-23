@@ -27,7 +27,7 @@ app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!email || !password || !username) {
-    return res.status(400).json({ error: "Invalid registration" });
+    return res.status(400).json({ error: "Ungültige Registrierung" });
   }
 
   if (password.length <= 8) {
@@ -52,19 +52,19 @@ app.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: "Invalid login" });
+    return res.status(400).json({ error: "Ungültige Anmeldung" });
   }
 
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
-      return res.status(401).json({ error: "User not found" });
+      return res.status(401).json({ error: "Benutzer nicht gefunden" });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Ungültige Anmeldedaten" });
     }
 
     const payload = { userId: user._id };
@@ -81,7 +81,7 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
 
   if (!userId) {
-    return res.status(401).json({ error: "User not authenticated" });
+    return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
 
   try {
@@ -100,16 +100,16 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
     });
 
     if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
 
     res
       .status(200)
-      .json({ message: "Profile updated successfully", updatedUser });
+      .json({ message: "Profil erfolgreich aktualisiert", updatedUser });
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to update profile", details: error.message });
+      .json({ error: "Profil konnte nicht aktualisiert werden", details: error.message });
   }
 });
 
@@ -117,7 +117,7 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
 
   if (!userId) {
-    return res.status(401).json({ error: "User not authenticated" });
+    return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
 
   try {
@@ -126,14 +126,14 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
     );
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
 
     res.status(200).json(user);
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to fetch user profile", details: error.message });
+      .json({ error: "Benutzerprofil konnte nicht abgerufen werden", details: error.message });
   }
 });
 
@@ -170,10 +170,10 @@ app.post("/jobs", authMiddleware, async (req, res) => {
 
     res
       .status(201)
-      .json({ message: "Job posted successfully", job: addUsername });
+      .json({ message: "Job erfolgreich ausgeschrieben", job: addUsername });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Failed to post job" });
+    res.status(500).json({ error: "Job konnte nicht veröffentlicht werden" });
   }
 });
 
@@ -205,7 +205,7 @@ app.get("/jobs", async (req, res) => {
       .sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch jobs" });
+    res.status(500).json({ error: "Abrufen der Aufträge fehlgeschlagen" });
   }
 });
 app.get("/search/jobs", async (req, res) => {
@@ -217,12 +217,12 @@ app.get("/search/jobs", async (req, res) => {
       const job = await Job.findByIdAndDelete(id);
 
       if (!job) {
-        return res.status(404).json({ error: "Job not found" });
+        return res.status(404).json({ error: "Job nicht gefunden" });
       }
 
-      res.status(200).json({ message: "Job deleted successfully" });
+      res.status(200).json({ message: "Job erfolgreich gelöscht" });
     } catch (error) {
-      res.status(500).json({ error: "Failed to delete job" });
+      res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
     }
   });
   const allowedCategories = [
@@ -276,7 +276,7 @@ app.get("/search/jobs", async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to search jobs", details: error.message });
+      .json({ error: "Suche nach Jobs fehlgeschlagen", details: error.message });
   }
 });
 
@@ -286,16 +286,16 @@ app.delete("/jobs/:id", authMiddleware, async (req, res) => {
   try {
     const job = await Job.findByIdAndDelete(id);
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: "Job nicht gefunden" });
     }
     if (job.createdBy.toString() !== userId) {
       return res
         .status(403)
         .json({ error: "Keine Berechtigung, diesen Job zu löschen." });
     }
-    res.status(200).json({ message: "Job deleted successfully" });
+    res.status(200).json({ message: "Job erfolgreich gelöscht" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete job" });
+    res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
   }
 });
 
@@ -306,12 +306,12 @@ app.put("/jobs/:id", async (req, res) => {
     const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
 
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: "Job nicht gefunden" });
     }
 
     res.status(200).json(job);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update job" });
+    res.status(500).json({ error: "Job konnte nicht aktualisiert werden" });
   }
 });
 
@@ -322,12 +322,12 @@ app.get("/users/:id", authMiddleware, async (req, res) => {
     const user = await User.findById(id);
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch user" });
+    res.status(500).json({ error: "Benutzer konnte nicht abgerufen werden" });
   }
 });
 
@@ -339,12 +339,12 @@ app.patch("/users/:id", authMiddleware, async (req, res) => {
     const user = await User.findByIdAndUpdate(id, updates, { new: true });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update user" });
+    res.status(500).json({ error: "Benutzer konnte nicht aktualisiert werden" });
   }
 });
 
@@ -375,7 +375,7 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to fetch ratings", details: error.message });
+      .json({ error: "Bewertungen konnten nicht abgerufen werden", details: error.message });
   }
 });
 
@@ -384,18 +384,18 @@ app.post("/ratings", authMiddleware, async (req, res) => {
   const senderId = req.user.userId;
 
   if (!jobId || !rating) {
-    return res.status(400).json({ error: "All fields are required" });
+    return res.status(400).json({ error: "Alle Felder sind Pflichtfelder" });
   }
 
   try {
     const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
 
-    res.status(201).json({ message: "Rating added successfully", newRating });
+    res.status(201).json({ message: "Bewertung erfolgreich hinzugefügt", newRating });
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to add rating", details: error.message });
+      .json({ error: "Bewertung konnte nicht hinzugefügt werden", details: error.message });
   }
 });
 
@@ -405,16 +405,16 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
   try {
     const rating = await Rating.findByIdAndDelete(id);
     if (!rating) {
-      return res.status(404).json({ error: "Rating not found" });
+      return res.status(404).json({ error: "Rating nicht gefunden" });
     }
     if (rating.senderId.toString() !== userId) {
       return res
         .status(403)
         .json({ error: "Keine Berechtigung, diese Bewertung zu löschen." });
     }
-    res.status(200).json({ message: "Rating deleted successfully" });
+    res.status(200).json({ message: "Bewertung erfolgreich gelöscht" });
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete rating" });
+    res.status(500).json({ error: "Bewertung konnte nicht gelöscht werden" });
   }
 });
 app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
@@ -450,7 +450,7 @@ app.post('/chats', authMiddleware, async (req, res) => {
   try {
     const job = await Job.findById(jobId);
     if (!job) {
-      return res.status(404).json({ error: "Job not found" });
+      return res.status(404).json({ error: "Job nicht gefunden" });
     }
     const recipientId = job.createdBy;
     let chat = await Chat.findOne({
@@ -471,7 +471,7 @@ app.post('/chats', authMiddleware, async (req, res) => {
     res.status(200).json(chat);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Failed to send message", details: error.message });
+    res.status(500).json({ error: "Nachricht konnte nicht gesendet werden", details: error.message });
   }
 });
 
@@ -525,7 +525,7 @@ app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Failed to fetch chats", details: error.message });
+      .json({ error: "Chats konnten nicht abgerufen werden.", details: error.message });
   }
 });
 
@@ -561,12 +561,12 @@ app.patch(
       const chat = await Chat.findById(chatId);
 
       if (!chat) {
-        return res.status(404).json({ error: "Chat not found" });
+        return res.status(404).json({ error: "Chat nicht gefunden" });
       }
 
       const message = chat.messages.id(messageId);
       if (!message) {
-        return res.status(404).json({ error: "Message not found" });
+        return res.status(404).json({ error: "Message nicht gefunden" });
       }
 
       message.read = true;
@@ -576,7 +576,7 @@ app.patch(
     } catch (error) {
       res
         .status(500)
-        .json({ error: "Failed to update message", details: error.message });
+        .json({ error: "Nachricht konnte nicht aktualisiert werden", details: error.message });
     }
   }
 );
@@ -612,25 +612,25 @@ app.delete("/chats/:chatId/messages/:messageId", authMiddleware, async (req, res
     const chat = await Chat.findOne({ _id: chatId, participants: { $in: [userId] } });
 
     if (!chat) {
-      return res.status(404).json({ error: "Chat not found or access denied" });
+      return res.status(404).json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
     }
 
     const message = chat.messages.id(messageId);
     if (!message) {
-      return res.status(404).json({ error: "Message not found" });
+      return res.status(404).json({ error: "Message nicht gefunden" });
     }
 
     if (message.sender.toString() !== userId) {
-      return res.status(403).json({ error: "You can only delete your own messages" });
+      return res.status(403).json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
     }
 
     chat.messages.pull(messageId);
     await chat.save();
 
-    res.status(200).json({ success: true, message: "Message deleted successfully" });
+    res.status(200).json({ success: true, message: "Nachricht erfolgreich gelöscht" });
   } catch (error) {
-    console.error("Error deleting message:", error);
-    res.status(500).json({ error: "Failed to delete message", details: error.message });
+    console.error("Fehler beim Löschen der Nachricht:", error);
+    res.status(500).json({ error: "Nachricht konnte nicht gelöscht werden", details: error.message });
   }
 });
 
@@ -713,7 +713,7 @@ app.post("/reset-password/:token", async (req, res) => {
     await user.save();
     res.status(200).json({ message: "Passwort erfolgreich zurückgesetzt." });
   } catch (error) {
-    console.error("Error resetting password:", error);
+    console.error("Fehler beim Zurücksetzen des Passworts:", error);
     res.status(500).json({ error: "Interner Serverfehler" });
   }
 });
