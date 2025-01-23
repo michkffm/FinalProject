@@ -12,23 +12,23 @@ import freizeit from "../assets/freizeit.jpeg";
 
 export function HomeSlider() {
   return (
-    <div className="flex overflow-hidden w-full py-4 hover:bg-opacity-50 bg-opacity-40 z-15 ">
-      <div className="flex gap-6 rounded-full animate-slide-left">
+    <div className="slider-container">
+      <div className="animate-slide-left">
         <Link
           to="/categorie/Beratung"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Beratung</span>
           <img
             src={beratung}
             alt="beratung"
-            className="rounded-full h-44 w-96 object-cover background-image"
+            className="rounded-lg h-44 w-72 object-cover background-image"
           />
         </Link>
 
         <Link
           to="/categorie/Bildung und Schulung"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Bildung und Schulung</span>
           <img
@@ -40,7 +40,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Betreuung und Gesundheit"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">
             Betreuung und Gesundheit
@@ -54,7 +54,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Finanzen und Versicherungen"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">
             Finanzen und Versicherungen
@@ -68,7 +68,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Technologie und IT"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Technologie und IT</span>
           <img
@@ -80,7 +80,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Reparatur und Wartung"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Reparatur und Wartung</span>
           <img
@@ -92,7 +92,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Transport und Logistik"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Transport und Logistik</span>
           <img
@@ -104,7 +104,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Reinigung und Pflege"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">Reinigung und Pflege</span>
           <img
@@ -116,7 +116,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Bau- und Renovierungsdienste"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">
             Bau- und Renovierungsdienste
@@ -130,7 +130,7 @@ export function HomeSlider() {
 
         <Link
           to="/categorie/Freizeit und Unterhaltung"
-          className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
         >
           <span className="text-lg font-semibold">
             Freizeit und Unterhaltung
