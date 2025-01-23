@@ -53,7 +53,7 @@ export function Home() {
 
   return (
     <main className="zero-section flex flex-col items-center sm:pt-28 sm:pb-40 pt-20 pb-10 sm:gap-20 gap-0">
-      <div className="handshake-section absolute inset-0 z-5"></div>
+      <div className="handshake-section absolute inset-0 z-5">{message && <p className="flex justify-center text-red-500 text-2xl mt-20 z-10">{message}</p>}</div>
       <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
         <h1 className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-xl sm:text-4xl text-teal-500 font-bold">
           Finde qualifizierte Fachleute für Deine Aufgaben
@@ -119,7 +119,6 @@ export function Home() {
           </form>
         </div>
       </section>
-        {message && <p className="text-red-500 text-2xl mt-10">{message}</p>}
     </main>
   );
 }

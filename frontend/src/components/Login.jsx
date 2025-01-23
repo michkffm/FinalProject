@@ -67,8 +67,8 @@ export function Login({ setIsLoggedIn }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           {message && (
             <div
-              className={`fixed top-10 left-1/2 transform -translate-x-1/2 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
-                message.includes("Fehler") ? "bg-red-200" : "bg-green-200"
+              className={`fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+                message.includes("Fehler") ? "bg-red-600" : "bg-green-600"
               }`}
             >
               {message}
