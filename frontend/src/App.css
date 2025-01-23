@@ -70,3 +70,8 @@ header {
     padding: 8px 12px; /* Reduzierte Innenabstände */
   }
 }
+.category-images {
+  position: relative; /* Bilder über dem Hintergrund */
+  z-index: 15; /* Höher als der Hintergrund */
+}
+

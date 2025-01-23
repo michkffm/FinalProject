@@ -24,6 +24,7 @@ import { ResetPassword } from "./components/ResetPassword.jsx";
 import { Help } from "./components/Help.jsx";
 import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die neue Nachrichten-Seite
 import { PaymentMethods } from "./components/PaymentMethods.jsx"; // hinzugefügt von Bilal
+import { HomeSlider } from "./components/HomeSlider.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -63,7 +64,9 @@ function App() {
           <Route path="/hilfe" element={<Help />} />
           <Route path="/messages" element={<MessagesPage />} /> {/* Neue Route für Nachrichten */}
         </Routes>
+        {/* <HomeSlider /> */}
       </div>
+      
       <Footer /> {/* Footer immer sichtbar */}
     </>
   );
