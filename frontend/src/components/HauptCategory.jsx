@@ -22,7 +22,7 @@ export function HauptCategory() {
       </div>
       <div className="flex flex-col items-center">
         <h1 className="text-4xl m-10 font-bold text-center text-teal-800">
-          Bitte wähle eine Kategorie aus
+          Bitte wähle eine Kategorie
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
           <Link
