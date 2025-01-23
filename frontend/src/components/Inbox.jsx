@@ -100,7 +100,7 @@ export function Inbox() {
         className="flex flex-col sm:flex-row items-center"
       >
         <i className="fa-solid fa-comments"></i>
-        <span className="text-lg font-normal ml-2">Nachrichten</span>
+        <span className="text-lg font-normal ml-2 hover:underline">Nachrichten</span>
         {unreadCount > 0 && (
           <span className="ml-2 bg-red-500 text-white rounded-full px-2 py-1 text-xs">
             {unreadCount}

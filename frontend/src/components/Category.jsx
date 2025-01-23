@@ -205,7 +205,7 @@ export function Category() {
           {filteredData.map((job) => (
             <div
               key={job._id}
-              className="bg-white shadow-lg rounded-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+              className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
             >
               <div className="flex justify-end relative">
                 {job.createdBy && username === job.createdBy.username && (
@@ -250,7 +250,7 @@ export function Category() {
               </p>
               <div className="flex justify-between mt-2">
                 <Link to={`/ratings/${job._id}`} className="w-5/12">
-                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors">
+                  <button className="w-full bg-blue-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors">
                     Bewerten
                   </button>
                 </Link>
@@ -258,7 +258,7 @@ export function Category() {
                   to={`/payment/${job._id}?price=${job.price}`}
                   className="w-5/12"
                 >
-                  <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-teal-600 transition-colors ">
+                  <button className="w-full bg-blue-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors ">
                     Buchen
                   </button>
                 </Link>
@@ -277,7 +277,7 @@ export function Category() {
                 ></textarea>
                 <button
                   type="submit"
-                  className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors mt-2"
+                  className="w-full bg-teal-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2"
                 >
                   Nachricht senden
                 </button>

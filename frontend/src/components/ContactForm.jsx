@@ -26,7 +26,7 @@ export default function ContactForm() {
       ) : (
         <form
           onSubmit={handleSubmit}
-          className="border border-gray-300 rounded-md shadow-lg mt-14 p-8 bg-white w-full max-w-4xl"
+          className="bg-white bg-opacity-40 border-2 border-teal-300 shadow-lg mt-14 p-8 w-full max-w-4xl"
         >
           <h2 className="text-2xl sm:text-3xl font-bold text-center mb-6 text-teal-600">
             Kontaktformular
@@ -121,7 +121,7 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={state.submitting}
-            className="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-teal-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
+            className="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg duration-300 hover:bg-teal-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
           >
             Senden
           </button>

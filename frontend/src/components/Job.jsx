@@ -176,8 +176,8 @@ export function Job({ setIsLoggedIn }) {
   };
 
   return (
-    <div className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
-      <div className="flex flex-col sm:flex-row justify-between sm:mt-14 mt-12 items-center bg-white shadow-lg rounded-lg p-6 max-w-4xl w-full">
+    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="flex flex-col sm:flex-row justify-between sm:mt-14 mt-12 items-center border-2 border-teal-300 bg-white bg-opacity-40 shadow-lg rounded-lg p-6 max-w-4xl w-full">
         <form className="space-y-6 w-full" onSubmit={handleSubmit}>
           <h2 className="text-2xl font-bold mb-6 text-center">
             Dienstleistung erstellen
@@ -314,7 +314,7 @@ export function Job({ setIsLoggedIn }) {
               <button
                 type="button"
                 onClick={handleLocation}
-                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 transition-colors"
+                className="bg-teal-500 text-white px-4 py-2 rounded duration-300 hover:bg-teal-600 transition-colors"
               >
                 Abrufen
               </button>
@@ -343,7 +343,7 @@ export function Job({ setIsLoggedIn }) {
           {/* Speichern-Button */}
           <button
             type="submit"
-            className="w-full bg-teal-500 text-white py-2 rounded hover:bg-teal-600 transition-colors"
+            className="w-full bg-teal-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors"
           >
             Speichern
           </button>

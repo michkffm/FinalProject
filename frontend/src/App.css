@@ -22,7 +22,16 @@ header {
     background-repeat: no-repeat;
     background-attachment: fixed; /* Hintergrund bleibt fixiert */
     height: 100vh;
-    }
+
+    /* Übergangseffekte */
+    opacity: 0;
+    transition: opacity 1s ease-in;
+}
+
+/* Sichtbare Klasse */
+.handshake-section.visible {
+    opacity: 1;
+}
 
   .zero-section {
       background-image: url('./assets/hintergrund-3.jpeg');

@@ -112,7 +112,7 @@ export function Help() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-    <div className="faq-container bg-white bg-opacity-80 p-8 rounded-lg shadow-lg w-full max-w-4xl mt-10">
+    <div className="faq-container bg-white bg-opacity-40 border-2 border-teal-300 p-8 rounded-lg shadow-lg w-full max-w-4xl mt-10">
       <h2 className="text-3xl font-bold mb-8 text-center text-teal-600">
         Häufige Fragen (FAQ)
       </h2>
