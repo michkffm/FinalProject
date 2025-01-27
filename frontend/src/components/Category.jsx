@@ -218,10 +218,10 @@ export function Category() {
               <div className="flex justify-end relative">
                 {job.createdBy && username === job.createdBy.username && (
                   <button
-                    className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-500 absolute"
                     onClick={() => handleDelete(job._id)}
                   >
-                    <i className="fa-solid fa-trash-can"></i>
+                     <i className="fa-solid fa-trash-can"></i>
+                     <span className="tooltip">Diensleistung löschen</span>
                   </button>
                 )}
               </div>
