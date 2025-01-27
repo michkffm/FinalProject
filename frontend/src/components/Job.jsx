@@ -293,8 +293,8 @@ export function Job({ setIsLoggedIn }) {
               <option value="Essen und Trinken">
               Essen und Trinken
               </option>
-              <option value="Sport und Livestyle">
-              Sport und Livestyle
+              <option value="Sport und Lifestyle">
+              Sport und Lifestyle
               </option>
             </select>
           </div>
