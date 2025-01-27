@@ -27,8 +27,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Beratung"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Beratung</span>
           <img
             src={beratung}
@@ -40,8 +39,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Bildung und Schulung"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Bildung und Schulung</span>
           <img
             src={bildung}
@@ -53,8 +51,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Betreuung und Gesundheit"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">
             Betreuung und Gesundheit
           </span>
@@ -68,8 +65,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Finanzen und Versicherungen"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">
             Finanzen und Versicherungen
           </span>
@@ -83,8 +79,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Technologie und IT"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Technologie und IT</span>
           <img
             src={technologie}
@@ -96,8 +91,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Reparatur und Wartung"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Reparatur und Wartung</span>
           <img
             src={reparatur}
@@ -109,8 +103,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Transport und Logistik"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Transport und Logistik</span>
           <img
             src={transport}
@@ -122,8 +115,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Reinigung und Pflege"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">Reinigung und Pflege</span>
           <img
             src={reinigung}
@@ -135,8 +127,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Bau- und Renovierungsdienste"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">
             Bau- und Renovierungsdienste
           </span>
@@ -150,8 +141,7 @@ export function HomeSlider() {
         <Link
           to="/categorie/Freizeit und Unterhaltung"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          onClick={handleUnauthorizedClick}
-        >
+          onClick={handleUnauthorizedClick}>
           <span className="text-lg font-semibold">
             Freizeit und Unterhaltung
           </span>

@@ -54,16 +54,16 @@ export function Home() {
   };
 
   return (
-    <main className="zero-section flex flex-col items-center sm:pt-28 sm:pb-40 pb-10 sm:gap-20 gap-0 mt-[-50px]">
-      <div className="handshake-section absolute inset-0 z-1">
-        {message && (
-          <p className="flex justify-center text-red-500 text-2xl mt-20 z-15">
+    <main className="zero-section flex flex-col justify-around items-center sm:pt-28 sm:pb-80 pb-80 sm:gap-14 gap-5 sm:mt-[-50px] mt-[0px]">
+      {message && (
+          <p className="sm:mt-0 mt-14 text-red-500 bg-red-200 p-1 rounded text-xl z-20 absolute">
             {message}
           </p>
         )}
+      <div className="handshake-section absolute inset-0 z-9">
       </div>
       <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
-        <h1 className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-xl sm:text-4xl text-teal-500 font-bold z-10">
+        <h1 className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
         <p className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-gray-600 mt-2 z-10">
@@ -85,7 +85,7 @@ export function Home() {
           />
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-7 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
+            className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
             disabled={!isLoggedIn}
           >
             Suchen
