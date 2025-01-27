@@ -55,6 +55,7 @@ header {
   white-space: nowrap;
   display: none; /* Tooltip standardmäßig verstecken */
   z-index: 1000;
+  margin-left: -80px;
 }
 button:hover .tooltip {
   display: block; /* Tooltip anzeigen, wenn man über den Button hovert */
@@ -155,5 +156,8 @@ button:hover .tooltip {
   .animate-slide-left {
     animation: slide-left 40s linear infinite; /* Geschwindigkeit für kleinere Geräte anpassen */
   }
+}
+footer {
+  position: relative;
 }
 

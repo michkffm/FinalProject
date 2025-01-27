@@ -135,12 +135,12 @@ export function RatingsView() {
 
                 <p className="text-gray-600 text-sm">{rating.content}</p>
                 {rating.senderId && userId === rating.senderId._id && (
-                  <div className="flex justify-end relative">
+                  <div className="flex justify-end relative bottom-5">
                     <button
-                      className="px-3 py-1 bg-red-600 text-white rounded-lg shadow hover:bg-red-500 absolute bottom-7"
                       onClick={() => handleDelete(rating._id)}
                     >
-                      <i className="fa-regular fa-trash-can"></i>
+                       <i className="fa-solid fa-trash-can"></i>
+                       <span className="tooltip">Bewertung löschen</span>
                     </button>
                   </div>
                 )}
