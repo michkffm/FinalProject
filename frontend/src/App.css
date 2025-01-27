@@ -86,6 +86,7 @@ header {
   }
 }
 
+
 .animate-slide-left {
   display: flex;
   animation: slide-left 60s linear infinite;
