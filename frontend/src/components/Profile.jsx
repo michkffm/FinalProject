@@ -305,6 +305,8 @@ export function Profile() {
               >
                 Freizeit und Unterhaltung
               </option>
+              <option value="Essen und Trinken">Essen und Trinken</option>
+              <option value="Sport und Lifestyle">Sport und Lifestyle</option>
             </select>
           </div>
           <div className="space-y-2">
