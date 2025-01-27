@@ -26,7 +26,7 @@ export function Profile() {
 
   useEffect(() => {
     if (!token) {
-      setMessage("Kein Token gefunden, bitte einloggen.");
+      setMessage("Bitte log dich ein.");
       navigate("/profile");
     }
   }, [token, navigate]);
