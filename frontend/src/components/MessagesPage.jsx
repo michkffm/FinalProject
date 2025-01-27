@@ -186,14 +186,16 @@ export function MessagesPage() {
                       Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                     </p>
                     <div className="absolute right-5 top-8">
-                      <button
-                        onClick={() =>
-                          handleDeleteMessage(chat._id, msg._id)
-                        }
-                      >
-                        <i className="fa-solid fa-trash-can"></i>
-                        <span className="tooltip">Deine Nachricht löschen</span>
-                      </button>
+                     {
+                      username === msg.sender.username && (
+                        <button
+                          onClick={() => handleDeleteMessage(chat._id, msg._id)}
+                        >
+                          <i className="fa-solid fa-trash-can"></i>
+                          <span className="tooltip">Nachricht löschen</span>
+                        </button>
+                      )
+                     }
                     </div>
                   </div>
                 ))}
