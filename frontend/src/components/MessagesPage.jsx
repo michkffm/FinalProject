@@ -146,15 +146,16 @@ export function MessagesPage() {
               key={chat._id}
               className="p-6 mb-6 w-full bg-green shadow-lg rounded-lg bg-white bg-opacity-40 border-2 border-teal-300"
             >
-              <div className="flex justify-center items-center py-6 relative">
-                <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 sm:w-2/6 w-3/4 mb-6 flex items-center justify-center border border-teal-300">
-                  Chat für {chat.jobId?.title || "Unbekannt"}
-                </h3>
-                <div className="absolute top-19 right-80 ">
+              <div>
                   <button onClick={() => handleDelete(chat._id)}>
                     <i className="fa-solid fa-trash-can"></i>
+                    <span className="tooltip">Chat löschen</span>
                   </button>
                 </div>
+              <div className="flex justify-center items-center py-6 relative">
+                <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 mb-6 flex items-center justify-center border border-teal-300">
+                  Chat für {chat.jobId?.title || "Unbekannt"}
+                </h3>
               </div>
 
               {/* Textarea für Nachrichtenantwort */}
@@ -185,13 +186,14 @@ export function MessagesPage() {
                       Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                     </p>
                     <div className="absolute right-5 top-8">
-                     {username === msg.sender.username && (
-                        <button
-                          onClick={() => handleDeleteMessage(chat._id, msg._id)}
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                        </button>
-                      )}
+                      <button
+                        onClick={() =>
+                          handleDeleteMessage(chat._id, msg._id)
+                        }
+                      >
+                        <i className="fa-solid fa-trash-can"></i>
+                        <span className="tooltip">Deine Nachricht löschen</span>
+                      </button>
                     </div>
                   </div>
                 ))}
