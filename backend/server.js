@@ -211,6 +211,7 @@ app.get("/jobs", async (req, res) => {
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
+    console.log("Allowed categories:", allowedCategories);
 
     const jobs = await Job.find(query)
       .populate("createdBy", "username")
@@ -248,6 +249,8 @@ app.get("/search/jobs", async (req, res) => {
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung",
+    "Essen und Trinken",
+    "Sport und Lifestyle",
   ];
 
   try {
