@@ -42,7 +42,7 @@ export function Category() {
         return res.json();
       })
       .then((data) => {
-        console.log(data);
+        console.log("Abgerufene Daten:", data);
 
         setData(data);
         setFilteredData(data);
