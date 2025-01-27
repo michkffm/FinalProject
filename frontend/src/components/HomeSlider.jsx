@@ -164,27 +164,27 @@ export function HomeSlider() {
           />
         </Link>
         <Link
-            to="/categorie/Essen und Trinken"
-            className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          >
-            <span className="text-lg font-semibold">Essen und Trinken</span>
-            <img
-              src={essen}
-              alt="essen und trinken"
-              className="rounded-lg h-44 w-72 object-cover"
-            />
-          </Link>
-          <Link
-            to="/categorie/Sport und Lifestyle"
-            className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-          >
-            <span className="text-lg font-semibold">Sport und Lifestyle</span>
-            <img
-              src={sport}
-              alt="sport"
-              className="rounded-lg h-44 w-72 object-cover"
-            />
-          </Link>
+          to="/categorie/Essen und Trinken"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-lg font-semibold">Essen und Trinken</span>
+          <img
+            src={essen}
+            alt="essen und trinken"
+            className="rounded-lg h-44 w-72 object-cover"
+          />
+        </Link>
+        <Link
+          to="/categorie/Sport und Lifestyle"
+          className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+        >
+          <span className="text-lg font-semibold">Sport und Lifestyle</span>
+          <img
+            src={sport}
+            alt="sport"
+            className="rounded-lg h-44 w-72 object-cover"
+          />
+        </Link>
       </div>
     </div>
   );
