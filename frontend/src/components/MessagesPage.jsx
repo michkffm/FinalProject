@@ -150,7 +150,7 @@ export function MessagesPage() {
                 <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 sm:w-2/6 w-3/4 mb-6 flex items-center justify-center border border-teal-300">
                   Chat für {chat.jobId?.title || "Unbekannt"}
                 </h3>
-                <div className="absolute top-8 right-80">
+                <div className="absolute top-19 right-80">
                   <button onClick={() => handleDelete(chat._id)}>
                     <i className="fa-solid fa-trash-can"></i>
                   </button>

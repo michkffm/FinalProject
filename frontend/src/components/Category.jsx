@@ -102,6 +102,7 @@ export function Category() {
   const handleContactSubmit = (e, jobId) => {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
+  
     fetch("http://localhost:3000/chats", {
       method: "POST",
       headers: {
@@ -138,6 +139,9 @@ export function Category() {
         } catch {
           setMessage("Fehler beim Senden der Nachricht.");
         }
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
       });
   };
 
@@ -166,7 +170,11 @@ export function Category() {
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">
       <div className="container mx-auto sm:mt-14 mt-10">
         {message && (
-          <div className="fixed top-22 left-1/2 transform -translate-x-1/2 bg-green-200 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in">
+          <div
+            className={`fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+              message.includes("Fehler") ? "bg-red-600" : "bg-green-600"
+            }`}
+          >
             {message}
           </div>
         )}
