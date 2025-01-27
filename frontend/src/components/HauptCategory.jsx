@@ -9,6 +9,8 @@ import transport from "../assets/transport.jpeg";
 import reinigung from "../assets/reinigung.jpeg";
 import bau from "../assets/bau.jpeg";
 import freizeit from "../assets/freizeit.jpeg";
+import essen from "../assets/essen und trinken.jpeg";
+import sport from "../assets/sport.jpeg";
 
 export function HauptCategory() {
   return (
@@ -151,6 +153,28 @@ export function HauptCategory() {
             <img
               src={freizeit}
               alt="freizeit"
+              className="rounded-lg h-44 w-72 object-cover"
+            />
+          </Link>
+          <Link
+            to="/categorie/essen-und-trinken"
+            className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          >
+            <span className="text-lg font-semibold">Essen und Trinken</span>
+            <img
+              src={essen}
+              alt="essen und trinken"
+              className="rounded-lg h-44 w-72 object-cover"
+            />
+          </Link>
+          <Link
+            to="/categorie/sport-und-livestyle"
+            className="flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
+          >
+            <span className="text-lg font-semibold">Sport und Livestyle</span>
+            <img
+              src={sport}
+              alt="sport"
               className="rounded-lg h-44 w-72 object-cover"
             />
           </Link>
