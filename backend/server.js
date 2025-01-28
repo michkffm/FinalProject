@@ -201,6 +201,8 @@ app.get("/jobs", async (req, res) => {
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung",
+    "Essen und Trinken", 
+    "Sport und Lifestyle",
   ];
 
   try {
@@ -246,6 +248,8 @@ app.get("/search/jobs", async (req, res) => {
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung",
+    "Essen und Trinken", 
+    "Sport und Lifestyle",
   ];
 
   try {
