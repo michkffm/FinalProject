@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-export function Inbox() {
+
+
+export function Inbox({setMenuOpen}) {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
@@ -85,6 +87,7 @@ export function Inbox() {
   const handleNavigate = () => {
     markMessagesAsRead().then(() => {
       fetchMessages(); // Refresh unread count after marking as read
+      setMenuOpen(false);
       navigate("/messages");
     });
   };
