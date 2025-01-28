@@ -219,7 +219,7 @@ export function Profile() {
           />
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <h2 className="text-2xl font-bold mb-6 text-center">
+          <h2 className="text-2xl font-bold mb-6 text-center text-teal-600">
             Profil bearbeiten
           </h2>
           {message && (
