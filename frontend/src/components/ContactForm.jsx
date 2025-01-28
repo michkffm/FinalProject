@@ -1,25 +1,79 @@
-import { useForm, ValidationError } from "@formspree/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaGithub } from "react-icons/fa";
 
 export default function ContactForm() {
-  const [state, handleSubmit] = useForm("mzzblene");
   const navigate = useNavigate();
   const [customSubject, setCustomSubject] = useState(false);
+  const [message, setMessage] = useState("");
+  const [data, setData] = useState({
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const token = localStorage.getItem("token");
 
-  useEffect(() => {
-    if (state.succeeded) {
-      setTimeout(() => {
-        navigate("/");
-      }, 8000);
+  const handleSubjectChange = (e) => {
+    const selectedSubject = e.target.value;
+    setData({
+      ...data,
+      subject: selectedSubject,
+    });
+    setCustomSubject(selectedSubject === "custom");
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (!data.email || !/\S+@\S+\.\S+/.test(data.email)) {
+      setMessage("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+      return;
     }
-  }, [state.succeeded, navigate]);
+
+    fetch("http://localhost:3000/contact", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => {
+        if (!res.ok) {
+          return res.text().then((text) => {
+            throw new Error(text);
+          });
+        }
+        return res.json();
+      })
+      .then(() => {
+        setData({
+          email: "",
+          subject: "",
+          message: "",
+        });
+        setMessage("Nachricht erfolgreich gesendet!");
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+      })
+      .catch((error) => {
+        try {
+          const err = JSON.parse(error.message);
+          setMessage(err.error || "Unbekannter Fehler.");
+        } catch {
+          setMessage("Fehler beim Senden der Nachricht.");
+        }
+        setTimeout(() => {
+          setMessage("");
+        }, 3000);
+      });
+  };
 
   return (
     <div className="flex justify-center items-center flex-col zero-section min-h-screen px-4 py-8">
       {/* Erfolgreich-Nachricht */}
-      {state.succeeded ? (
+      {message ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
           Du hast erfolgreich Deine Nachricht verschickt!
         </p>
@@ -43,14 +97,10 @@ export default function ContactForm() {
               id="email"
               type="email"
               name="email"
+              value={data.email}
+              onChange={(e) => setData({ ...data, email: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
               placeholder="max@musterman.com"
-            />
-            <ValidationError
-              prefix="Email"
-              field="email"
-              errors={state.errors}
-              className="text-red-500 text-sm mt-1"
             />
           </div>
 
@@ -65,10 +115,11 @@ export default function ContactForm() {
             <select
               id="subject"
               name="subject"
+              value={data.subject}
+              onChange={handleSubjectChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
-              onChange={(e) => setCustomSubject(e.target.value === "custom")}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Betreff auswählen
               </option>
               <option value="support">Support-Anfrage</option>
@@ -82,16 +133,14 @@ export default function ContactForm() {
               <input
                 type="text"
                 name="customSubject"
+                value={data.subject}
+                onChange={(e) =>
+                  setData({ ...data, subject: e.target.value })
+                }
                 className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
                 placeholder="Bitte Betreff angeben"
               />
             )}
-            <ValidationError
-              prefix="Subject"
-              field="subject"
-              errors={state.errors}
-              className="text-red-500 text-sm mt-1"
-            />
           </div>
 
           {/* Nachricht */}
@@ -106,21 +155,16 @@ export default function ContactForm() {
               id="message"
               name="message"
               rows="5"
+              value={data.message}
+              onChange={(e) => setData({ ...data, message: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
               placeholder="Beschreibe Dein Anliegen..."
-            />
-            <ValidationError
-              prefix="Message"
-              field="message"
-              errors={state.errors}
-              className="text-red-500 text-sm mt-1"
             />
           </div>
 
           {/* Senden-Button */}
           <button
             type="submit"
-            disabled={state.submitting}
             className="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg duration-300 hover:bg-teal-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
           >
             Senden
