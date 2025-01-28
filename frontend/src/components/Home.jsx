@@ -54,7 +54,7 @@ export function Home() {
   };
 
   return (
-    <main className="zero-section flex flex-col justify-around items-center sm:pt-28 sm:pb-80 pb-80 sm:gap-14 gap-5 sm:mt-[-50px] mt-[0px]">
+    <main className="zero-section flex flex-col justify-start items-center sm:pt-28 sm:gap-14 gap-5">
       {message && (
           <p className="sm:mt-0 mt-14 text-red-500 bg-red-200 p-1 rounded text-xl z-20 absolute">
             {message}
@@ -93,7 +93,7 @@ export function Home() {
         </form>
       </section>
 
-      <section className="z-10 mt-[-60px]">
+      <section className="z-10">
         <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4 duration-300 hover:bg-opacity-50">
           <h2 className="font-semibold mb-2">Dienstleistung anbieten</h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
