@@ -19,10 +19,8 @@ header {
   .handshake-section {
     background-image: url('./assets/handshake-PNG.png');
     background-size: cover;
-    background-position: bottom;
+    background-position: center;
     background-repeat: no-repeat;
-    background-attachment: fixed;
-    height: 100vh;
 
     opacity: 0;
     transition: opacity 3s ease-in;
@@ -43,6 +41,8 @@ header {
 
   footer {
     box-shadow: 0px -5px 5px 0px #00000052;
+    position: relative;
+    z-index: 10;
 }
 
 .tooltip {
@@ -55,6 +55,7 @@ header {
   white-space: nowrap;
   display: none; /* Tooltip standardmäßig verstecken */
   z-index: 1000;
+  margin-left: -80px;
 }
 button:hover .tooltip {
   display: block; /* Tooltip anzeigen, wenn man über den Button hovert */
@@ -82,23 +83,11 @@ button:hover .tooltip {
   z-index: 15; 
 }
 
-@keyframes slide-left {
-  0% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(-100%);
-  }
-}
-
-
+/* Slider Animation */
 .animate-slide-left {
   position: absolute;
   display: flex;
-  animation: slide-left 60s linear infinite;
+  animation: slide-left 40s linear infinite;
   white-space: nowrap;
 }
 
@@ -107,7 +96,7 @@ button:hover .tooltip {
     transform: translateX(0);
   }
   100% {
-    transform: translateX(-100%);
+    transform: translateX(-100%); /* Nur bis zur Hälfte der duplizierten Inhalte */
   }
 }
 
@@ -115,6 +104,7 @@ button:hover .tooltip {
 .slider-container {
   overflow: hidden;
   z-index: 10;
+  width: 100%;
 }
 
 /* Einzelne Slider Items */
@@ -129,7 +119,7 @@ button:hover .tooltip {
   background-color: rgba(28, 153, 133, 0.7);
 }
 
-/* Hintergrundbild für Slides */
+/* Hintergrundbild */
 .background-image {
   object-fit: cover;
   object-position: center;
@@ -143,17 +133,24 @@ button:hover .tooltip {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .slider-item {
-    margin: 5px;
-    transform: scale(1); /* Kein Hover-Scale auf kleineren Geräten */
+  body {
+    overflow-x: hidden;
   }
 
   .background-image {
     border-radius: 0.25rem;
   }
 
-  .animate-slide-left {
-    animation: slide-left 40s linear infinite; /* Geschwindigkeit für kleinere Geräte anpassen */
+  .slider-item {
+    margin: 5px;
+    transform: scale(0.85); /* Kein Hover-Scale auf kleineren Geräten */
   }
+
+  .animate-slide-left {
+    animation: slide-left 20s linear infinite; /* Geschwindigkeit für kleinere Geräte anpassen */
+  }
+}
+footer {
+  position: relative;
 }
 
