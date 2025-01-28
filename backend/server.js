@@ -201,7 +201,11 @@ app.get("/jobs", async (req, res) => {
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung",
+<<<<<<< HEAD
     "Essen und Trinken", 
+=======
+    "Essen und Trinken",
+>>>>>>> 8f0bd0f302c3b38c90e1a01d920181255afca643
     "Sport und Lifestyle",
   ];
 
@@ -211,6 +215,7 @@ app.get("/jobs", async (req, res) => {
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
+    console.log("Allowed categories:", allowedCategories);
 
     const jobs = await Job.find(query)
       .populate("createdBy", "username")
@@ -248,7 +253,11 @@ app.get("/search/jobs", async (req, res) => {
     "Reinigung und Pflege",
     "Bau- und Renovierungsdienste",
     "Freizeit und Unterhaltung",
+<<<<<<< HEAD
     "Essen und Trinken", 
+=======
+    "Essen und Trinken",
+>>>>>>> 8f0bd0f302c3b38c90e1a01d920181255afca643
     "Sport und Lifestyle",
   ];
 

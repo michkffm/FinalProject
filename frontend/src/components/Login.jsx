@@ -75,7 +75,7 @@ export function Login({ setIsLoggedIn }) {
             </div>
           )}
           <div className="space-y-2">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center text-gray-800">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-center text-teal-600">
               Login
             </h2>
             <label
