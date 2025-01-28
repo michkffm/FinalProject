@@ -108,7 +108,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                 </button>
               </li>
               <li>
-                <Inbox />
+                <Inbox setMenuOpen={setMenuOpen}/>
               </li>
             </>
           )}
