@@ -25,7 +25,7 @@ export function HomeSlider() {
   };
   return (
     <div className="slider-container">
-      <div className="animate-slide-left">
+      <div className="animate-slide-left relative mb-12">
         <Link
           to="/categorie/Beratung"
           className="slider-item flex flex-col items-center gap-4 bg-teal-600 bg-opacity-40 text-white p-6 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
