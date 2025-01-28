@@ -11,7 +11,7 @@ import authMiddleware from "./middlewares/authMiddleware.js";
 import { Resend } from "resend";
 import crypto from "crypto";
 import cookieParser from "cookie-parser";
-
+import Contact from "./models/Contact.js";
 
 const { ObjectId } = mongoose.Types;
 
@@ -19,7 +19,7 @@ await mongoose.connect(process.env.DB_URI);
 
 const app = express();
 const port = process.env.PORT;
-const resend = new Resend("re_KyqmAF3D_85kbs7wN1vf1iNrVuM85NEyL");
+const resend = new Resend("re_YHxdk7a9_GUy9bg1bnvn45smJJ1HcbPkH");
 
 app.use(cors());
 
@@ -35,7 +35,9 @@ app.post("/register", async (req, res) => {
   }
 
   if (password.length <= 8) {
-    return res.status(400).json({ error: "Password muss mindesten 8 Zeichen lang sein." });
+    return res
+      .status(400)
+      .json({ error: "Password muss mindesten 8 Zeichen lang sein." });
   }
 
   try {
@@ -73,11 +75,11 @@ app.post("/login", async (req, res) => {
 
     const payload = { userId: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    res.cookie('jwt', token, {
+    res.cookie("jwt", token, {
       httpOnly: true,
       secure: true,
       maxAge: 2592000000,
-      sameSite: "none"
+      sameSite: "none",
     });
 
     res.json({ user: user, token: token });
@@ -119,7 +121,10 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Profil konnte nicht aktualisiert werden", details: error.message });
+      .json({
+        error: "Profil konnte nicht aktualisiert werden",
+        details: error.message,
+      });
   }
 });
 
@@ -143,7 +148,10 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Benutzerprofil konnte nicht abgerufen werden", details: error.message });
+      .json({
+        error: "Benutzerprofil konnte nicht abgerufen werden",
+        details: error.message,
+      });
   }
 });
 
@@ -211,7 +219,6 @@ app.get("/jobs", async (req, res) => {
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
-    console.log("Allowed categories:", allowedCategories);
 
     const jobs = await Job.find(query)
       .populate("createdBy", "username")
@@ -291,7 +298,10 @@ app.get("/search/jobs", async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Suche nach Jobs fehlgeschlagen", details: error.message });
+      .json({
+        error: "Suche nach Jobs fehlgeschlagen",
+        details: error.message,
+      });
   }
 });
 
@@ -359,22 +369,31 @@ app.patch("/users/:id", authMiddleware, async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ error: "Benutzer konnte nicht aktualisiert werden" });
+    res
+      .status(500)
+      .json({ error: "Benutzer konnte nicht aktualisiert werden" });
   }
 });
 
-app.delete('/users/:id', authMiddleware, async (req, res) => {
+app.delete("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
   try {
     await Job.deleteMany({ createdBy: userId });
     const user = await User.findByIdAndDelete(id);
     if (!user) {
-      return res.status(404).json({ error: 'Benutzer nicht gefunden' });
+      return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
-    res.status(200).json({ message: 'Benutzer und alle zugehörigen Jobs wurden erfolgreich gelöscht' });
+    res
+      .status(200)
+      .json({
+        message:
+          "Benutzer und alle zugehörigen Jobs wurden erfolgreich gelöscht",
+      });
   } catch (error) {
-    res.status(500).json({ error: 'Fehler beim Löschen des Benutzers und der Jobs' });
+    res
+      .status(500)
+      .json({ error: "Fehler beim Löschen des Benutzers und der Jobs" });
   }
 });
 
@@ -390,7 +409,10 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Bewertungen konnten nicht abgerufen werden", details: error.message });
+      .json({
+        error: "Bewertungen konnten nicht abgerufen werden",
+        details: error.message,
+      });
   }
 });
 
@@ -406,11 +428,16 @@ app.post("/ratings", authMiddleware, async (req, res) => {
     const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
 
-    res.status(201).json({ message: "Bewertung erfolgreich hinzugefügt", newRating });
+    res
+      .status(201)
+      .json({ message: "Bewertung erfolgreich hinzugefügt", newRating });
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Bewertung konnte nicht hinzugefügt werden", details: error.message });
+      .json({
+        error: "Bewertung konnte nicht hinzugefügt werden",
+        details: error.message,
+      });
   }
 });
 
@@ -432,7 +459,7 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Bewertung konnte nicht gelöscht werden" });
   }
 });
-app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
+app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
 
@@ -458,8 +485,7 @@ app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
   }
 });
 
-
-app.post('/chats', authMiddleware, async (req, res) => {
+app.post("/chats", authMiddleware, async (req, res) => {
   const { jobId, message } = req.body;
   const senderId = req.user.userId;
   try {
@@ -479,14 +505,18 @@ app.post('/chats', authMiddleware, async (req, res) => {
         messages: [{ content: message, sender: senderId }],
       });
     } else {
-    
       chat.messages.push({ content: message, sender: senderId });
     }
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Nachricht konnte nicht gesendet werden", details: error.message });
+    res
+      .status(500)
+      .json({
+        error: "Nachricht konnte nicht gesendet werden",
+        details: error.message,
+      });
   }
 });
 
@@ -540,11 +570,14 @@ app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Chats konnten nicht abgerufen werden.", details: error.message });
+      .json({
+        error: "Chats konnten nicht abgerufen werden.",
+        details: error.message,
+      });
   }
 });
 
-app.post('/chats/:chatId/reply', authMiddleware, async (req, res) => {
+app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
   try {
@@ -591,11 +624,13 @@ app.patch(
     } catch (error) {
       res
         .status(500)
-        .json({ error: "Nachricht konnte nicht aktualisiert werden", details: error.message });
+        .json({
+          error: "Nachricht konnte nicht aktualisiert werden",
+          details: error.message,
+        });
     }
   }
 );
-
 
 app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
@@ -606,52 +641,80 @@ app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
   }
   try {
     // Wandelt chatId in ObjectId um, um sicherzustellen, dass sie korrekt behandelt wird
-    const chat = await Chat.findOne({ _id: new ObjectId(chatId), participants: { $in: [userId] } });
+    const chat = await Chat.findOne({
+      _id: new ObjectId(chatId),
+      participants: { $in: [userId] },
+    });
     if (!chat) {
-      return res.status(404).json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
+      return res
+        .status(404)
+        .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
     }
     // Lösche den Chat
     await Chat.findByIdAndDelete(chatId);
-    res.status(200).json({ success: true, message: "Chat erfolgreich gelöscht" });
+    res
+      .status(200)
+      .json({ success: true, message: "Chat erfolgreich gelöscht" });
   } catch (error) {
     console.error("Fehler beim Löschen des Chats:", error);
-    res.status(500).json({ error: "Fehler beim Löschen des Chats", details: error.message });
+    res
+      .status(500)
+      .json({ error: "Fehler beim Löschen des Chats", details: error.message });
   }
 });
 
-app.delete("/chats/:chatId/messages/:messageId", authMiddleware, async (req, res) => {
-  const { chatId, messageId } = req.params;
-  const userId = req.user.userId;
+app.delete(
+  "/chats/:chatId/messages/:messageId",
+  authMiddleware,
+  async (req, res) => {
+    const { chatId, messageId } = req.params;
+    const userId = req.user.userId;
 
-  try {
-    const chat = await Chat.findOne({ _id: chatId, participants: { $in: [userId] } });
+    try {
+      const chat = await Chat.findOne({
+        _id: chatId,
+        participants: { $in: [userId] },
+      });
 
-    if (!chat) {
-      return res.status(404).json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
+      if (!chat) {
+        return res
+          .status(404)
+          .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
+      }
+
+      const message = chat.messages.id(messageId);
+      if (!message) {
+        return res.status(404).json({ error: "Message nicht gefunden" });
+      }
+
+      if (message.sender.toString() !== userId) {
+        return res
+          .status(403)
+          .json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
+      }
+
+      chat.messages.pull(messageId);
+      await chat.save();
+
+      res
+        .status(200)
+        .json({ success: true, message: "Nachricht erfolgreich gelöscht" });
+    } catch (error) {
+      console.error("Fehler beim Löschen der Nachricht:", error);
+      res
+        .status(500)
+        .json({
+          error: "Nachricht konnte nicht gelöscht werden",
+          details: error.message,
+        });
     }
-
-    const message = chat.messages.id(messageId);
-    if (!message) {
-      return res.status(404).json({ error: "Message nicht gefunden" });
-    }
-
-    if (message.sender.toString() !== userId) {
-      return res.status(403).json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
-    }
-
-    chat.messages.pull(messageId);
-    await chat.save();
-
-    res.status(200).json({ success: true, message: "Nachricht erfolgreich gelöscht" });
-  } catch (error) {
-    console.error("Fehler beim Löschen der Nachricht:", error);
-    res.status(500).json({ error: "Nachricht konnte nicht gelöscht werden", details: error.message });
   }
-});
+);
 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   if (!email) {
+    console.log("E-Mail erhalten:", email);
     return res.status(400).json({ error: "E-Mail ist erforderlich." });
   }
   try {
@@ -665,8 +728,8 @@ app.post("/forgot-password", async (req, res) => {
     user.resetPasswordToken = resetPasswordToken;
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
-    await resend.emails.send({
-      from: "onboarding@resend.dev",
+    const { data, error } = await resend.emails.send({
+      from: "info@easyhelfer.com",
       to: user.email,
       subject: "Passwort zurücksetzen",
       html: `
@@ -692,10 +755,16 @@ app.post("/forgot-password", async (req, res) => {
         </div>
       `,
     });
+    if (error) {
+      return res.status(400).json({ error });
+    }
 
-    res.status(200).json({
-      message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
-    });
+    res
+      .status(200)
+      .json({
+        data,
+        message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
+      });
   } catch (error) {
     console.error("Fehler beim Zurücksetzen des Passworts:", error);
     res.status(500).json({
@@ -748,6 +817,30 @@ app.get("/reset-password/:token", async (req, res) => {
   } catch (error) {
     console.error("Error in getResetPasswordPage:", error.message);
     res.status(500).json({ error: "Interner Serverfehler" });
+  }
+});
+app.post("/contact", async (req, res) => {
+  try {
+    const { email, subject, message } = req.body;
+
+    if (!email || !subject || !message) {
+      return res.status(400).json({ error: "Alle Felder sind erforderlich." });
+    }
+
+    const newContact = new Contact({
+      email,
+      subject,
+      message,
+    });
+
+    await newContact.save();
+
+    res.status(201).json({ message: "Nachricht erfolgreich gesendet!" });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ error: "Es gab einen Fehler beim Senden der Nachricht." });
   }
 });
 
