@@ -110,7 +110,7 @@ export function Home() {
           </form>
         </div>
       </section>
-      <section>
+      <section className="hidden md:block">
         <HomeSlider />
       </section>
     </main>
