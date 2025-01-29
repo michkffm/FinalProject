@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export function Footer() {
   return (
-    <footer className="text-teal-600 bottom-0 h-full">
+    <footer className="bg-white text-teal-600 w-full">
       <nav aria-label="Footer Navigation" className="p-2 flex flex-col sm:flex-row sm:justify-center sm:items-center items-center top-0 left-0 w-full">
         <ul className="flex flex-col sm:flex-row flex-wrap justify-between items-center sm:gap-20 gap-3">
           <p className="text-center sm:text-left w-full sm:w-auto sm:mt-0">&copy; {new Date().getFullYear()}</p>

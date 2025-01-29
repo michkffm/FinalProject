@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import profileImage from "../assets/profile-1.jpeg";
+
 export function Profile() {
   const [data, setData] = useState({
     profilePhoto: "",

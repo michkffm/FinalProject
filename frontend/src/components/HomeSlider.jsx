@@ -12,6 +12,7 @@ import bau from '../assets/bau.jpeg';
 import freizeit from '../assets/freizeit.jpeg';
 import essen from '../assets/essen und trinken.jpeg';
 import sport from '../assets/sport.jpeg';
+
 const categories = [
   { name: "Beratung", image: beratung, link: "/categorie/Beratung" },
   { name: "Bildung und Schulung", image: bildung, link: "/categorie/Bildung und Schulung" },
