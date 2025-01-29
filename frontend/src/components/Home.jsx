@@ -12,20 +12,17 @@ export function Home() {
   const [isLoggedIn] = useState(localStorage.getItem("token") !== null);
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-
   useEffect(() => {
     const section = document.querySelector(".handshake-section");
     setTimeout(() => {
       section.classList.add("visible");
     }, 100); // Verzögerung von 100ms
   }, []);
-
   useEffect(() => {
     if (!isLoggedIn) {
       setMessage("Bitte logge dich ein, um fortzufahren.");
     }
   }, [isLoggedIn]);
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setData({
@@ -33,17 +30,14 @@ export function Home() {
       [name]: value,
     });
   };
-
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
       setMessage("Bitte logge dich ein, um zu suchen.");
       return;
     }
-
     navigate(`/suche?query=${query}`);
   };
-
   const handleOfferSubmit = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
@@ -52,24 +46,22 @@ export function Home() {
     }
     navigate("/jobs");
   };
-
   return (
-    <main className="zero-section flex flex-col justify-around items-center sm:pt-28 sm:pb-80 pb-80 sm:gap-14 gap-5 sm:mt-[-50px] mt-[0px]">
+    <main className="position zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5">
       {message && (
-          <p className="sm:mt-0 mt-14 text-red-500 bg-red-200 p-1 rounded text-xl z-20 absolute">
+          <p className="sm:mt-0 text-red-600 p-1 rounded text-2xl z-20 absolute">
             {message}
           </p>
         )}
       <div className="handshake-section absolute inset-0 z-9">
       </div>
-      <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 mt-20 p-8 text-center">
-        <h1 className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
+      <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center mt-[-180px]">
+        <h1 className="bg-white bg-opacity-0 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
         <p className="bg-white bg-opacity-0 pl-2 pr-2 rounded text-gray-600 mt-2 z-10">
           Verbindung zu qualifizierten Dienstleistern für alle Deine Bedürfnisse
         </p>
-
         <form
           className="flex flex-col sm:flex-row sm:gap-0 gap-2 pt-8 items-center sm:items-start z-10"
           onSubmit={handleSearchSubmit}
@@ -92,8 +84,7 @@ export function Home() {
           </button>
         </form>
       </section>
-
-      <section className="z-10 mt-[-60px]">
+      <section className="z-10 sm:mb-5 px-4 sm:px-6 lg:px-8 ">
         <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4 duration-300 hover:bg-opacity-50">
           <h2 className="font-semibold mb-2">Dienstleistung anbieten</h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
@@ -116,3 +107,12 @@ export function Home() {
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
