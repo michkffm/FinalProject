@@ -47,15 +47,15 @@ export function Home() {
     navigate("/jobs");
   };
   return (
-    <main className="position zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5">
+    <main className="position zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5 transform -translate-y-[40px]">
       {message && (
-          <p className="sm:mt-0 text-red-600 p-1 rounded text-2xl z-20 absolute">
+          <p className=" sm:mt-6 text-red-600 p-1 rounded text-2xl z-20">
             {message}
           </p>
         )}
       <div className="handshake-section absolute inset-0 z-9">
       </div>
-      <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center mt-[-180px]">
+      <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center transform -translate-y-[40px]">
         <h1 className="bg-white bg-opacity-0 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
@@ -84,7 +84,7 @@ export function Home() {
           </button>
         </form>
       </section>
-      <section className="z-10 sm:mb-5 px-4 sm:px-6 lg:px-8 ">
+      <section className="z-10 sm:mb-5 px-4 sm:px-6 lg:px-8 transform -translate-y-[60px]">
         <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4 duration-300 hover:bg-opacity-50">
           <h2 className="font-semibold mb-2">Dienstleistung anbieten</h2>
           <form className="space-y-4" onSubmit={handleOfferSubmit}>
@@ -101,7 +101,7 @@ export function Home() {
           </form>
         </div>
       </section>
-      <section className="hidden md:block">
+      <section className="hidden md:block transform -translate-y-[60px]">
         <HomeSlider />
       </section>
     </main>
