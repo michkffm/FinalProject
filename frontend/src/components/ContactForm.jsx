@@ -71,7 +71,7 @@ export default function ContactForm() {
   };
 
   return (
-    <div className="flex justify-center items-center flex-col zero-section min-h-screen px-4 py-8">
+    <div className="position flex justify-center items-center flex-col zero-section min-h-screen px-4 py-8">
       {/* Erfolgreich-Nachricht */}
       {message ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">

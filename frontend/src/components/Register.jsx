@@ -52,7 +52,7 @@ export function Register() {
   };
 
   return (
-    <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+    <div className="position zero-section min-h-screen px-4 py-8 flex justify-center items-center">
       <div className="bg-white bg-opacity-80 border border-gray-300 rounded-lg shadow-lg p-8 w-full max-w-lg">
         {message && (
           <div

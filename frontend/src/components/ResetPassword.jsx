@@ -58,7 +58,7 @@ export function ResetPassword() {
 
   if (success) {
     return (
-      <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      <div className="position zero-section min-h-screen px-4 py-8 flex justify-center items-center">
         <div className="bg-white bg-opacity-80 p-6 rounded-lg shadow-md text-center w-full max-w-sm">
           <h2 className="text-teal-600 text-2xl font-semibold mb-4">
             Passwort erfolgreich zurückgesetzt!

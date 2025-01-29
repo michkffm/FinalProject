@@ -80,7 +80,7 @@ export function Ratings() {
   }, [isFormSubmitted, jobId, userRating, userComment]);
 
   return (
-    <main className="zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
+    <main className="position zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">
     <div className="flex flex-col justify-between items-center bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-md p-6 max-w-xl w-full">
     {message && (
       <p

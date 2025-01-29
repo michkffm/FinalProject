@@ -28,7 +28,7 @@ export function PaymentMethods() {
         currency: "EUR", // Optional: Wähle die gewünschte Währung
       }}
     >
-      <main className="zero-section flex flex-col items-center px-4 py-8 sm:gap-20 gap-0">
+      <main className="position zero-section flex flex-col items-center px-4 py-8 sm:gap-20 gap-0">
       <div className="handshake-section absolute inset-0 z-10"></div>
       <div className="bg-white bg-opacity-40 mt-80 sm:flex-row justify-between z-10 items-center border-2 border-teal-300 shadow-md rounded-lg p-6 max-w-2xl w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Zahlungsmethoden</h1>
