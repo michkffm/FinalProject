@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import profileImage from "../assets/profile-1.jpeg";
-
 export function Profile() {
   const [data, setData] = useState({
     profilePhoto: "",
@@ -23,14 +22,12 @@ export function Profile() {
   };
   const userId = decodeToken(token);
   console.log("Benutzer ID:", userId);
-
   useEffect(() => {
     if (!token) {
       setMessage("Bitte log dich ein.");
       navigate("/profile");
     }
   }, [token, navigate]);
-
   useEffect(() => {
     //wird am Amfang nur einmal ausgeführt
     //fetch Anfrage an users/profile(Get)
@@ -66,7 +63,6 @@ export function Profile() {
         }
       });
   }, []);
-
   const handleChangeRole = (e) => {
     if (e.target.checked) {
       if (!data.role.includes(e.target.value)) {
@@ -86,20 +82,16 @@ export function Profile() {
       });
     }
   };
-
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
-
     setData((prevData) => {
       if (type === "file") {
         return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
       }
-
       // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
       return { ...prevData, [name]: value };
     });
   };
-
   const handleLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -133,19 +125,15 @@ export function Profile() {
       setMessage("Geolocation ist in diesem Browser nicht unterstützt.");
     }
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
     // const formData = new FormData();
     // formData.append("profilePhoto", data.profilePhoto);
     // formData.append("role", JSON.stringify(data.role));
     // formData.append("profession", data.profession);
     // formData.append("location", data.location);
     // formData.append("description", data.description);
-
     // console.log([...formData]);
-
     fetch("http://localhost:3000/users/profile", {
       method: "PATCH",
       headers: {
@@ -162,7 +150,6 @@ export function Profile() {
         }
         return res.json();
       })
-
       .then((data) => {
         console.log("Gesendete Daten:", data);
         setMessage("Profil erfolgreich gespeichert!");
@@ -180,7 +167,6 @@ export function Profile() {
         }
       });
   };
-
   const handleDeleteProfile = () => {
     fetch(`http://localhost:3000/users/${userId}`, {
       method: "DELETE",
@@ -209,9 +195,9 @@ export function Profile() {
   };
 
   return (
-    <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex justify-center items-center">
+    <div className="zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5">
       <div className="flex flex-col bg-white bg-opacity-40 sm:flex-row justify-between items-center border-2 border-teal-300 shadow-md rounded-lg p-6 max-w-2xl w-full">
-        <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center">
+        <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center ">
           <img
             src={profileImage}
             alt="profileimage"
@@ -231,7 +217,6 @@ export function Profile() {
               {message}
             </div>
           )}
-
           {/* Profile photo */}
           {/* <div className="space-y-2">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">
@@ -251,11 +236,10 @@ export function Profile() {
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer "
               />
               <div className="w-20 h-20 bg-slate-200 rounded-full flex items-center justify-center text-white shadow-md">
-                <span className="text-sm">📷</span>
+                <span className="text-sm">:kamera:</span>
               </div>
             </div>
           </div> */}
-
           {/* Other fields */}
           <div className="space-y-2">
             <label
@@ -325,7 +309,6 @@ export function Profile() {
               placeholder="Gebe hier Deine Beschreibung ein..."
             ></textarea>
           </div>
-
           {/* Standort */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -349,7 +332,6 @@ export function Profile() {
               </button>
             </div>
           </div>
-
           {/* Rollen */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -376,7 +358,6 @@ export function Profile() {
               </label>
             </div>
           </div>
-
           {/* Speichern-Button */}
           <button
             type="submit"

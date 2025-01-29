@@ -9,7 +9,7 @@ import { Login } from "./components/Login.jsx";
 import Impressum from "./pages/Impressum.jsx";
 import { TermsAndConditions } from "./pages/Agb.jsx";
 import { Profile } from "./components/Profile.jsx";
-import ContactForm from "./components/ContactForm.jsx"; 
+import ContactForm from "./components/ContactForm.jsx";
 import { ProfileDelete } from "./components/ProfileDelete.jsx";
 import { Job } from "./components/Job.jsx";
 import { Category } from "./components/Category.jsx";
@@ -24,21 +24,19 @@ import { ResetPassword } from "./components/ResetPassword.jsx";
 import { Help } from "./components/Help.jsx";
 import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die neue Nachrichten-Seite
 import { PaymentMethods } from "./components/PaymentMethods.jsx"; // hinzugefügt von Bilal
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       setIsLoggedIn(true);
     }
   }, []);
-
   return (
     <>
+    <div id="root" className="flex flex-col min-h-screen">
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} /> {/* Header immer sichtbar */}
-      <div className="content">
+      <div className="content flex-grow">
         <Routes>
           {/* Hauptseiten-Routen */}
           <Route path="/" element={<Home />} />
@@ -64,10 +62,9 @@ function App() {
           <Route path="/messages" element={<MessagesPage />} /> {/* Neue Route für Nachrichten */}
         </Routes>
       </div>
-      
       <Footer /> {/* Footer immer sichtbar */}
+      </div>
     </>
   );
 }
-
 export default App;

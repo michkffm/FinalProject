@@ -1,50 +1,59 @@
 body {
   background-color: rgb(248, 248, 248);
-  overflow-x: hidden;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
-
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.content {
+  flex: 1;
+  position: relative;
+}
 header {
   background-color: rgb(248, 248, 248);
 }
-
 .hero-section {
-  background-image: url('./assets/Hintergrund-5.jpg');
+  background-image: url("./assets/Hintergrund-5.jpg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   background-attachment: fixed; /* Hintergrund bleibt fixiert */
-  height: 100vh;
-  }
-
-  .handshake-section {
-    background-image: url('./assets/handshake-PNG.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-
-    opacity: 0;
-    transition: opacity 3s ease-in;
 }
-
-.handshake-section.visible {
-    opacity: 1;
-}
-
-  .zero-section {
-      background-image: url('./assets/hintergrund-3.jpeg');
-      background-size: cover;
+.handshake-section {
+  background-image: url("./assets/handshake-PNG.png");
+  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed; 
-  min-height: 100vh;
-    }
-
-  footer {
-    box-shadow: 0px -5px 5px 0px #00000052;
-    position: relative;
-    z-index: 10;
+  opacity: 0;
+  transition: opacity 3s ease-in;
 }
-
+.handshake-section.visible {
+  opacity: 1;
+}
+.zero-section {
+  background-image: url("./assets/hintergrund-3.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+.position{
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 0;
+  width: 100%;
+}
+footer {
+  box-shadow: 0px -5px 5px 0px #00000052;
+  position: relative;
+  z-index: 10;
+}
 .tooltip {
   position: absolute;
   background-color: rgb(255, 168, 168);
@@ -60,10 +69,9 @@ header {
 button:hover .tooltip {
   display: block; /* Tooltip anzeigen, wenn man über den Button hovert */
 }
-
 .message-standard {
-  background: #2a4b47; /* Helles Grau für die Standardnachricht */
-  color: #ffffff; /* Dunkler Text für gute Lesbarkeit */
+  background: #2A4B47; /* Helles Grau für die Standardnachricht */
+  color: #FFFFFF; /* Dunkler Text für gute Lesbarkeit */
   max-width: 80%; /* Begrenzung der maximalen Breite */
   margin: 5px 0; /* Abstand zwischen den Nachrichten */
   padding: 10px 15px; /* Innenabstand für eine bessere Darstellung */
@@ -71,86 +79,38 @@ button:hover .tooltip {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Schatten für eine leichte Tiefe */
   word-wrap: break-word; /* Zeilenumbruch bei langen Wörtern */
 }
-
 .message-standard.message-me {
-  background: #14b8a6; /* Blau für eigene Nachrichten */
+  background: #14B8A6; /* Blau für eigene Nachrichten */
   color: #fff; /* Weißer Text für Kontrast */
   margin-left: auto; /* Nach rechts ausrichten */
 }
-
 .category-images {
-  position: relative; 
-  z-index: 15; 
+  position: relative;
+  z-index: 15;
 }
-
-/* Slider Animation */
-.animate-slide-left {
-  position: absolute;
-  display: flex;
-  animation: slide-left 40s linear infinite;
-  white-space: nowrap;
-}
-
-@keyframes slide-left {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-100%); /* Nur bis zur Hälfte der duplizierten Inhalte */
-  }
-}
-
-/* Slider Container */
 .slider-container {
-  overflow: hidden;
-  z-index: 10;
-  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
-
-/* Einzelne Slider Items */
-.slider-item {
-  flex: 0 0 auto;
-  margin: 10px;
-  transition: transform 0.3s ease, background-color 0.3s ease;
+.slider-container button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  cursor: pointer;
 }
-
-.slider-item:hover {
-  transform: scale(1.05);
-  background-color: rgba(28, 153, 133, 0.7);
-}
-
-/* Hintergrundbild */
-.background-image {
-  object-fit: cover;
-  object-position: center;
-  border-radius: 0.375rem;
-}
-
-/* Hover: Animation pausieren */
-.slider-container:hover .animate-slide-left {
-  animation-play-state: paused;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-  body {
-    overflow-x: hidden;
-  }
-
-  .background-image {
-    border-radius: 0.25rem;
-  }
-
-  .slider-item {
-    margin: 5px;
-    transform: scale(0.85); /* Kein Hover-Scale auf kleineren Geräten */
-  }
-
-  .animate-slide-left {
-    animation: slide-left 20s linear infinite; /* Geschwindigkeit für kleinere Geräte anpassen */
-  }
+.slider-container .flex {
+  width: 80%;
 }
 footer {
   position: relative;
+  background-color: #F9F9F9; /* Optional: Hintergrundfarbe für den Footer */
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #ddd; /* Optional: Trennlinie */
 }
-
