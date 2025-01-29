@@ -63,11 +63,11 @@ export function Login({ setIsLoggedIn }) {
 
   return (
     <div className="position zero-section min-h-screen px-4 py-8 flex justify-center items-center">
-      <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-8 bg-green w-full max-w-lg bg-opacity-70">
+      <div className="sm:transform -translate-y-[70px] bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-8 bg-green w-full max-w-lg bg-opacity-70">
         <form onSubmit={handleSubmit} className="space-y-6">
           {message && (
             <div
-              className={`fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
+              className={`fixed top-[-90px] left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in ${
                 message.includes("Fehler") ? "bg-red-600" : "bg-green-600"
               }`}
             >

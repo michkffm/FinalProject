@@ -1,60 +1,59 @@
-import "../App.css";
-import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { HomeSlider } from "./HomeSlider";
 import { Footer } from "./Footer";
 
 export function Home() {
   const [message, setMessage] = useState("");
-  const [data, setData] = useState({
-    location: "",
-  });
-  const [isLoggedIn] = useState(localStorage.getItem("token") !== null);
+  const isLoggedIn = localStorage.getItem("token") !== null;
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      setMessage("Bitte logge dich ein, um zu suchen.");
+      setTimeout(() => {
+        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
+        navigate("/login");
+      }, 3000);
+      return;
+    }
+    navigate(`/suche?query=${query}`);
+  };
+
+  const handleOfferSubmit = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      setMessage("Bitte logge dich ein, um etwas anzubieten.");
+      setTimeout(() => {
+        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
+        navigate("/login");
+      }, 3000);
+      return;
+    }
+    navigate("/jobs");
+  };
+  
+
   useEffect(() => {
     const section = document.querySelector(".handshake-section");
     setTimeout(() => {
       section.classList.add("visible");
     }, 100); // Verzögerung von 100ms
   }, []);
-  useEffect(() => {
-    if (!isLoggedIn) {
-      setMessage("Bitte logge dich ein, um fortzufahren.");
-    }
-  }, [isLoggedIn]);
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: value,
-    });
-  };
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (!isLoggedIn) {
-      setMessage("Bitte logge dich ein, um zu suchen.");
-      return;
-    }
-    navigate(`/suche?query=${query}`);
-  };
-  const handleOfferSubmit = (e) => {
-    e.preventDefault();
-    if (!isLoggedIn) {
-      setMessage("Bitte logge dich ein, um etwas anzubieten.");
-      return;
-    }
-    navigate("/jobs");
-  };
+
   return (
-    <main className="position zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5 transform -translate-y-[40px]">
-      {message && (
-          <p className=" sm:mt-6 text-red-600 p-1 rounded text-2xl z-20">
-            {message}
-          </p>
-        )}
-      <div className="handshake-section absolute inset-0 z-9">
-      </div>
+    <main className="position zero-section flex flex-col justify-center items-center sm:pt-28 sm:gap-14 gap-5">
+      {/* Nachricht wird nur angezeigt, wenn sie gesetzt wurde und der Benutzer nicht eingeloggt ist */}
+      {!isLoggedIn && message && (
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in bg-red-600">
+          {message}
+        </div>
+      )}
+      {/* Handshake Section */}
+      <div className="handshake-section absolute inset-0 z-9"></div>
+
       <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center transform -translate-y-[40px]">
         <h1 className="bg-white bg-opacity-0 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
@@ -73,12 +72,12 @@ export function Home() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Suche nach Dienstleistung"
-            disabled={!isLoggedIn}
+            disabled={isLoggedIn}
           />
           <button
             type="submit"
             className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
-            disabled={!isLoggedIn}
+            disabled={isLoggedIn}
           >
             Suchen
           </button>
@@ -94,25 +93,16 @@ export function Home() {
             <button
               type="submit"
               className="bg-teal-400 text-white py-2 px-4 rounded duration-300 hover:bg-teal-500 w-full sm:w-100%"
-              disabled={!isLoggedIn}
+              disabled={isLoggedIn}
             >
-              <Link to={isLoggedIn ? "/jobs" : "#"}>Anbieten</Link>
+              Anbieten
             </button>
           </form>
         </div>
       </section>
-      <section className="hidden md:block transform -translate-y-[60px]">
-        <HomeSlider />
+      <section className="hidden md:block transform -translate-y-[90px]">
+        <HomeSlider isLoggedIn={isLoggedIn} />
       </section>
     </main>
   );
 }
-
-
-
-
-
-
-
-
-
