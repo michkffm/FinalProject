@@ -72,12 +72,10 @@ export function Home() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Suche nach Dienstleistung"
-            disabled={isLoggedIn}
           />
           <button
             type="submit"
             className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
-            disabled={isLoggedIn}
           >
             Suchen
           </button>
@@ -93,7 +91,6 @@ export function Home() {
             <button
               type="submit"
               className="bg-teal-400 text-white py-2 px-4 rounded duration-300 hover:bg-teal-500 w-full sm:w-100%"
-              disabled={isLoggedIn}
             >
               Anbieten
             </button>

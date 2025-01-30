@@ -159,7 +159,7 @@ export function Search() {
     <div className="zero-section min-h-screen bg-gray-50 px-4 py-8">
       <div className="container mx-auto sm:mt-20 mt-32">
         {message && (
-          <div className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-green-200 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in">
+          <div className="fixed top-10 left-1/2 transform z-25 -translate-x-1/2 bg-green-200 text-green-700 border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in">
             {message}
           </div>
         )}
