@@ -25,8 +25,6 @@ import { Help } from "./components/Help.jsx";
 import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die neue Nachrichten-Seite
 import { PaymentMethods } from "./components/PaymentMethods.jsx"; // hinzugefügt von Bilal
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx"; // Importiere die ProtectedRoute-Komponente
-
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   useEffect(() => {
@@ -52,8 +50,6 @@ function App() {
           <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
           <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
           <Route path="/hilfe" element={<Help />} />
-         
-
           {/* protected routes */}
           <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />
