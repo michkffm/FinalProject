@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { MyContext } from "./MyContext.jsx";
+import { useContext } from "react";
 
 export function RatingsView() {
   const [ratings, setRatings] = useState([]);
@@ -7,19 +9,8 @@ export function RatingsView() {
   const [error, setError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
   const { jobId } = useParams();
-
+  const { userId } = useContext(MyContext);
   const token = localStorage.getItem("token");
-
-  const decodeToken = (token) => {
-    if (!token) return null;
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = atob(payloadBase64);
-    const payload = JSON.parse(payloadDecoded);
-    return payload.userId;
-  };
-
-  const userId = decodeToken(token);
-  console.log("User ID:", userId);
 
   useEffect(() => {
     const fetchRatings = async () => {
