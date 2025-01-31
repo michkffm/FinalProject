@@ -738,7 +738,7 @@ app.post("/forgot-password", async (req, res) => {
             Passwort zurücksetzen
           </h1>
           <p style="color: #333333; font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 20px;">
-            Sie haben beantragt, Ihr Passwort zurückzusetzen. Bitte klicke  auf die Schaltfläche unten, um Dein Passwort zurückzusetzen:
+            Du hast beantragt, Dein Passwort zurückzusetzen. Bitte klicke  auf die Schaltfläche unten, um Dein Passwort zurückzusetzen:
           </p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}"
