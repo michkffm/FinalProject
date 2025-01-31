@@ -13,7 +13,6 @@ export function Profile() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [error, setError] = useState(null);
   const decodeToken = (token) => {
     if (!token) return null;
     const payloadBase64 = token.split(".")[1];
