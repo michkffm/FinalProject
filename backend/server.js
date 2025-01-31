@@ -19,7 +19,7 @@ await mongoose.connect(process.env.DB_URI);
 
 const app = express();
 const port = process.env.PORT;
-const resend = new Resend("re_YHxdk7a9_GUy9bg1bnvn45smJJ1HcbPkH");
+const resend = new Resend(process.env.RESEND_API)
 
 app.use(cors());
 
@@ -729,7 +729,7 @@ app.post("/forgot-password", async (req, res) => {
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
     const { data, error } = await resend.emails.send({
-      from: "info@easyhelfer.com",
+      from: process.env.RESEND_EMAIL,
       to: user.email,
       subject: "Passwort zurücksetzen",
       html: `
