@@ -12,34 +12,34 @@ import { Resend } from "resend";
 import crypto from "crypto";
 import cookieParser from "cookie-parser";
 import Contact from "./models/Contact.js";
-
+ 
 const { ObjectId } = mongoose.Types;
-
+ 
 await mongoose.connect(process.env.DB_URI);
-
+ 
 const app = express();
 const port = process.env.PORT;
-const resend = new Resend(process.env.RESEND_API)
+const resend = new Resend("re_YHxdk7a9_GUy9bg1bnvn45smJJ1HcbPkH");
 
 app.use(cors());
-
+ 
 app.use(express.json());
-
+ 
 app.use(cookieParser());
-
+ 
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
-
+ 
   if (!email || !password || !username) {
     return res.status(400).json({ error: "Ungültige Registrierung" });
   }
-
+ 
   if (password.length <= 8) {
     return res
       .status(400)
       .json({ error: "Password muss mindesten 8 Zeichen lang sein." });
   }
-
+ 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -47,32 +47,32 @@ app.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
     });
-
+ 
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
+ 
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
+ 
   if (!email || !password) {
     return res.status(400).json({ error: "Ungültige Anmeldung" });
   }
-
+ 
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(401).json({ error: "Benutzer nicht gefunden" });
     }
-
+ 
     const isValidPassword = await bcrypt.compare(password, user.password);
-
+ 
     if (!isValidPassword) {
       return res.status(401).json({ error: "Ungültige Anmeldedaten" });
     }
-
+ 
     const payload = { userId: user._id };
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
     res.cookie("jwt", token, {
@@ -81,21 +81,21 @@ app.post("/login", async (req, res) => {
       maxAge: 2592000000,
       sameSite: "none",
     });
-
+ 
     res.json({ user: user, token: token });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
-
+ 
 app.patch("/users/profile", authMiddleware, async (req, res) => {
   const { role, profession, location, description, profilePhoto } = req.body;
   const userId = req.user.userId;
-
+ 
   if (!userId) {
     return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
-
+ 
   try {
     const updateData = {
       role,
@@ -104,17 +104,17 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       description,
       profilePhoto,
     };
-
+ 
     // Update user document by ID
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true, // Return the updated document
       runValidators: true, // Ensure validations are run
     });
-
+ 
     if (!updatedUser) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
-
+ 
     res
       .status(200)
       .json({ message: "Profil erfolgreich aktualisiert", updatedUser });
@@ -127,23 +127,23 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 app.get("/users/profile", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
-
+ 
   if (!userId) {
     return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
-
+ 
   try {
     const user = await User.findById(userId).select(
       "username email role profession location description profilePhoto"
     );
-
+ 
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
-
+ 
     res.status(200).json(user);
   } catch (error) {
     res
@@ -154,13 +154,13 @@ app.get("/users/profile", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 // neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
   const { title, description, category, price, location, contact, username } =
     req.body;
   const userId = req.user.userId;
-
+ 
   try {
     const job = new Job({
       title,
@@ -173,19 +173,19 @@ app.post("/jobs", authMiddleware, async (req, res) => {
       createdBy: userId,
     });
     await job.save();
-
+ 
     const addUsername = await Job.findById(job._id).populate(
       "createdBy",
       "username"
     );
-
+ 
     const testPopulate = await Job.findById(job._id).populate(
       "createdBy",
       "username"
     );
-
+ 
     console.log(testPopulate.createdBy);
-
+ 
     res
       .status(201)
       .json({ message: "Job erfolgreich ausgeschrieben", job: addUsername });
@@ -194,10 +194,10 @@ app.post("/jobs", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Job konnte nicht veröffentlicht werden" });
   }
 });
-
+ 
 app.get("/jobs", async (req, res) => {
   const { category } = req.query;
-
+ 
   const allowedCategories = [
     "Beratung",
     "Bildung und Schulung",
@@ -212,14 +212,14 @@ app.get("/jobs", async (req, res) => {
     "Essen und Trinken",
     "Sport und Lifestyle",
   ];
-
+ 
   try {
     let query = {};
-
+ 
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
-
+ 
     const jobs = await Job.find(query)
       .populate("createdBy", "username")
       .sort({ createdAt: -1 });
@@ -232,14 +232,14 @@ app.get("/search/jobs", async (req, res) => {
   const { category, query, price, location } = req.query;
   app.delete("/jobs/:id", async (req, res) => {
     const { id } = req.params;
-
+ 
     try {
       const job = await Job.findByIdAndDelete(id);
-
+ 
       if (!job) {
         return res.status(404).json({ error: "Job nicht gefunden" });
       }
-
+ 
       res.status(200).json({ message: "Job erfolgreich gelöscht" });
     } catch (error) {
       res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
@@ -259,15 +259,15 @@ app.get("/search/jobs", async (req, res) => {
     "Essen und Trinken",
     "Sport und Lifestyle",
   ];
-
+ 
   try {
     let filter = {};
-
+ 
     // Filter nach Kategorie, wenn angegeben
     if (category && allowedCategories.includes(category)) {
       filter.category = category;
     }
-
+ 
     // Filter nach Suchbegriff (Titel oder Beschreibung)
     if (query) {
       const regex = new RegExp(query, "i");
@@ -276,7 +276,7 @@ app.get("/search/jobs", async (req, res) => {
         { description: { $regex: regex } },
       ];
     }
-
+ 
     // Filter nach Preis, wenn angegeben
     if (price) {
       const priceRange = price.split("-"); // Beispiel: '50-200'
@@ -287,12 +287,12 @@ app.get("/search/jobs", async (req, res) => {
         };
       }
     }
-
+ 
     // Filter nach Standort, wenn angegeben
     if (location) {
       filter.location = { $regex: new RegExp(location, "i") }; // Case insensitive Suche
     }
-
+ 
     const jobs = await Job.find(filter).sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
@@ -304,7 +304,7 @@ app.get("/search/jobs", async (req, res) => {
       });
   }
 });
-
+ 
 app.delete("/jobs/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
@@ -323,50 +323,50 @@ app.delete("/jobs/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
   }
 });
-
+ 
 app.put("/jobs/:id", async (req, res) => {
   const { id } = req.params;
-
+ 
   try {
     const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
-
+ 
     if (!job) {
       return res.status(404).json({ error: "Job nicht gefunden" });
     }
-
+ 
     res.status(200).json(job);
   } catch (error) {
     res.status(500).json({ error: "Job konnte nicht aktualisiert werden" });
   }
 });
-
+ 
 app.get("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
-
+ 
   try {
     const user = await User.findById(id);
-
+ 
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
-
+ 
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: "Benutzer konnte nicht abgerufen werden" });
   }
 });
-
+ 
 app.patch("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const updates = req.body;
-
+ 
   try {
     const user = await User.findByIdAndUpdate(id, updates, { new: true });
-
+ 
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
-
+ 
     res.status(200).json(user);
   } catch (error) {
     res
@@ -374,7 +374,7 @@ app.patch("/users/:id", authMiddleware, async (req, res) => {
       .json({ error: "Benutzer konnte nicht aktualisiert werden" });
   }
 });
-
+ 
 app.delete("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
@@ -396,15 +396,15 @@ app.delete("/users/:id", authMiddleware, async (req, res) => {
       .json({ error: "Fehler beim Löschen des Benutzers und der Jobs" });
   }
 });
-
+ 
 app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
-
+ 
   try {
     const ratings = await Rating.find({ jobId })
       .populate("senderId", "username")
       .sort({ createdAt: 1 });
-
+ 
     res.status(200).json(ratings);
   } catch (error) {
     res
@@ -415,19 +415,19 @@ app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 app.post("/ratings", authMiddleware, async (req, res) => {
   const { jobId, rating, content } = req.body;
   const senderId = req.user.userId;
-
+ 
   if (!jobId || !rating) {
     return res.status(400).json({ error: "Alle Felder sind Pflichtfelder" });
   }
-
+ 
   try {
     const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
-
+ 
     res
       .status(201)
       .json({ message: "Bewertung erfolgreich hinzugefügt", newRating });
@@ -440,7 +440,7 @@ app.post("/ratings", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 app.delete("/ratings/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
@@ -462,29 +462,29 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
 app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
-
+ 
   try {
     const chat = await Chat.findById(chatId);
     if (!chat) {
       return res.status(404).json({ error: "Chat nicht gefunden" });
     }
-
+ 
     // Erstelle eine neue Antwort
     const reply = {
       sender: req.user.userId, // oder ein anderes Feld für den Absender
       content,
       timestamp: new Date(),
     };
-
+ 
     chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
     await chat.save();
-
+ 
     res.status(201).json({ message: "Antwort erfolgreich gesendet" });
   } catch (error) {
     res.status(500).json({ error: "Fehler beim Senden der Antwort" });
   }
 });
-
+ 
 app.post("/chats", authMiddleware, async (req, res) => {
   const { jobId, message } = req.body;
   const senderId = req.user.userId;
@@ -519,7 +519,7 @@ app.post("/chats", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 app.get("/chats", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -552,11 +552,11 @@ app.get("/chats", authMiddleware, async (req, res) => {
     });
   }
 });
-
+ 
 app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
   const userId = req.user.userId;
-
+ 
   try {
     const chats = await Chat.find({
       jobId,
@@ -565,7 +565,7 @@ app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
       .populate("participants", "username")
       .populate("messages.sender", "username")
       .sort({ updatedAt: -1 });
-
+ 
     res.status(200).json(chats);
   } catch (error) {
     res
@@ -576,7 +576,7 @@ app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
       });
   }
 });
-
+ 
 app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
@@ -598,28 +598,28 @@ app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Fehler beim Senden der Antwort" });
   }
 });
-
+ 
 app.patch(
   "/chats/:chatId/messages/:messageId",
   authMiddleware,
   async (req, res) => {
     const { chatId, messageId } = req.params;
-
+ 
     try {
       const chat = await Chat.findById(chatId);
-
+ 
       if (!chat) {
         return res.status(404).json({ error: "Chat nicht gefunden" });
       }
-
+ 
       const message = chat.messages.id(messageId);
       if (!message) {
         return res.status(404).json({ error: "Message nicht gefunden" });
       }
-
+ 
       message.read = true;
       await chat.save();
-
+ 
       res.status(200).json({ success: true, message });
     } catch (error) {
       res
@@ -631,7 +631,7 @@ app.patch(
     }
   }
 );
-
+ 
 app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const userId = req.user.userId;
@@ -662,40 +662,40 @@ app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
       .json({ error: "Fehler beim Löschen des Chats", details: error.message });
   }
 });
-
+ 
 app.delete(
   "/chats/:chatId/messages/:messageId",
   authMiddleware,
   async (req, res) => {
     const { chatId, messageId } = req.params;
     const userId = req.user.userId;
-
+ 
     try {
       const chat = await Chat.findOne({
         _id: chatId,
         participants: { $in: [userId] },
       });
-
+ 
       if (!chat) {
         return res
           .status(404)
           .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
       }
-
+ 
       const message = chat.messages.id(messageId);
       if (!message) {
         return res.status(404).json({ error: "Message nicht gefunden" });
       }
-
+ 
       if (message.sender.toString() !== userId) {
         return res
           .status(403)
           .json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
       }
-
+ 
       chat.messages.pull(messageId);
       await chat.save();
-
+ 
       res
         .status(200)
         .json({ success: true, message: "Nachricht erfolgreich gelöscht" });
@@ -710,7 +710,7 @@ app.delete(
     }
   }
 );
-
+ 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   if (!email) {
@@ -741,7 +741,7 @@ app.post("/forgot-password", async (req, res) => {
             Sie haben beantragt, Ihr Passwort zurückzusetzen. Bitte klicken Sie auf die Schaltfläche unten, um Ihr Passwort zurückzusetzen:
           </p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}" 
+            <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}"
               style="background-color: #4CAF50; color: white; padding: 14px 32px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 8px; display: inline-block; transition: background-color 0.3s;">
               Passwort zurücksetzen
             </a>
@@ -758,7 +758,7 @@ app.post("/forgot-password", async (req, res) => {
     if (error) {
       return res.status(400).json({ error });
     }
-
+ 
     res
       .status(200)
       .json({
@@ -822,19 +822,19 @@ app.get("/reset-password/:token", async (req, res) => {
 app.post("/contact", async (req, res) => {
   try {
     const { email, subject, message } = req.body;
-
+ 
     if (!email || !subject || !message) {
       return res.status(400).json({ error: "Alle Felder sind erforderlich." });
     }
-
+ 
     const newContact = new Contact({
       email,
       subject,
       message,
     });
-
+ 
     await newContact.save();
-
+ 
     res.status(201).json({ message: "Nachricht erfolgreich gesendet!" });
   } catch (error) {
     console.error(error);
@@ -843,5 +843,6 @@ app.post("/contact", async (req, res) => {
       .json({ error: "Es gab einen Fehler beim Senden der Nachricht." });
   }
 });
-
+ 
 app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
+ 
