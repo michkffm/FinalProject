@@ -738,7 +738,7 @@ app.post("/forgot-password", async (req, res) => {
             Passwort zurücksetzen
           </h1>
           <p style="color: #333333; font-size: 16px; line-height: 1.6; text-align: center; margin-bottom: 20px;">
-            Sie haben beantragt, Ihr Passwort zurückzusetzen. Bitte klicken Sie auf die Schaltfläche unten, um Ihr Passwort zurückzusetzen:
+            Sie haben beantragt, Ihr Passwort zurückzusetzen. Bitte klicke  auf die Schaltfläche unten, um Dein Passwort zurückzusetzen:
           </p>
           <div style="text-align: center; margin: 30px 0;">
             <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}"
@@ -750,7 +750,7 @@ app.post("/forgot-password", async (req, res) => {
             Wenn Sie kein neues Passwort angefordert haben, ignorieren Sie bitte diese E-Mail.
           </p>
           <footer style="text-align: center; font-size: 12px; color: #999999; margin-top: 40px;">
-            <p style="margin: 0;">© 2024 EasyHelfer. Alle Rechte vorbehalten.</p>
+            <p style="margin: 0;">© 2025 EasyHelfer. Alle Rechte vorbehalten.</p>
           </footer>
         </div>
       `,
