@@ -747,7 +747,7 @@ app.post("/forgot-password", async (req, res) => {
             </a>
           </div>
           <p style="color: #555555; font-size: 14px; line-height: 1.4; text-align: center;">
-            Wenn Sie kein neues Passwort angefordert haben, ignorieren Sie bitte diese E-Mail.
+            Wenn Du kein neues Passwort angefordert hast, ignoriere bitte diese E-Mail.
           </p>
           <footer style="text-align: center; font-size: 12px; color: #999999; margin-top: 40px;">
             <p style="margin: 0;">© 2025 EasyHelfer. Alle Rechte vorbehalten.</p>
