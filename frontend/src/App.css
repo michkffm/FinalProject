@@ -16,6 +16,7 @@ body {
 header {
   background-color: rgb(248, 248, 248);
 }
+
 .hero-section {
   background-image: url("./assets/Hintergrund-5.jpg");
   background-size: cover;
@@ -94,6 +95,7 @@ button:hover .tooltip {
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  margin-bottom: 40px;
 }
 .slider-container button {
   width: 40px;
@@ -107,10 +109,32 @@ button:hover .tooltip {
 .slider-container .flex {
   width: 80%;
 }
+
+.category-content {
+  font-size: large;
+  font-weight: bold;
+}
+
 footer {
   position: relative;
   background-color: #F9F9F9; /* Optional: Hintergrundfarbe für den Footer */
   padding: 1rem;
   text-align: center;
   border-top: 1px solid #ddd; /* Optional: Trennlinie */
+}
+
+@media (max-width: 1160px) {
+  .slider-container {
+    display: grid;
+    justify-items: center;
+    margin-bottom: 0;
+  }
+  .category-content {
+    font-size: small;
+    font-weight: bold;
+  }
+  .slider-container .flex {
+    width: 93%;
+  }
+
 }
