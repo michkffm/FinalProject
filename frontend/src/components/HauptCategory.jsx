@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import beratung from "../assets/beratung.jpeg";
 import bildung from "../assets/bildung.jpeg";
 import gesundheit from "../assets/gesundheit.jpeg";
@@ -28,17 +29,69 @@ const categories = [
 ];
 
 export function HauptCategory() {
+  const [message, setMessage] = useState("");
+  const isLoggedIn = localStorage.getItem("token") !== null;
+  const navigate = useNavigate();
+  const [query, setQuery] = useState("");
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      setMessage("Bitte logge dich ein, um zu suchen.");
+      setTimeout(() => {
+        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
+        navigate("/login");
+      }, 3000);
+      return;
+    }
+    navigate(`/suche?query=${query}`);
+  };
+
+  const handleOfferSubmit = (e) => {
+    e.preventDefault();
+    if (!isLoggedIn) {
+      setMessage("Bitte logge dich ein, um etwas anzubieten.");
+      setTimeout(() => {
+        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
+        navigate("/login");
+      }, 3000);
+      return;
+    }
+    navigate("/jobs");
+  };
+
   return (
     <div className="zero-section min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
       <div className="flex justify-center">
         <Link to="/jobs">
-          <button className="bg-teal-600 text-white bg-opacity-40 p-4 sm:mt-14 mt-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
+          <button className="bg-teal-600 text-white bg-opacity-40 p-4 sm:mt-14 mt-0 mb-8 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">
             Dienstleistung hinzufügen
           </button>
         </Link>
       </div>
+      <section className="flex flex-col justify-center items-center sm:mt-9 text-center transform -translate-y-[40px]">
+        <form
+          className="flex flex-col sm:flex-row sm:gap-0 gap-2 pt-8 items-center sm:items-start z-10"
+          onSubmit={handleSearchSubmit}
+        >
+          <input
+            id="search-input"
+            className="sm:rounded-l p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Suche nach Dienstleistung"
+          />
+          <button
+            type="submit"
+            className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
+          >
+            Suchen
+          </button>
+        </form>
+      </section>
       <div className="flex flex-col items-center">
-        <h1 className="text-4xl m-10 font-bold text-center text-teal-800">
+        <h1 className="text-4xl m-4 font-bold text-center text-teal-800">
           Bitte wähle eine Kategorie
         </h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
