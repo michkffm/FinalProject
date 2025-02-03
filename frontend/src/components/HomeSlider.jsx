@@ -13,7 +13,6 @@ import freizeit from "../assets/freizeit.jpeg";
 import essen from "../assets/essen und trinken.jpeg";
 import sport from "../assets/sport.jpeg";
 import { useNavigate } from "react-router-dom";
-
 const categories = [
   { name: "Beratung", image: beratung, link: "/categorie/Beratung" },
   {
@@ -84,7 +83,6 @@ export function HomeSlider({ isLoggedIn }) {
         : 0
     );
   };
-
   const handlePrev = () => {
     setCurrentIndex((prevIndex) =>
       prevIndex - itemsPerPage >= 0
@@ -92,12 +90,10 @@ export function HomeSlider({ isLoggedIn }) {
         : categories.length - itemsPerPage
     );
   };
-
   const visibleCategories = categories.slice(
     currentIndex,
     currentIndex + itemsPerPage
   );
-
   const handleSliderClick = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
@@ -111,56 +107,64 @@ export function HomeSlider({ isLoggedIn }) {
     navigate();
   };
   return (
-    <div className="slider-container relative w-full mb-10">
-       {!isLoggedIn && message && (
-        <div className="fixed transform -translate-y-[550px] left-1/2 transform -translate-x-1/2 text-white border border-green-300 rounded-lg shadow-lg px-6 py-3 text-sm font-medium animate-fade-in bg-red-600">
-          {message}
+    <div className="relative w-full flex justify-center items-center overflow-hidden">
+  <button
+    onClick={handlePrev}
+    className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
+  >
+    &lt;
+  </button>
+  <div className="flex justify-center items-center gap-4 overflow-hidden w-[90%]">
+    {visibleCategories.map((category, index) =>
+      isLoggedIn ? (
+        <Link
+          key={index}
+          to={category.link}
+          className="flex flex-col justify-between items-center bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105
+                    flex-shrink-0 w-[22%] min-w-[180px] max-w-[250px] aspect-[3/4] min-h-[250px]"
+        >
+          {/* Yazı Alanı */}
+          <span className="text-sm font-semibold text-center min-h-[50px] flex items-center justify-center break-words px-2">
+            {category.name}
+          </span>
+          {/* Resim Alanı */}
+          <div className="w-full flex-grow flex items-end">
+            <img
+              src={category.image}
+              alt={category.name}
+              className="rounded-lg w-full h-full object-cover"
+            />
+          </div>
+        </Link>
+      ) : (
+        <div
+          key={index}
+          onClick={handleSliderClick}
+          className="flex flex-col justify-between items-center bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105
+                    flex-shrink-0 w-[22%] min-w-[180px] max-w-[250px] aspect-[3/4] min-h-[250px]"
+        >
+          {/* Yazı Alanı */}
+          <span className="text-sm font-semibold text-center min-h-[50px] flex items-center justify-center break-words px-2">
+            {category.name}
+          </span>
+          {/* Resim Alanı */}
+          <div className="w-full flex-grow flex items-end">
+            <img
+              src={category.image}
+              alt={category.name}
+              className="rounded-lg w-full h-full object-cover opacity-50"
+            />
+          </div>
         </div>
-      )}
-      <button
-        onClick={handlePrev}
-        className="absolute left-0 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
-      >
-        &lt;
-      </button>
-      <div className="flex gap-4 justify-center items-center overflow-hidden">
-        {visibleCategories.map((category, index) =>
-          isLoggedIn ? (
-            <Link
-              key={index}
-              to={category.link}
-              className="flex flex-col items-center gap-2 bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105"
-            >
-              <span className="text-lg font-semibold">{category.name}</span>
-              <img
-                src={category.image}
-                alt={category.name}
-                className="rounded-lg h-48 w-96 object-cover"
-              />
-            </Link>
-          ) : (
-            <div
-              key={index}
-              onClick={handleSliderClick}
-              className="flex flex-col items-center gap-2 bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105 "
-            >
-              <span className="text-lg font-semibold">{category.name}</span>
-              <img
-                src={category.image}
-                alt={category.name}
-                className="rounded-lg h-48 w-96 object-cover opacity-50"
-              />
-            </div>
-          )
-        )}
-      </div>
-
-      <button
-        onClick={handleNext}
-        className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
-      >
-        &gt;
-      </button>
-    </div>
+      )
+    )}
+  </div>
+  <button
+    onClick={handleNext}
+    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
+  >
+    &gt;
+  </button>
+</div>
   );
 }
