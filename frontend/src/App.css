@@ -115,7 +115,6 @@ button:hover .tooltip {
 footer {
   position: relative;
   background-color: #F9F9F9; /* Optional: Hintergrundfarbe für den Footer */
-  padding: 1rem;
   text-align: center;
   border-top: 1px solid #ddd; /* Optional: Trennlinie */
 }
