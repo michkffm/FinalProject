@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { MyContext } from "./MyContext.jsx";
+import { useContext } from "react";
 
 export function Job({ setIsLoggedIn }) {
   const [data, setData] = useState({
@@ -23,6 +25,7 @@ export function Job({ setIsLoggedIn }) {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const { userId } = useContext(MyContext); 
   const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {

@@ -19,8 +19,8 @@ await mongoose.connect(process.env.DB_URI);
  
 const app = express();
 const port = process.env.PORT;
-const resend = new Resend(process.env.RESEND_API)
- 
+const resend = new Resend("re_YHxdk7a9_GUy9bg1bnvn45smJJ1HcbPkH");
+
 app.use(cors());
  
 app.use(express.json());

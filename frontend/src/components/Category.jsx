@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { JobRatings } from "./JobRatings.jsx";
+import { MyContext } from "./MyContext.jsx";
+import { useContext } from "react";
 
 export function Category() {
   const [message, setMessage] = useState("");
@@ -8,6 +10,7 @@ export function Category() {
   const username = localStorage.getItem("username");
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const { userId } = useContext(MyContext);
   const { name } = useParams();
   const [filters, setFilters] = useState({
     name: "",
@@ -16,15 +19,6 @@ export function Category() {
   });
 
   const [contactMessages, setContactMessages] = useState({});
-  const decodeToken = (token) => {
-    if (!token) return null;
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = atob(payloadBase64);
-    const payload = JSON.parse(payloadDecoded);
-    return payload.userId;
-  };
-  const userId = decodeToken(token);
-  console.log("username", username);
 
   useEffect(() => {
     fetch(`http://localhost:3000/jobs?category=${name}`, {

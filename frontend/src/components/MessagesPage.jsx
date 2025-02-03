@@ -6,17 +6,9 @@ export function MessagesPage() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
-  const decodeToken = (token) => {
-    if (!token) return null;
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = atob(payloadBase64);
-    const payload = JSON.parse(payloadDecoded);
-    return payload.userId;
-  };
-  const userId = decodeToken(token);
   const username = localStorage.getItem("username");
-  console.log("username", username);
-  console.log("userId", userId);
+   
+  
 
   useEffect(() => {
     fetchMessages();
