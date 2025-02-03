@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import profileImage from "../assets/profile-1.jpeg";
+import { MyContext } from "./MyContext.jsx";
+import { useContext } from "react";
 
 export function Profile() {
   const [data, setData] = useState({
@@ -13,22 +15,8 @@ export function Profile() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const [error, setError] = useState(null);
-  const decodeToken = (token) => {
-    if (!token) return null;
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = atob(payloadBase64);
-    const payload = JSON.parse(payloadDecoded);
-    return payload.userId;
-  };
-  const userId = decodeToken(token);
-  console.log("Benutzer ID:", userId);
-  useEffect(() => {
-    if (!token) {
-      setMessage("Bitte log dich ein.");
-      navigate("/profile");
-    }
-  }, [token, navigate]);
+  const { userId } = useContext(MyContext);
+ 
   useEffect(() => {
     //wird am Amfang nur einmal ausgeführt
     //fetch Anfrage an users/profile(Get)
