@@ -18,7 +18,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
 
   return (
     <header>
-      <nav className="p-2 flex sm:bg-opacity-50 z-20 bg-opacity-100 sm:gap-14 gap-1 bg-white shadow-lg flex-col sm:flex-row sm:justify-center sm:items-center items-center fixed top-0 left-0 w-full">
+      <nav className="p-1 flex sm:bg-opacity-50 z-20 bg-opacity-100 sm:gap-14 gap-1 bg-white shadow-lg flex-col sm:flex-row sm:justify-center sm:items-center items-center fixed top-0 left-0 w-full">
         <div className="flex justify-between items-center w-full sm:w-auto">
           <div className="text-xl font-bold">
             <Link to="/">
@@ -37,7 +37,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
         <ul
           className={`${
             menuOpen ? "flex" : "hidden"
-          } sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-10 text-teal-600 text-lg w-full sm:w-auto`}
+          } sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-4 text-teal-600 text-lg w-full sm:w-auto`}
         >
           <li>
             <Link

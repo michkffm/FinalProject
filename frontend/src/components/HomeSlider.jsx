@@ -114,7 +114,7 @@ export function HomeSlider({ isLoggedIn }) {
   >
     &lt;
   </button>
-  <div className="flex justify-center items-center gap-4 overflow-hidden w-[90%]">
+  <div className="flex justify-center items-center gap-1 overflow-hidden w-[90%]">
     {visibleCategories.map((category, index) =>
       isLoggedIn ? (
         <Link
