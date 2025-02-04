@@ -152,9 +152,12 @@ export function Category() {
         throw new Error(errorText);
       }
       setData((prevState) => prevState.filter((job) => job._id !== jobId));
-      setMessage("Job erfolgreich gelöscht!");
+      setMessage("Dienstleistung erfolgreich gelöscht!");
+      setTimeout(() => {
+        setMessage("");
+      }, 2000)
     } catch (err) {
-      setMessage(err.message || "Fehler beim Löschen des Jobs.");
+      setMessage(err.message || "Fehler beim Löschen des Angebots.");
     }
   };
 

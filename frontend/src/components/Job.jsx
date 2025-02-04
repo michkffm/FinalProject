@@ -155,7 +155,7 @@ export function Job({ setIsLoggedIn }) {
         return response.json();
       })
       .then((responseData) => {
-        setMessage("Job erfolgreich erstellt!");
+        setMessage("Dienstleistung erfolgreich erstellt!");
         console.log("Erstellte Jobdaten:", responseData);
 
         // Reset Form
@@ -210,7 +210,7 @@ export function Job({ setIsLoggedIn }) {
               name="title"
               value={data.title}
               onChange={handleChange}
-              placeholder="Jobtitel eingeben..."
+              placeholder="Tätigkeit eingeben..."
               className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
