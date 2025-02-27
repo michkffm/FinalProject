@@ -29,17 +29,21 @@ app.use(cookieParser());
  
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
- 
+
   if (!email || !password || !username) {
     return res.status(400).json({ error: "Ungültige Registrierung" });
   }
- 
-  if (password.length <= 8) {
-    return res
-      .status(400)
-      .json({ error: "Password muss mindesten 8 Zeichen lang sein." });
+
+  // Passwortvalidierung
+  const minLength = 8;
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password); // 🛡️ Sonderzeichen-Check
+
+  if (password.length < minLength || !hasSpecialChar) {
+    return res.status(400).json({ 
+      error: "Ungültiges Passwort: Mindestens 8 Zeichen und ein Sonderzeichen erforderlich." 
+    });
   }
- 
+
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({
@@ -47,7 +51,7 @@ app.post("/register", async (req, res) => {
       email,
       password: hashedPassword,
     });
- 
+
     res.status(201).json(user);
   } catch (error) {
     res.status(500).json({ error: error.message });

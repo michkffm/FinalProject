@@ -9,6 +9,7 @@ export function Register() {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -17,38 +18,55 @@ export function Register() {
       ...data,
       [name]: value,
     });
+    if (name === "password") {
+      validatePassword(value);
+    }
+  };
+
+  const validatePassword = (input) => {
+    const minLength = 8;
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(input); // Anpassbare Sonderzeichen
+    
+    if (input.length < minLength) {
+      setError("Passwort muss mindestens 8 Zeichen lang sein.");
+    } else if (!hasSpecialChar) {
+      setError("Passwort muss mindestens ein Sonderzeichen enthalten.");
+    } else {
+      setError(""); // Kein Fehler
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    fetch("http://localhost:3000/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((res) => {
-        if (!res.ok) {
-          return res.text().then((text) => {
-            throw new Error(text);
-          });
-        }
-        return res.json();
+    if (!error) {
+      fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       })
-      .then((data) => {
-        setMessage("Registrierung erfolgreich!");
-        console.log("Registrierung erfolgreich", data);
-        localStorage.setItem("username", data.username);
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-      })
-      .catch((error) => {
-        setMessage("Fehler bei der Registrierung: " + error.message);
-        console.error("Fehler bei der Registrierung", error);
-      });
+        .then((res) => {
+          if (!res.ok) {
+            return res.text().then((text) => {
+              throw new Error(text);
+            });
+          }
+          return res.json();
+        })
+        .then((data) => {
+          setMessage("Registrierung erfolgreich!");
+          console.log("Registrierung erfolgreich", data);
+          localStorage.setItem("username", data.username);
+          setTimeout(() => {
+            navigate("/login");
+          }, 2000);
+        })
+        .catch((error) => {
+          setMessage("Fehler bei der Registrierung: " + error.message);
+          console.error("Fehler bei der Registrierung", error);
+        });
+    }
   };
 
   return (
@@ -132,7 +150,7 @@ export function Register() {
               )}
             </button>
           </div>
-
+          {error && <p style={{ color: "red" }}>{error}</p>}
           <button
             type="submit"
             className="bg-teal-500 text-white py-3 px-6 rounded-lg hover:bg-teal-600 focus:outline-none focus:ring-4 focus:ring-teal-300 w-full font-medium"
