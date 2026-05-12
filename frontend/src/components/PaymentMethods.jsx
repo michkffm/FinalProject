@@ -7,7 +7,6 @@ export function PaymentMethods() {
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const price = urlParams.get("price");  // Preis aus der URL holen
-  console.log("Preis:", price);
 
   useEffect(() => {
     const section = document.querySelector('.handshake-section');
