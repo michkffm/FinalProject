@@ -8,7 +8,6 @@ export function PaymentMethods() {
   const urlParams = new URLSearchParams(location.search);
   const price = urlParams.get("price");  // Preis aus der URL holen
   console.log("Preis:", price);
-  console.log("API Key:", import.meta.env.VITE_PAYPAL_API_KEY);
 
   useEffect(() => {
     const section = document.querySelector('.handshake-section');
