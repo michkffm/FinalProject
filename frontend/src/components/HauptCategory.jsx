@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import beratung from "../assets/beratung.jpeg";
 import bildung from "../assets/bildung.jpeg";
@@ -44,24 +44,12 @@ export function HauptCategory() {
       }, 3000);
       return;
     }
-    navigate(`/suche?query=${query}`);
-  };
-
-  const handleOfferSubmit = (e) => {
-    e.preventDefault();
-    if (!isLoggedIn) {
-      setMessage("Bitte logge dich ein, um etwas anzubieten.");
-      setTimeout(() => {
-        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
-        navigate("/login");
-      }, 3000);
-      return;
-    }
-    navigate("/jobs");
+    navigate(`/suche?query=${encodeURIComponent(query)}`);
   };
 
   return (
     <div className="zero-section min-h-screen sm:mt-0 mt-10 bg-gray-50 px-4 py-8">
+      {message && <p role="status">{message}</p>}
       <div className="flex justify-center">
         <Link to="/jobs">
           <button className="bg-teal-600 text-white bg-opacity-40 p-4 sm:mt-14 mt-0 mb-8 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 hover:scale-105">

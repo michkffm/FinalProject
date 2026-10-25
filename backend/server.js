@@ -10,39 +10,56 @@ import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
 import { Resend } from "resend";
 import crypto from "crypto";
-import cookieParser from "cookie-parser";
+import { pathToFileURL } from "node:url";
 import Contact from "./models/Contact.js";
- 
-const { ObjectId } = mongoose.Types;
- 
-await mongoose.connect(process.env.DB_URI);
- 
-const app = express();
-const port = process.env.PORT;
-const resend = new Resend("re_YHxdk7a9_GUy9bg1bnvn45smJJ1HcbPkH");
 
-app.use(cors());
- 
-app.use(express.json());
- 
-app.use(cookieParser());
- 
+const { ObjectId } = mongoose.Types;
+
+
+
+const app = express();
+const port = process.env.PORT || 3000;
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+app.disable("x-powered-by");
+app.use(cors({ origin: frontendUrl }));
+
+app.use(express.json({ limit: "100kb" }));
+
+const profileFields = ["role", "profession", "location", "description", "profilePhoto"];
+const allowedCategories = Job.schema.path("category").enumValues;
+const jobFields = ["title", "description", "category", "price", "location", "contact"];
+const pick = (body, fields) => Object.fromEntries(fields.filter((key) => Object.hasOwn(body, key)).map((key) => [key, body[key]]));
+const validPassword = (value) => typeof value === "string" && value.length >= 8 && Buffer.byteLength(value) <= 72 && /[!@#$%^&*(),.?":{}|<>]/.test(value);
+const validEmail = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+const tokenHash = (value) => crypto.createHash("sha256").update(value).digest("hex");
+
+for (const name of ["id", "jobId", "chatId", "messageId"]) {
+  app.param(name, (req, res, next, value) => {
+    if (!/^[a-f0-9]{24}$/i.test(value)) return res.status(400).json({ error: "Ungültige ID" });
+    next();
+  });
+}
+// Reject structured values before they can become MongoDB query operators.
+app.use((req, res, next) => {
+  if (req.body && (Array.isArray(req.body) || typeof req.body !== "object")) return res.status(400).json({ error: "Ungültige Eingabe" });
+  for (const [key, value] of Object.entries(req.body || {})) {
+    if (key === "role" && Array.isArray(value) && value.every((item) => typeof item === "string")) continue;
+    if (!["string", "number", "boolean"].includes(typeof value) && value !== null) return res.status(400).json({ error: "Ungültige Eingabe" });
+  }
+  if (Object.values(req.query).some((value) => typeof value !== "string" || value.length > 200)) return res.status(400).json({ error: "Ungültige Suchanfrage" });
+  next();
+});
+
 app.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
-  if (!email || !password || !username) {
+  if (!validEmail(email) || typeof username !== "string" || !username.trim() || username.length > 100 || typeof password !== "string") {
     return res.status(400).json({ error: "Ungültige Registrierung" });
   }
 
-  // Passwortvalidierung
-  const minLength = 8;
-  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password); // 🛡️ Sonderzeichen-Check
-
-  if (password.length < minLength || !hasSpecialChar) {
-    return res.status(400).json({ 
-      error: "Ungültiges Passwort: Mindestens 8 Zeichen und ein Sonderzeichen erforderlich." 
-    });
-  }
+  if (!validPassword(password)) return res.status(400).json({ error: "Passwort: mindestens 8 Zeichen, ein Sonderzeichen und höchstens 72 UTF-8-Bytes." });
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -54,52 +71,52 @@ app.post("/register", async (req, res) => {
 
     res.status(201).json(user);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(error.code === 11000 ? 409 : 500).json({ error: "Anfrage konnte nicht verarbeitet werden" });
   }
 });
- 
+
 app.post("/login", async (req, res) => {
   const { email, password } = req.body;
- 
-  if (!email || !password) {
+
+  if (!validEmail(email) || typeof password !== "string" || Buffer.byteLength(password) > 72) {
     return res.status(400).json({ error: "Ungültige Anmeldung" });
   }
- 
+
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email }).select("+password +tokenVersion");
     if (!user) {
-      return res.status(401).json({ error: "Benutzer nicht gefunden" });
+      return res.status(401).json({ error: "Ungültige Anmeldedaten" });
     }
- 
+
     const isValidPassword = await bcrypt.compare(password, user.password);
- 
+
     if (!isValidPassword) {
       return res.status(401).json({ error: "Ungültige Anmeldedaten" });
     }
- 
-    const payload = { userId: user._id };
-    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY);
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: true,
-      maxAge: 2592000000,
-      sameSite: "none",
-    });
- 
+
+    const payload = { userId: user._id.toString(), tokenVersion: user.tokenVersion };
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "1d", algorithm: "HS256" });
     res.json({ user: user, token: token });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(error.code === 11000 ? 409 : 500).json({ error: "Anfrage konnte nicht verarbeitet werden" });
   }
 });
- 
+
+app.post("/logout", authMiddleware, async (req, res, next) => {
+  try {
+    await User.updateOne({ _id: req.user.userId }, { $inc: { tokenVersion: 1 } });
+    res.status(200).json({ message: "Alle Sitzungen beendet" });
+  } catch (error) { next(error); }
+});
+
 app.patch("/users/profile", authMiddleware, async (req, res) => {
   const { role, profession, location, description, profilePhoto } = req.body;
   const userId = req.user.userId;
- 
+
   if (!userId) {
     return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
- 
+
   try {
     const updateData = {
       role,
@@ -108,17 +125,17 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       description,
       profilePhoto,
     };
- 
+
     // Update user document by ID
     const updatedUser = await User.findByIdAndUpdate(userId, updateData, {
       new: true, // Return the updated document
       runValidators: true, // Ensure validations are run
     });
- 
+
     if (!updatedUser) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
- 
+
     res
       .status(200)
       .json({ message: "Profil erfolgreich aktualisiert", updatedUser });
@@ -127,44 +144,42 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       .status(500)
       .json({
         error: "Profil konnte nicht aktualisiert werden",
-        details: error.message,
       });
   }
 });
- 
+
 app.get("/users/profile", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
- 
+
   if (!userId) {
     return res.status(401).json({ error: "Benutzer nicht authentifiziert" });
   }
- 
+
   try {
     const user = await User.findById(userId).select(
       "username email role profession location description profilePhoto"
     );
- 
+
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
- 
+
     res.status(200).json(user);
   } catch (error) {
     res
       .status(500)
       .json({
         error: "Benutzerprofil konnte nicht abgerufen werden",
-        details: error.message,
       });
   }
 });
- 
+
 // neue Job erstellen
 app.post("/jobs", authMiddleware, async (req, res) => {
   const { title, description, category, price, location, contact, username } =
     req.body;
   const userId = req.user.userId;
- 
+
   try {
     const job = new Job({
       title,
@@ -177,53 +192,33 @@ app.post("/jobs", authMiddleware, async (req, res) => {
       createdBy: userId,
     });
     await job.save();
- 
+
     const addUsername = await Job.findById(job._id).populate(
       "createdBy",
       "username"
     );
- 
-    const testPopulate = await Job.findById(job._id).populate(
-      "createdBy",
-      "username"
-    );
- 
-    console.log(testPopulate.createdBy);
- 
+
     res
       .status(201)
       .json({ message: "Job erfolgreich ausgeschrieben", job: addUsername });
   } catch (error) {
-    console.log(error);
+
     res.status(500).json({ error: "Job konnte nicht veröffentlicht werden" });
   }
 });
- 
+
 app.get("/jobs", async (req, res) => {
   const { category } = req.query;
- 
-  const allowedCategories = [
-    "Beratung",
-    "Bildung und Schulung",
-    "Betreuung und Gesundheit",
-    "Finanzen und Versicherungen",
-    "Technologie und IT",
-    "Reparatur und Wartung",
-    "Transport und Logistik",
-    "Reinigung und Pflege",
-    "Bau- und Renovierungsdienste",
-    "Freizeit und Unterhaltung",
-    "Essen und Trinken",
-    "Sport und Lifestyle",
-  ];
- 
+
+
+
   try {
     let query = {};
- 
+
     if (category && allowedCategories.includes(category)) {
       query = { category };
     }
- 
+
     const jobs = await Job.find(query)
       .populate("createdBy", "username")
       .sort({ createdAt: -1 });
@@ -234,143 +229,107 @@ app.get("/jobs", async (req, res) => {
 });
 app.get("/search/jobs", async (req, res) => {
   const { category, query, price, location } = req.query;
-  app.delete("/jobs/:id", async (req, res) => {
-    const { id } = req.params;
- 
-    try {
-      const job = await Job.findByIdAndDelete(id);
- 
-      if (!job) {
-        return res.status(404).json({ error: "Job nicht gefunden" });
-      }
- 
-      res.status(200).json({ message: "Job erfolgreich gelöscht" });
-    } catch (error) {
-      res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
-    }
-  });
-  const allowedCategories = [
-    "Beratung",
-    "Bildung und Schulung",
-    "Betreuung und Gesundheit",
-    "Finanzen und Versicherungen",
-    "Technologie und IT",
-    "Reparatur und Wartung",
-    "Transport und Logistik",
-    "Reinigung und Pflege",
-    "Bau- und Renovierungsdienste",
-    "Freizeit und Unterhaltung",
-    "Essen und Trinken",
-    "Sport und Lifestyle",
-  ];
- 
+
+
   try {
     let filter = {};
- 
+
     // Filter nach Kategorie, wenn angegeben
     if (category && allowedCategories.includes(category)) {
       filter.category = category;
     }
- 
+
     // Filter nach Suchbegriff (Titel oder Beschreibung)
     if (query) {
-      const regex = new RegExp(query, "i");
+      const regex = new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
       filter.$or = [
         { title: { $regex: regex } },
         { description: { $regex: regex } },
       ];
     }
- 
-    // Filter nach Preis, wenn angegeben
+
     if (price) {
-      const priceRange = price.split("-"); // Beispiel: '50-200'
-      if (priceRange.length === 2) {
-        filter.price = {
-          $gte: parseInt(priceRange[0]),
-          $lte: parseInt(priceRange[1]),
-        };
-      }
+      const range = /^(\d+(?:\.\d{1,2})?)-(\d+(?:\.\d{1,2})?)$/.exec(price);
+      if (!range || Number(range[1]) > Number(range[2])) return res.status(400).json({ error: "Ungültiger Preisbereich" });
+      // Existing documents store prices as strings; compare numerically without a data migration.
+      const amount = { $convert: { input: "$price", to: "double", onError: null, onNull: null } };
+      filter.$expr = { $and: [{ $gte: [amount, Number(range[1])] }, { $lte: [amount, Number(range[2])] }] };
     }
- 
+
     // Filter nach Standort, wenn angegeben
     if (location) {
-      filter.location = { $regex: new RegExp(location, "i") }; // Case insensitive Suche
+      filter.location = { $regex: new RegExp(location.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i") }; // Case insensitive Suche
     }
- 
-    const jobs = await Job.find(filter).sort({ createdAt: -1 });
+
+    const jobs = await Job.find(filter).populate("createdBy", "username").sort({ createdAt: -1 });
     res.status(200).json(jobs);
   } catch (error) {
     res
       .status(500)
       .json({
         error: "Suche nach Jobs fehlgeschlagen",
-        details: error.message,
       });
   }
 });
- 
+
 app.delete("/jobs/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
   try {
-    const job = await Job.findByIdAndDelete(id);
+    const job = await Job.findOneAndDelete({ _id: id, createdBy: userId });
     if (!job) {
       return res.status(404).json({ error: "Job nicht gefunden" });
-    }
-    if (job.createdBy.toString() !== userId) {
-      return res
-        .status(403)
-        .json({ error: "Keine Berechtigung, diesen Job zu löschen." });
     }
     res.status(200).json({ message: "Job erfolgreich gelöscht" });
   } catch (error) {
     res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
   }
 });
- 
-app.put("/jobs/:id", async (req, res) => {
+
+app.put("/jobs/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
- 
+
   try {
-    const job = await Job.findByIdAndUpdate(id, req.body, { new: true });
- 
+    const job = await Job.findOneAndUpdate({ _id: id, createdBy: req.user.userId }, { $set: pick(req.body, jobFields) }, { new: true, runValidators: true });
+
     if (!job) {
       return res.status(404).json({ error: "Job nicht gefunden" });
     }
- 
+
     res.status(200).json(job);
   } catch (error) {
     res.status(500).json({ error: "Job konnte nicht aktualisiert werden" });
   }
 });
- 
+
 app.get("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
- 
+
   try {
-    const user = await User.findById(id);
- 
+    const user = await User.findById(id).select("username role profession location description profilePhoto");
+
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
- 
+
     res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ error: "Benutzer konnte nicht abgerufen werden" });
   }
 });
- 
+
 app.patch("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
- 
+  if (id !== req.user.userId) return res.status(403).json({ error: "Keine Berechtigung" });
+  const updates = pick(req.body, profileFields);
+
   try {
-    const user = await User.findByIdAndUpdate(id, updates, { new: true });
- 
+    const user = await User.findByIdAndUpdate(id, { $set: updates }, { new: true, runValidators: true });
+
     if (!user) {
       return res.status(404).json({ error: "Benutzer nicht gefunden" });
     }
- 
+
     res.status(200).json(user);
   } catch (error) {
     res
@@ -378,10 +337,11 @@ app.patch("/users/:id", authMiddleware, async (req, res) => {
       .json({ error: "Benutzer konnte nicht aktualisiert werden" });
   }
 });
- 
+
 app.delete("/users/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
+  if (id !== userId) return res.status(403).json({ error: "Keine Berechtigung" });
   try {
     await Job.deleteMany({ createdBy: userId });
     const user = await User.findByIdAndDelete(id);
@@ -400,38 +360,37 @@ app.delete("/users/:id", authMiddleware, async (req, res) => {
       .json({ error: "Fehler beim Löschen des Benutzers und der Jobs" });
   }
 });
- 
+
 app.get("/ratings/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
- 
+
   try {
     const ratings = await Rating.find({ jobId })
       .populate("senderId", "username")
       .sort({ createdAt: 1 });
- 
+
     res.status(200).json(ratings);
   } catch (error) {
     res
       .status(500)
       .json({
         error: "Bewertungen konnten nicht abgerufen werden",
-        details: error.message,
       });
   }
 });
- 
+
 app.post("/ratings", authMiddleware, async (req, res) => {
   const { jobId, rating, content } = req.body;
   const senderId = req.user.userId;
- 
+
   if (!jobId || !rating) {
     return res.status(400).json({ error: "Alle Felder sind Pflichtfelder" });
   }
- 
+
   try {
     const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
- 
+
     res
       .status(201)
       .json({ message: "Bewertung erfolgreich hinzugefügt", newRating });
@@ -440,23 +399,17 @@ app.post("/ratings", authMiddleware, async (req, res) => {
       .status(500)
       .json({
         error: "Bewertung konnte nicht hinzugefügt werden",
-        details: error.message,
       });
   }
 });
- 
+
 app.delete("/ratings/:id", authMiddleware, async (req, res) => {
   const { id } = req.params;
   const userId = req.user.userId;
   try {
-    const rating = await Rating.findByIdAndDelete(id);
+    const rating = await Rating.findOneAndDelete({ _id: id, senderId: userId });
     if (!rating) {
       return res.status(404).json({ error: "Rating nicht gefunden" });
-    }
-    if (rating.senderId.toString() !== userId) {
-      return res
-        .status(403)
-        .json({ error: "Keine Berechtigung, diese Bewertung zu löschen." });
     }
     res.status(200).json({ message: "Bewertung erfolgreich gelöscht" });
   } catch (error) {
@@ -466,29 +419,29 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
 app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
- 
+
   try {
-    const chat = await Chat.findById(chatId);
+    const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId });
     if (!chat) {
       return res.status(404).json({ error: "Chat nicht gefunden" });
     }
- 
+
     // Erstelle eine neue Antwort
     const reply = {
       sender: req.user.userId, // oder ein anderes Feld für den Absender
       content,
       timestamp: new Date(),
     };
- 
+
     chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
     await chat.save();
- 
+
     res.status(201).json({ message: "Antwort erfolgreich gesendet" });
   } catch (error) {
     res.status(500).json({ error: "Fehler beim Senden der Antwort" });
   }
 });
- 
+
 app.post("/chats", authMiddleware, async (req, res) => {
   const { jobId, message } = req.body;
   const senderId = req.user.userId;
@@ -514,16 +467,15 @@ app.post("/chats", authMiddleware, async (req, res) => {
     await chat.save();
     res.status(200).json(chat);
   } catch (error) {
-    console.error(error);
+
     res
       .status(500)
       .json({
         error: "Nachricht konnte nicht gesendet werden",
-        details: error.message,
       });
   }
 });
- 
+
 app.get("/chats", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -536,7 +488,7 @@ app.get("/chats", authMiddleware, async (req, res) => {
     // Berechnung der ungelesenen Nachrichten für den aktuellen Benutzer
     const chatsWithUnreadCount = chats.map((chat) => {
       const unreadCount = chat.messages.filter(
-        (msg) => !msg.read && msg.sender._id.toString() !== userId // Ungelesene Nachrichten, nicht vom Benutzer gesendet
+        (msg) => !msg.read && msg.sender?._id.toString() !== userId // Ungelesene Nachrichten, nicht vom Benutzer gesendet
       ).length;
       return {
         ...chat, // Alle vorhandenen Chat-Daten
@@ -548,19 +500,18 @@ app.get("/chats", authMiddleware, async (req, res) => {
       data: chatsWithUnreadCount,
     });
   } catch (error) {
-    console.error("Fehler beim Abrufen der Chats:", error);
+
     res.status(500).json({
       success: false,
       error: "Fehler beim Abrufen der Chats",
-      details: error.message,
     });
   }
 });
- 
+
 app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
   const { jobId } = req.params;
   const userId = req.user.userId;
- 
+
   try {
     const chats = await Chat.find({
       jobId,
@@ -569,73 +520,50 @@ app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
       .populate("participants", "username")
       .populate("messages.sender", "username")
       .sort({ updatedAt: -1 });
- 
+
     res.status(200).json(chats);
   } catch (error) {
     res
       .status(500)
       .json({
         error: "Chats konnten nicht abgerufen werden.",
-        details: error.message,
       });
   }
 });
- 
-app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
-  const { chatId } = req.params;
-  const { content } = req.body;
-  try {
-    const chat = await Chat.findById(chatId);
-    if (!chat) {
-      return res.status(404).json({ error: "Chat nicht gefunden" });
-    }
-    // Erstelle eine neue Antwort
-    const reply = {
-      sender: req.user.userId, // oder ein anderes Feld für den Absender
-      content,
-      timestamp: new Date(),
-    };
-    chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
-    await chat.save();
-    res.status(201).json({ message: "Antwort erfolgreich gesendet" });
-  } catch (error) {
-    res.status(500).json({ error: "Fehler beim Senden der Antwort" });
-  }
-});
- 
+
 app.patch(
   "/chats/:chatId/messages/:messageId",
   authMiddleware,
   async (req, res) => {
     const { chatId, messageId } = req.params;
- 
+
     try {
-      const chat = await Chat.findById(chatId);
- 
+      const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId });
+
       if (!chat) {
         return res.status(404).json({ error: "Chat nicht gefunden" });
       }
- 
+
       const message = chat.messages.id(messageId);
       if (!message) {
         return res.status(404).json({ error: "Message nicht gefunden" });
       }
- 
+
+      if (message.sender.toString() === req.user.userId) return res.status(403).json({ error: "Nur empfangene Nachrichten können als gelesen markiert werden" });
       message.read = true;
       await chat.save();
- 
+
       res.status(200).json({ success: true, message });
     } catch (error) {
       res
         .status(500)
         .json({
           error: "Nachricht konnte nicht aktualisiert werden",
-          details: error.message,
         });
     }
   }
 );
- 
+
 app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const userId = req.user.userId;
@@ -660,79 +588,76 @@ app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
       .status(200)
       .json({ success: true, message: "Chat erfolgreich gelöscht" });
   } catch (error) {
-    console.error("Fehler beim Löschen des Chats:", error);
+
     res
       .status(500)
-      .json({ error: "Fehler beim Löschen des Chats", details: error.message });
+      .json({ error: "Fehler beim Löschen des Chats", });
   }
 });
- 
+
 app.delete(
   "/chats/:chatId/messages/:messageId",
   authMiddleware,
   async (req, res) => {
     const { chatId, messageId } = req.params;
     const userId = req.user.userId;
- 
+
     try {
       const chat = await Chat.findOne({
         _id: chatId,
         participants: { $in: [userId] },
       });
- 
+
       if (!chat) {
         return res
           .status(404)
           .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
       }
- 
+
       const message = chat.messages.id(messageId);
       if (!message) {
         return res.status(404).json({ error: "Message nicht gefunden" });
       }
- 
+
       if (message.sender.toString() !== userId) {
         return res
           .status(403)
           .json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
       }
- 
+
       chat.messages.pull(messageId);
       await chat.save();
- 
+
       res
         .status(200)
         .json({ success: true, message: "Nachricht erfolgreich gelöscht" });
     } catch (error) {
-      console.error("Fehler beim Löschen der Nachricht:", error);
+
       res
         .status(500)
         .json({
           error: "Nachricht konnte nicht gelöscht werden",
-          details: error.message,
         });
     }
   }
 );
- 
+
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
-  if (!email) {
-    console.log("E-Mail erhalten:", email);
+  if (!validEmail(email)) {
     return res.status(400).json({ error: "E-Mail ist erforderlich." });
   }
   try {
+    if (!resend || !process.env.RESEND_EMAIL) return res.status(503).json({ error: "Mailversand ist nicht konfiguriert." });
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(404).json({ error: "Benutzer nicht gefunden." });
-    }
-    console.log(user);
+    if (!user) return res.status(200).json({ message: "Falls ein Konto existiert, wurde eine E-Mail angefordert." });
+
     const resetPasswordToken = crypto.randomBytes(32).toString("hex");
     const resetPasswordExpires = Date.now() + 1000 * 60 * 60 * 24; // Token gültig für 24 Stunden
-    user.resetPasswordToken = resetPasswordToken;
+    user.resetPasswordToken = tokenHash(resetPasswordToken);
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: process.env.RESEND_EMAIL,
       to: user.email,
       subject: "Passwort zurücksetzen",
@@ -745,7 +670,7 @@ app.post("/forgot-password", async (req, res) => {
             Du hast beantragt, Dein Passwort zurückzusetzen. Bitte klicke  auf die Schaltfläche unten, um Dein Passwort zurückzusetzen:
           </p>
           <div style="text-align: center; margin: 30px 0;">
-            <a href="http://localhost:5173/passwort-reset/${resetPasswordToken}"
+            <a href="${frontendUrl}/passwort-reset/${resetPasswordToken}"
               style="background-color: #4CAF50; color: white; padding: 14px 32px; text-decoration: none; font-size: 18px; font-weight: 600; border-radius: 8px; display: inline-block; transition: background-color 0.3s;">
               Passwort zurücksetzen
             </a>
@@ -760,17 +685,16 @@ app.post("/forgot-password", async (req, res) => {
       `,
     });
     if (error) {
-      return res.status(400).json({ error });
+      return res.status(502).json({ error: "Mailversand fehlgeschlagen." });
     }
- 
+
     res
       .status(200)
       .json({
-        data,
-        message: "E-Mail zum Zurücksetzen des Passworts wurde gesendet.",
+        message: "Falls ein Konto existiert, wurde eine E-Mail angefordert.",
       });
   } catch (error) {
-    console.error("Fehler beim Zurücksetzen des Passworts:", error);
+
     res.status(500).json({
       error:
         "Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.",
@@ -780,28 +704,25 @@ app.post("/forgot-password", async (req, res) => {
 app.post("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
-  if (!password) {
+  if (!validPassword(password)) {
     return res.status(400).json({ error: "Passwort ist erforderlich." });
   }
   try {
     // Überprüfen, ob der Token existiert und nicht abgelaufen ist
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() }, // Token muss noch gültig sein
-    });
+    const resetQuery = { resetPasswordToken: tokenHash(token), resetPasswordExpires: { $gt: Date.now() } };
+    if (!await User.exists(resetQuery)) return res.status(400).json({ error: "Ungültiger oder abgelaufener Token." });
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.findOneAndUpdate({
+      resetPasswordToken: tokenHash(token), resetPasswordExpires: { $gt: Date.now() },
+    }, { $set: { password: hashedPassword }, $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 }, $inc: { tokenVersion: 1 } });
     if (!user) {
       return res
         .status(400)
         .json({ error: "Ungültiger oder abgelaufener Token." });
     }
-    // Neues Passwort setzen
-    user.password = await bcrypt.hash(password, 10); // Passwort-Hashing
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
-    await user.save();
     res.status(200).json({ message: "Passwort erfolgreich zurückgesetzt." });
   } catch (error) {
-    console.error("Fehler beim Zurücksetzen des Passworts:", error);
+
     res.status(500).json({ error: "Interner Serverfehler" });
   }
 });
@@ -809,7 +730,7 @@ app.get("/reset-password/:token", async (req, res) => {
   const { token } = req.params;
   try {
     const user = await User.findOne({
-      resetPasswordToken: token,
+      resetPasswordToken: tokenHash(token),
       resetPasswordExpires: { $gt: Date.now() }, // Token muss gültig sein
     });
     if (!user) {
@@ -819,34 +740,45 @@ app.get("/reset-password/:token", async (req, res) => {
     }
     res.status(200).json({ message: "Token ist gültig" });
   } catch (error) {
-    console.error("Error in getResetPasswordPage:", error.message);
+
     res.status(500).json({ error: "Interner Serverfehler" });
   }
 });
 app.post("/contact", async (req, res) => {
   try {
     const { email, subject, message } = req.body;
- 
+
     if (!email || !subject || !message) {
       return res.status(400).json({ error: "Alle Felder sind erforderlich." });
     }
- 
+
     const newContact = new Contact({
       email,
       subject,
       message,
     });
- 
+
     await newContact.save();
- 
+
     res.status(201).json({ message: "Nachricht erfolgreich gesendet!" });
   } catch (error) {
-    console.error(error);
+
     res
       .status(500)
       .json({ error: "Es gab einen Fehler beim Senden der Nachricht." });
   }
 });
- 
-app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
- 
+
+app.use((error, req, res, next) => {
+  if (res.headersSent) return next(error);
+  const status = error.status || (error.name === "ValidationError" || error.name === "CastError" ? 400 : 500);
+  res.status(status).json({ error: status < 500 ? "Ungültige Anfrage" : "Interner Serverfehler" });
+});
+
+export { app };
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  if (!process.env.DB_URI || !process.env.JWT_SECRET_KEY || process.env.JWT_SECRET_KEY.length < 32) throw new Error("DB_URI und ein JWT_SECRET_KEY mit mindestens 32 Zeichen sind erforderlich.");
+  await mongoose.connect(process.env.DB_URI);
+  app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
+}
+

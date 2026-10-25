@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { HomeSlider } from "./HomeSlider";
-import { Footer } from "./Footer";
 
 export function Home() {
   const [message, setMessage] = useState("");
@@ -19,7 +18,7 @@ export function Home() {
       }, 3000);
       return;
     }
-    navigate(`/suche?query=${query}`);
+    navigate(`/suche?query=${encodeURIComponent(query)}`);
   };
 
   const handleOfferSubmit = (e) => {

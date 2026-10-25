@@ -1,4 +1,6 @@
-import { useState, useEffect } from "react";
+import { getSessionUserId } from "../session.js";
+import { API_URL } from "../api.js";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 
 
@@ -6,18 +8,10 @@ export function Inbox({setMenuOpen}) {
   const [unreadCount, setUnreadCount] = useState(0);
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const decodeToken = (token) => {
-    if (!token) return null;
-    const payloadBase64 = token.split(".")[1];
-    const payloadDecoded = atob(payloadBase64);
-    const payload = JSON.parse(payloadDecoded);
-    return payload.userId;
-  };
-  const userId = decodeToken(token);
-  console.log("userId", userId);
+  const userId = getSessionUserId(token);
 
-  const fetchMessages = () => {
-    fetch("http://localhost:3000/chats", {
+  const fetchMessages = useCallback(() => {
+    fetch(`${API_URL}/chats`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -32,7 +26,7 @@ export function Inbox({setMenuOpen}) {
               chat.messages.filter(
                 (msg) =>
                   !msg.read && // Nachricht ist ungelesen
-                  msg.sender._id !== userId // Nachricht wurde von jemand anderem gesendet
+                  msg.sender?._id !== userId // Nachricht wurde von jemand anderem gesendet
               ).length
             );
           }, 0);
@@ -47,11 +41,11 @@ export function Inbox({setMenuOpen}) {
       .catch((error) =>
         console.error("Fehler beim Laden der Nachrichten:", error)
       );
-  };
+  }, [token, userId]);
 
   const markMessagesAsRead = async () => {
     try {
-      const chatsResponse = await fetch("http://localhost:3000/chats", {
+      const chatsResponse = await fetch(`${API_URL}/chats`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -61,9 +55,9 @@ export function Inbox({setMenuOpen}) {
       if (chatsData.success && Array.isArray(chatsData.data)) {
         for (const chat of chatsData.data) {
           for (const message of chat.messages) {
-            if (!message.read && message.sender._id !== userId) {
+            if (!message.read && message.sender?._id !== userId) {
               await fetch(
-                `http://localhost:3000/chats/${chat._id}/messages/${message._id}`,
+                `${API_URL}/chats/${chat._id}/messages/${message._id}`,
                 {
                   method: "PATCH",
                   headers: {
@@ -87,7 +81,7 @@ export function Inbox({setMenuOpen}) {
   const handleNavigate = () => {
     markMessagesAsRead().then(() => {
       fetchMessages(); // Refresh unread count after marking as read
-      setMenuOpen(false);
+      setMenuOpen?.(false);
       navigate("/messages");
     });
   };
@@ -95,7 +89,7 @@ export function Inbox({setMenuOpen}) {
     fetchMessages();
     const interval = setInterval(fetchMessages, 10000); // Fetch messages every 30 seconds
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [token]);
+  }, [fetchMessages]);
   return (
     <div className="relative">
       <button

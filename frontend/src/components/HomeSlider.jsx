@@ -108,6 +108,7 @@ export function HomeSlider({ isLoggedIn }) {
   };
   return (
     <div className="relative w-full flex justify-center items-center overflow-hidden">
+  {message && <p role="status">{message}</p>}
   <button
     onClick={handlePrev}
     className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"

@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import StarRatings from "react-star-ratings";
@@ -12,9 +13,6 @@ export function Ratings() {
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const navigate = useNavigate();
 
-  if (!jobId) {
-    return <p>Job-ID fehlt. Bitte überprüfen Sie die URL.</p>;
-  }
 
   const handleRatingChange = (newRating) => {
     setUserRating(newRating);
@@ -48,7 +46,7 @@ export function Ratings() {
     if (isFormSubmitted) {
       const token = localStorage.getItem("token");
 
-      fetch("http://localhost:3000/ratings", {
+      fetch(`${API_URL}/ratings`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,8 +58,8 @@ export function Ratings() {
           content: userComment,
         }),
       })
-        .then((res) => res.json())
-        .then((data) => {
+        .then((res) => { if (!res.ok) throw new Error("Bewertung fehlgeschlagen"); return res.json(); })
+        .then(() => {
           setMessage("Bewertung erfolgreich hinzugefügt!");
           setUserRating(0);
           setUserComment("");
@@ -77,7 +75,9 @@ export function Ratings() {
           setIsFormSubmitted(false);
         });
     }
-  }, [isFormSubmitted, jobId, userRating, userComment]);
+  }, [isFormSubmitted, jobId, userRating, userComment, navigate]);
+
+  if (!jobId) return <p>Job-ID fehlt. Bitte überprüfen Sie die URL.</p>;
 
   return (
     <main className="position zero-section min-h-screen bg-gray-50 px-4 py-8 flex justify-center items-center">

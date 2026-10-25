@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
@@ -10,13 +11,9 @@ export function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    localStorage.removeItem("password");
     const saveEmail = localStorage.getItem("email");
-    const savePassword = localStorage.getItem("password");
-    if (saveEmail && savePassword) {
-      setEmail(saveEmail);
-      setPassword(savePassword);
-      setRememberMe(true);
-    }
+    if (saveEmail) { setEmail(saveEmail); setRememberMe(true); }
   }, []);
 
   const handleSubmit = (e) => {
@@ -24,13 +21,13 @@ export function Login({ setIsLoggedIn }) {
 
     if (rememberMe) {
       localStorage.setItem("email", email);
-      localStorage.setItem("password", password);
+
     } else {
       localStorage.removeItem("email");
       localStorage.removeItem("password");
     }
 
-    fetch("http://localhost:3000/login", {
+    fetch(`${API_URL}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -137,7 +134,7 @@ export function Login({ setIsLoggedIn }) {
               htmlFor="rememberMe"
               className="ml-2 block text-sm text-gray-700"
             >
-              Angemeldet bleiben
+              E-Mail merken
             </label>
           </div>
           <button
@@ -147,7 +144,7 @@ export function Login({ setIsLoggedIn }) {
             Login
           </button>
           <div>
-            <button className="w-full bg-teal-400 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2">
+            <button type="button" className="w-full bg-teal-400 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2">
               <Link to="/passwort-vergessen">Passwort vergessen?</Link>
             </button>
           </div>

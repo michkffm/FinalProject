@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { API_URL } from "../api.js";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 export function ProfileDelete() {
@@ -10,8 +11,8 @@ export function ProfileDelete() {
   const token = localStorage.getItem("token");
 
   
-  const fetchUser = () => {
-    fetch(`http://localhost:3000/users/${id}`)
+  const fetchUser = useCallback(() => {
+    fetch(`${API_URL}/users/${id}`, { headers: { Authorization: `Bearer ${token}` } })
       .then((res) => {
         if (!res.ok) {
           throw new Error("Failed to fetch user data");
@@ -24,14 +25,14 @@ export function ProfileDelete() {
       .catch((err) => {
         setError(err.message);
       });
-  };
+  }, [id, token]);
 
   useEffect(() => {
     fetchUser(); 
-  }, [id]);
+  }, [fetchUser]);
 
   const handleDelete = () => {
-    fetch(`http://localhost:3000/users/${id}`, {
+    fetch(`${API_URL}/users/${id}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -46,6 +47,8 @@ export function ProfileDelete() {
         return res.json();
       })
       .then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
         setMessage("Profil erfolgreich gelöscht!");
         setTimeout(() => {
           navigate("/"); 

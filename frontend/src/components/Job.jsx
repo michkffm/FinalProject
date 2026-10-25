@@ -1,9 +1,8 @@
-import { useState, useEffect } from "react";
+import { API_URL } from "../api.js";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { MyContext } from "./MyContext.jsx";
-import { useContext } from "react";
 
-export function Job({ setIsLoggedIn }) {
+export function Job() {
   const [data, setData] = useState({
     title: "",
     description: "",
@@ -14,19 +13,9 @@ export function Job({ setIsLoggedIn }) {
     username: "",
   });
 
-  const [profileData, setProfileData] = useState({
-    profilePhoto: "",
-    role: [],
-    profession: "",
-    location: "",
-    description: "",
-  });
-
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  const token = localStorage.getItem("token");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-  const { userId } = useContext(MyContext); 
-  const [selectedCategory, setSelectedCategory] = useState("");
 
   useEffect(() => {
     // Benutzernamen aus dem localStorage abrufen
@@ -39,21 +28,12 @@ export function Job({ setIsLoggedIn }) {
     } // Abrufen der Kategorie aus localStorage
     const category = localStorage.getItem("selectedCategory");
     if (category) {
-      setSelectedCategory(category);
+      setData((previous) => ({ ...previous, category }));
     }
   }, []);
 
-  useEffect(() => {
-    if (!token) {
-      setMessage("Kein Token gefunden, bitte einloggen.");
-      setTimeout(() => navigate("/hauptCategorie"), 2000);
-    } else {
-      fetchProfileData();
-    }
-  }, [token, navigate]);
-
-  const fetchProfileData = () => {
-    fetch("http://localhost:3000/users/profile", {
+  const fetchProfileData = useCallback(() => {
+    fetch(`${API_URL}/users/profile`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -68,13 +48,6 @@ export function Job({ setIsLoggedIn }) {
         return res.json();
       })
       .then((data) => {
-        setProfileData({
-          profilePhoto: data.profilePhoto || "",
-          role: data.role || [],
-          profession: data.profession || "",
-          location: data.location || "",
-          description: data.description || "",
-        });
         setData((prevData) => ({
           ...prevData,
           category: data.profession || "",
@@ -86,7 +59,16 @@ export function Job({ setIsLoggedIn }) {
         console.error("Fehler beim Abrufen der Profildaten:", error);
         setMessage("Fehler beim Abrufen der Profildaten.");
       });
-  };
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) {
+      setMessage("Kein Token gefunden, bitte einloggen.");
+      setTimeout(() => navigate("/hauptCategorie"), 2000);
+    } else {
+      fetchProfileData();
+    }
+  }, [token, navigate, fetchProfileData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,13 +79,14 @@ export function Job({ setIsLoggedIn }) {
   };
 
   const handleLocation = () => {
+    if (!import.meta.env.VITE_OPENCAGE_API_KEY) { setMessage("Automatische Standortsuche ist nicht konfiguriert. Bitte Standort eingeben."); return; }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
           try {
             const response = await fetch(
-              `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=b6ac76c3a4584145b820399ee203ee28`
+              `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${encodeURIComponent(import.meta.env.VITE_OPENCAGE_API_KEY || "")}`
             );
             const locationData = await response.json();
             const city =
@@ -138,7 +121,7 @@ export function Job({ setIsLoggedIn }) {
       return;
     }
 
-    fetch("http://localhost:3000/jobs", {
+    fetch(`${API_URL}/jobs`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -154,9 +137,9 @@ export function Job({ setIsLoggedIn }) {
         }
         return response.json();
       })
-      .then((responseData) => {
+      .then(() => {
         setMessage("Dienstleistung erfolgreich erstellt!");
-        console.log("Erstellte Jobdaten:", responseData);
+
 
         // Reset Form
         setData({

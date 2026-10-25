@@ -1,33 +1,27 @@
-import { useState, useEffect } from "react";
+import { API_URL } from "../api.js";
+import { useState, useEffect, useCallback } from "react";
 
 export function MessagesPage() {
   const [messages, setMessages] = useState([]);
   const [replyMessages, setReplyMessages] = useState({});
-  const [data, setData] = useState([]);
   const [error, setError] = useState(null);
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
    
   
 
-  useEffect(() => {
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 60000); // 60000 ms = 1 Minute
-    return () => clearInterval(interval); // Cleanup function to clear the interval
-  }, [token]);
-
-  const fetchMessages = () => {
-    fetch("http://localhost:3000/chats", {
+  const fetchMessages = useCallback(() => {
+    fetch(`${API_URL}/chats`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => res.json())
+      .then((res) => { if (!res.ok) throw new Error("Anfrage fehlgeschlagen"); return res.json(); })
       .then((response) => {
         if (response.success && Array.isArray(response.data)) {
           setMessages(response.data);
-          console.log(response.data);
+
         } else {
           console.error(
             "Fehler beim Laden der Nachrichten: Daten sind kein Array",
@@ -35,10 +29,16 @@ export function MessagesPage() {
           );
         }
       })
-      .catch((error) => {
-        console.error("Fehler beim Laden der Nachrichten:", error);
+      .catch(() => {
+        setError("Nachrichten konnten nicht geladen werden.");
       });
-  };
+  }, [token]);
+
+  useEffect(() => {
+    fetchMessages();
+    const interval = setInterval(fetchMessages, 60000); // 60000 ms = 1 Minute
+    return () => clearInterval(interval); // Cleanup function to clear the interval
+  }, [fetchMessages]);
 
   const handleReplyChange = (chatId, event) => {
     setReplyMessages({
@@ -49,7 +49,7 @@ export function MessagesPage() {
 
   const handleReplySubmit = (chatId) => {
     const replyMessage = replyMessages[chatId];
-    fetch(`http://localhost:3000/chats/${chatId}/reply`, {
+    fetch(`${API_URL}/chats/${chatId}/reply`, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -57,7 +57,7 @@ export function MessagesPage() {
       },
       body: JSON.stringify({ content: replyMessage }),
     })
-      .then((res) => res.json())
+      .then((res) => { if (!res.ok) throw new Error("Anfrage fehlgeschlagen"); return res.json(); })
       .then(() => {
         setReplyMessages({
           ...replyMessages,
@@ -65,8 +65,8 @@ export function MessagesPage() {
         });
         fetchMessages(); // Refresh messages after sending a reply
       })
-      .catch((error) => {
-        console.error("Fehler beim Senden der Antwort:", error);
+      .catch(() => {
+        setError("Antwort konnte nicht gesendet werden.");
       });
   };
 
@@ -75,7 +75,7 @@ export function MessagesPage() {
       const chatIdString = chatId._id || chatId;
 
       const response = await fetch(
-        `http://localhost:3000/chats/${chatIdString}`,
+        `${API_URL}/chats/${chatIdString}`,
         {
           method: "DELETE",
           headers: {
@@ -100,7 +100,7 @@ export function MessagesPage() {
 
       // API-Request zum Löschen der Nachricht
       const response = await fetch(
-        `http://localhost:3000/chats/${chatIdString}/messages/${messageIdString}`,
+        `${API_URL}/chats/${chatIdString}/messages/${messageIdString}`,
         {
           method: "DELETE",
           headers: {
@@ -131,6 +131,7 @@ export function MessagesPage() {
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
+      {error && <p role="alert">{error}</p>}
       <div className="flex flex-col justify-center sm:mt-16 mt-10 items-center min-h-screen sm:w-3/6 w-full mt-6">
         {Array.isArray(messages) && messages.length > 0 ? (
           messages.map((chat) => (
@@ -156,19 +157,19 @@ export function MessagesPage() {
                   <div
                     key={msg._id}
                     className={`mb-4 message-standard relative ${
-                      username === msg.sender.username ? "message-me" : ""
+                      username === msg.sender?.username ? "message-me" : ""
                     }`}
                   >
                     <p>
                       {username === msg.sender
                         ? chat.participants
                             .filter(
-                              (participant) => participant.username !== username
+                              (participant) => participant?.username !== username
                             )
-                            .map((participant) => participant.username)
+                            .map((participant) => participant?.username)
                             .join(", ")
                         : typeof msg.sender === "object"
-                        ? msg.sender.username
+                        ? msg.sender?.username
                         : msg.sender}{" "}
                       {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
                     </p>
@@ -178,7 +179,7 @@ export function MessagesPage() {
                       Gesendet am: {new Date(msg.createdAt).toLocaleString()}
                     </p>
                     <div className="absolute right-5 top-8">
-                      {username === msg.sender.username && (
+                      {username === msg.sender?.username && (
                         <button
                           onClick={() => handleDeleteMessage(chat._id, msg._id)}
                         >

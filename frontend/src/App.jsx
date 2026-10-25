@@ -1,5 +1,6 @@
+import { getSessionUserId } from "./session.js";
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.css";
 import { Header } from "./components/Header.jsx";
 import { Footer } from "./components/Footer.jsx";
@@ -26,13 +27,11 @@ import { MessagesPage } from "./components/MessagesPage.jsx"; // Importiere die 
 import { PaymentMethods } from "./components/PaymentMethods.jsx"; // hinzugefügt von Bilal
 import { ProtectedRoute } from "./components/ProtectedRoute.jsx"; // Importiere die ProtectedRoute-Komponente
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { pathname } = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(() => Boolean(getSessionUserId(localStorage.getItem("token"))));
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsLoggedIn(true);
-    }
-  }, []);
+    setIsLoggedIn(Boolean(getSessionUserId(localStorage.getItem("token"))));
+  }, [pathname]);
   return (
     <>
     <div id="root" className="flex flex-col min-h-screen">

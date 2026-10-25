@@ -3,21 +3,24 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 export function PaymentMethods() {
-  const [setMessage] = useState("");
+  const [message, setMessage] = useState("");
   const location = useLocation();
   const urlParams = new URLSearchParams(location.search);
   const price = urlParams.get("price");  // Preis aus der URL holen
-  console.log("Preis:", price);
-  console.log("API Key:", import.meta.env.VITE_PAYPAL_API_KEY);
+
+
 
   useEffect(() => {
     const section = document.querySelector('.handshake-section');
-    setTimeout(() => {
-      section.classList.add('visible');
+    const timer = setTimeout(() => {
+      section?.classList.add('visible');
     }, 100); // Verzögerung von 100ms
+    return () => clearTimeout(timer);
   }, []);
   
   
+  if (!import.meta.env.VITE_PAYPAL_API_KEY || !Number.isFinite(Number(price)) || Number(price) <= 0) return <p role="alert">Zahlung ist nicht konfiguriert oder der Preis ist ungültig.</p>;
+
   return (
     <PayPalScriptProvider
     
@@ -32,6 +35,7 @@ export function PaymentMethods() {
       <div className="handshake-section absolute inset-0 z-10"></div>
       <div className="bg-white bg-opacity-40 mt-80 sm:flex-row justify-between z-10 items-center border-2 border-teal-300 shadow-md rounded-lg p-6 max-w-2xl w-full">
         <h1 className="text-2xl font-bold mb-6 text-center">Zahlungsmethoden</h1>
+        {message && <p role="status">{message}</p>}
         <PayPalButtons
           style={{ layout: "vertical" }}
           createOrder={(data, actions) => {

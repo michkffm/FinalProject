@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -39,7 +40,7 @@ export function Register() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!error) {
-      fetch("http://localhost:3000/register", {
+      fetch(`${API_URL}/register`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +57,7 @@ export function Register() {
         })
         .then((data) => {
           setMessage("Registrierung erfolgreich!");
-          console.log("Registrierung erfolgreich", data);
+
           localStorage.setItem("username", data.username);
           setTimeout(() => {
             navigate("/login");

@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { Link } from "react-router-dom";
 import logogross from "../assets/logo-gross-ohne-kontur.png";
 import { Inbox } from "./Inbox";
@@ -5,8 +6,17 @@ import { useState } from "react";
 
 export function Header({ isLoggedIn, setIsLoggedIn }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${API_URL}/logout`, { method: "POST", headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+      if (!response.ok && response.status !== 401) throw new Error("Abmeldung fehlgeschlagen");
+    } catch {
+      setLogoutError("Abmeldung fehlgeschlagen. Bitte erneut versuchen.");
+      return;
+    }
+    setLogoutError("");
     setIsLoggedIn(false);
     localStorage.removeItem("token");
     localStorage.removeItem("username");
@@ -18,6 +28,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
 
   return (
     <header>
+      {logoutError && <p role="alert">{logoutError}</p>}
       <nav className="p-1 flex sm:bg-opacity-50 z-20 bg-opacity-100 sm:gap-14 gap-1 bg-white shadow-lg flex-col sm:flex-row sm:justify-center sm:items-center items-center fixed top-0 left-0 w-full">
         <div className="flex justify-between items-center w-full sm:w-auto">
           <div className="text-xl font-bold">
@@ -104,7 +115,7 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
                   className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
                 >
                   <i className="fa-solid fa-right-from-bracket"></i>
-                  Logout
+                  Abmelden (alle Geräte)
                 </button>
               </li>
               <li>

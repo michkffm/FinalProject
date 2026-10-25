@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import profileImage from "../assets/profile-1.jpeg";
@@ -20,7 +21,7 @@ export function Profile() {
   useEffect(() => {
     //wird am Amfang nur einmal ausgeführt
     //fetch Anfrage an users/profile(Get)
-    fetch("http://localhost:3000/users/profile", {
+    fetch(`${API_URL}/users/profile`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -51,7 +52,7 @@ export function Profile() {
           setMessage("Fehler beim Erstellen des Profils.");
         }
       });
-  }, []);
+  }, [token]);
   const handleChangeRole = (e) => {
     if (e.target.checked) {
       if (!data.role.includes(e.target.value)) {
@@ -66,29 +67,37 @@ export function Profile() {
       setData((prevData) => {
         return {
           ...prevData, // Kopie des gesamten vorherigen Objekts
-          role: prevData.role.filter((role) => role === e.target.value),
+          role: prevData.role.filter((role) => role !== e.target.value),
         };
       });
     }
   };
   const handleChange = (e) => {
     const { name, value, files, type } = e.target;
-    setData((prevData) => {
-      if (type === "file") {
-        return { ...prevData, [name]: files[0] }; // Speichert die erste Datei
+    if (type === "file") {
+      const file = files?.[0];
+      if (!file) return;
+      if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 60 * 1024) {
+        setMessage("Profilbild: JPG, PNG oder WebP mit höchstens 60 KB wählen.");
+        return;
       }
-      // Bei anderen Eingabetypen wird der Wert des Feldes übernommen
-      return { ...prevData, [name]: value };
-    });
+      const reader = new FileReader();
+      reader.onload = () => setData((previous) => ({ ...previous, [name]: reader.result }));
+      reader.onerror = () => setMessage("Profilbild konnte nicht gelesen werden.");
+      reader.readAsDataURL(file);
+      return;
+    }
+    setData((previous) => ({ ...previous, [name]: value }));
   };
   const handleLocation = () => {
+    if (!import.meta.env.VITE_OPENCAGE_API_KEY) { setMessage("Automatische Standortsuche ist nicht konfiguriert. Bitte Standort eingeben."); return; }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
           try {
             const response = await fetch(
-              `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=b6ac76c3a4584145b820399ee203ee28`
+              `https://api.opencagedata.com/geocode/v1/json?q=${latitude}+${longitude}&key=${encodeURIComponent(import.meta.env.VITE_OPENCAGE_API_KEY || "")}`
             );
             const locationData = await response.json();
             const city =
@@ -119,11 +128,11 @@ export function Profile() {
     // const formData = new FormData();
     // formData.append("profilePhoto", data.profilePhoto);
     // formData.append("role", JSON.stringify(data.role));
-    // formData.append("profession", data.profession);
+    // formData.append("profession", data.updatedUser.profession);
     // formData.append("location", data.location);
     // formData.append("description", data.description);
     // console.log([...formData]);
-    fetch("http://localhost:3000/users/profile", {
+    fetch(`${API_URL}/users/profile`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -140,9 +149,9 @@ export function Profile() {
         return res.json();
       })
       .then((data) => {
-        console.log("Gesendete Daten:", data);
+
         setMessage("Profil erfolgreich gespeichert!");
-        localStorage.setItem("selectedCategory", data.profession);
+        localStorage.setItem("selectedCategory", data.updatedUser.profession);
         setTimeout(() => {
           navigate("/");
         }, 2000);
@@ -157,7 +166,7 @@ export function Profile() {
       });
   };
   const handleDeleteProfile = () => {
-    fetch(`http://localhost:3000/users/${userId}`, {
+    fetch(`${API_URL}/users/${userId}`, {
       method: "DELETE",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -172,6 +181,8 @@ export function Profile() {
         return res.json();
       })
       .then(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
         setMessage("Profil erfolgreich gelöscht.");
         setTimeout(() => {
           navigate("/register");

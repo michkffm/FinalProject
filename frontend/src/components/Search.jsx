@@ -1,3 +1,5 @@
+import { filterJobs } from "../filterJobs.js";
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
@@ -6,7 +8,6 @@ export function Search() {
   const [token] = useState(localStorage.getItem("token"));
   const username = localStorage.getItem("username");
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
   const [contactMessages, setContactMessages] = useState({});
   const [filters, setFilters] = useState({
     name: "",
@@ -18,8 +19,7 @@ export function Search() {
   const query = searchParams.get("query");
 
   useEffect(() => {
-    if (query) {
-      fetch(`http://localhost:3000/search/jobs?query=${query}`, {
+    fetch(`${API_URL}/search/jobs?query=${encodeURIComponent(query || "")}`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -35,8 +35,7 @@ export function Search() {
         })
         .then((data) => {
           setData(data);
-          setFilteredData(data);
-        })
+          })
         .catch((error) => {
           try {
             const err = JSON.parse(error.message);
@@ -45,38 +44,9 @@ export function Search() {
             setMessage("Fehler beim Laden der Suchergebnisse.");
           }
         });
-    }
   }, [query, token]);
 
-  useEffect(() => {
-    let filtered = data;
-
-    if (filters.name) {
-      filtered = filtered.filter((job) =>
-        job.title.toLowerCase().includes(filters.name.toLowerCase())
-      );
-    }
-
-    if (filters.price !== "all") {
-      if (filters.price === "low") {
-        filtered = filtered.filter((job) => job.price < 50);
-      } else if (filters.price === "medium") {
-        filtered = filtered.filter(
-          (job) => job.price >= 50 && job.price <= 100
-        );
-      } else if (filters.price === "high") {
-        filtered = filtered.filter((job) => job.price > 100);
-      }
-    }
-
-    if (filters.location) {
-      filtered = filtered.filter((job) =>
-        job.location.toLowerCase().includes(filters.location.toLowerCase())
-      );
-    }
-
-    setFilteredData(filtered);
-  }, [filters, data]);
+  const filteredData = filterJobs(data, filters);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -97,7 +67,7 @@ export function Search() {
   const handleContactSubmit = (e, jobId) => {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
-    fetch("http://localhost:3000/chats", {
+    fetch(`${API_URL}/chats`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -138,7 +108,7 @@ export function Search() {
 
   const handleDelete = async (jobId) => {
     try {
-      const response = await fetch(`http://localhost:3000/jobs/${jobId}`, {
+      const response = await fetch(`${API_URL}/jobs/${jobId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

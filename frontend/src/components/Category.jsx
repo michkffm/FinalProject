@@ -1,16 +1,14 @@
+import { filterJobs } from "../filterJobs.js";
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { JobRatings } from "./JobRatings.jsx";
-import { MyContext } from "./MyContext.jsx";
-import { useContext } from "react";
 
 export function Category() {
   const [message, setMessage] = useState("");
   const [token] = useState(localStorage.getItem("token"));
   const username = localStorage.getItem("username");
   const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
-  const { userId } = useContext(MyContext);
   const { name } = useParams();
   const [filters, setFilters] = useState({
     name: "",
@@ -21,7 +19,7 @@ export function Category() {
   const [contactMessages, setContactMessages] = useState({});
 
   useEffect(() => {
-    fetch(`http://localhost:3000/jobs?category=${name}`, {
+    fetch(`${API_URL}/jobs?category=${name}`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -36,10 +34,9 @@ export function Category() {
         return res.json();
       })
       .then((data) => {
-        console.log("Abgerufene Daten:", data);
+
 
         setData(data);
-        setFilteredData(data);
       })
       .catch((error) => {
         try {
@@ -49,33 +46,9 @@ export function Category() {
           setMessage("Fehler beim Laden der Kategorie.");
         }
       });
-  }, [name]);
+  }, [name, token]);
 
-  useEffect(() => {
-    let filtered = data;
-    if (filters.name) {
-      filtered = filtered.filter((job) =>
-        job.title.toLowerCase().includes(filters.name.toLowerCase())
-      );
-    }
-    if (filters.price !== "all") {
-      if (filters.price === "low") {
-        filtered = filtered.filter((job) => job.price < 50);
-      } else if (filters.price === "medium") {
-        filtered = filtered.filter(
-          (job) => job.price >= 50 && job.price <= 100
-        );
-      } else if (filters.price === "high") {
-        filtered = filtered.filter((job) => job.price > 100);
-      }
-    }
-    if (filters.location) {
-      filtered = filtered.filter((job) =>
-        job.location.toLowerCase().includes(filters.location.toLowerCase())
-      );
-    }
-    setFilteredData(filtered);
-  }, [filters, data]);
+  const filteredData = filterJobs(data, filters);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -97,7 +70,7 @@ export function Category() {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
   
-    fetch("http://localhost:3000/chats", {
+    fetch(`${API_URL}/chats`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -141,7 +114,7 @@ export function Category() {
 
   const handleDelete = async (jobId) => {
     try {
-      const response = await fetch(`http://localhost:3000/jobs/${jobId}`, {
+      const response = await fetch(`${API_URL}/jobs/${jobId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -161,7 +134,6 @@ export function Category() {
     }
   };
 
-  console.log(userId);
 
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-start">

@@ -11,7 +11,7 @@ export function TermsAndConditions() {
         <div className="space-y-8 text-gray-700 leading-relaxed">
           {/* Einleitung */}
           <p className="text-lg text-center">
-            Willkommen bei <strong className="text-teal-500">EasyHelfer INC</strong>! Diese Allgemeinen Geschäftsbedingungen ("AGB") regeln die Nutzung unserer Website und Dienstleistungen. Bitte lesen Sie diese sorgfältig durch.
+            Willkommen bei <strong className="text-teal-500">EasyHelfer INC</strong>! Diese Allgemeinen Geschäftsbedingungen (&quot;AGB&quot;) regeln die Nutzung unserer Website und Dienstleistungen. Bitte lesen Sie diese sorgfältig durch.
           </p>
 
           {/* Geltungsbereich */}

@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -14,12 +15,14 @@ export function ResetPassword() {
 
   useEffect(() => {
     const checkToken = async () => {
-      const res = await fetch(`http://localhost:3000/reset-password/${token}`);
+      try {
+      const res = await fetch(`${API_URL}/reset-password/${token}`);
       if (res.ok) {
         setTokenValid(true);
       } else {
         setTokenValid(false);
       }
+      } catch { setError("Token konnte nicht geprüft werden."); setTokenValid(false); }
     };
     checkToken();
   }, [token]);
@@ -33,7 +36,7 @@ export function ResetPassword() {
 
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/reset-password/${token}`, {
+      const response = await fetch(`${API_URL}/reset-password/${token}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,7 +53,7 @@ export function ResetPassword() {
 
       setSuccess(true);
       setLoading(false);
-    } catch (err) {
+    } catch {
       setError("Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
       setLoading(false);
     }
@@ -88,6 +91,7 @@ export function ResetPassword() {
             Token ist abgelaufen
           </p>
         )}
+        {error && <p role="alert" className="text-red-600">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4 relative">
             <label

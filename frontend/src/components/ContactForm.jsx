@@ -1,9 +1,8 @@
+import { API_URL } from "../api.js";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { FaGithub } from "react-icons/fa";
 
 export default function ContactForm() {
-  const navigate = useNavigate();
   const [customSubject, setCustomSubject] = useState(false);
   const [message, setMessage] = useState("");
   const [data, setData] = useState({
@@ -30,7 +29,7 @@ export default function ContactForm() {
       return;
     }
 
-    fetch("http://localhost:3000/contact", {
+    fetch(`${API_URL}/contact`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -75,7 +74,7 @@ export default function ContactForm() {
       {/* Erfolgreich-Nachricht */}
       {message ? (
         <p className="text-2xl sm:text-4xl font-bold text-center text-teal-400 mt-10">
-          Du hast erfolgreich Deine Nachricht verschickt!
+          {message}
         </p>
       ) : (
         <form

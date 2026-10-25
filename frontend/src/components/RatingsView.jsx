@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MyContext } from "./MyContext.jsx";
@@ -15,7 +16,7 @@ export function RatingsView() {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/ratings/${jobId}`, {
+        const response = await fetch(`${API_URL}/ratings/${jobId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +65,7 @@ export function RatingsView() {
   const handleDelete = async (ratingId) => {
     try {
       const response = await fetch(
-        `http://localhost:3000/ratings/${ratingId}`,
+        `${API_URL}/ratings/${ratingId}`,
         {
           method: "DELETE",
           headers: {

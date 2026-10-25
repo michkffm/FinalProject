@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 export function ForgotPassword() {
@@ -14,7 +15,7 @@ export function ForgotPassword() {
     setError("");
     setMessage("");
     try {
-      const response = await fetch("http://localhost:3000/forgot-password", {
+      const response = await fetch(`${API_URL}/forgot-password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -25,18 +26,19 @@ export function ForgotPassword() {
       const data = await response.json();
       if (!response.ok) {
         // Serverfehler behandeln
-        setError(data.message || "Fehler beim Senden der E-Mail.");
+        setError(data.error || "Fehler beim Senden der E-Mail.");
         return;
       }
       setMessage("E-Mail zum Zurücksetzen des Passworts wurde gesendet.");
       setTimeout(() => navigate("/login"), 2000);
-    } catch (error) {
+    } catch {
       // Fehler, wenn die Antwort nicht im JSON-Format vorliegt
       setError("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
     }
   };
   return (
     <div className="zero-section min-h-screen px-4 py-8 flex justify-center items-center">
+      {error && <p role="alert" className="text-red-600">{error}</p>}
       <div className="bg-white bg-opacity-80 p-8 rounded-lg shadow-lg w-full max-w-md">
         {message && (
           <div

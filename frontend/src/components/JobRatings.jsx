@@ -1,3 +1,4 @@
+import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
@@ -6,13 +7,12 @@ export function JobRatings({ jobId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [averageRating, setAverageRating] = useState(0);
-  const [showAll, setShowAll] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/ratings/${jobId}`, {
+        const response = await fetch(`${API_URL}/ratings/${jobId}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -60,9 +60,7 @@ export function JobRatings({ jobId }) {
     );
   };
 
-  const handleLoadMore = () => {
-    setShowAll(true);
-  };
+
 
   if (loading) return <p>Lädt...</p>;
   if (error) return <p>{error}</p>;
@@ -75,7 +73,7 @@ export function JobRatings({ jobId }) {
             Bewertung: {averageRating.toFixed(1)}{" "}
             {renderStars(averageRating)}
           </p>
-            <button className="text-teal-300 rounded duration-300 hover:text-teal-500 transition-colors" onClick={handleLoadMore}>
+            <button className="text-teal-300 rounded duration-300 hover:text-teal-500 transition-colors">
               <Link to={`/ratingsView/${jobId}`}> Mehr laden...</Link>
             </button>
         </div>
