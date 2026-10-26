@@ -37,9 +37,10 @@ export function Home() {
 
   useEffect(() => {
     const section = document.querySelector(".handshake-section");
-    setTimeout(() => {
-      section.classList.add("visible");
-    }, 100); // Verzögerung von 100ms
+    const timer = setTimeout(() => {
+      section?.classList.add("visible");
+    }, 100);
+    return () => clearTimeout(timer); // Verzögerung von 100ms
   }, []);
 
   return (

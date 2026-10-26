@@ -49,6 +49,8 @@ const allowedCategories = Job.schema.path("category").enumValues;
 const jobFields = ["title", "description", "category", "price", "location", "contact"];
 const pick = (body, fields) => Object.fromEntries(fields.filter((key) => Object.hasOwn(body, key)).map((key) => [key, body[key]]));
 const validPassword = (value) => typeof value === "string" && value.length >= 8 && Buffer.byteLength(value) <= 72 && /[!@#$%^&*(),.?":{}|<>]/.test(value);
+const validId = value => typeof value === "string" && /^[a-f0-9]{24}$/i.test(value);
+const inputStatus = error => ["ValidationError", "CastError"].includes(error.name) ? 400 : 500;
 const validEmail = (value) => typeof value === "string" && value.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 const tokenHash = (value) => crypto.createHash("sha256").update(value).digest("hex");
 
@@ -158,7 +160,7 @@ app.patch("/users/profile", authMiddleware, async (req, res) => {
       .json({ message: "Profil erfolgreich aktualisiert", updatedUser });
   } catch (error) {
     res
-      .status(500)
+      .status(inputStatus(error))
       .json({
         error: "Profil konnte nicht aktualisiert werden",
       });
@@ -220,7 +222,7 @@ app.post("/jobs", authMiddleware, async (req, res) => {
       .json({ message: "Job erfolgreich ausgeschrieben", job: addUsername });
   } catch (error) {
 
-    res.status(500).json({ error: "Job konnte nicht veröffentlicht werden" });
+    res.status(inputStatus(error)).json({ error: "Job konnte nicht veröffentlicht werden. Bitte Eingaben prüfen." });
   }
 });
 
@@ -297,6 +299,7 @@ app.delete("/jobs/:id", authMiddleware, async (req, res) => {
     if (!job) {
       return res.status(404).json({ error: "Job nicht gefunden" });
     }
+    await Promise.all([Rating.deleteMany({ jobId: id }), Chat.deleteMany({ jobId: id })]);
     res.status(200).json({ message: "Job erfolgreich gelöscht" });
   } catch (error) {
     res.status(500).json({ error: "Löschen des Auftrags fehlgeschlagen" });
@@ -315,7 +318,7 @@ app.put("/jobs/:id", authMiddleware, async (req, res) => {
 
     res.status(200).json(job);
   } catch (error) {
-    res.status(500).json({ error: "Job konnte nicht aktualisiert werden" });
+    res.status(inputStatus(error)).json({ error: "Job konnte nicht aktualisiert werden. Bitte Eingaben prüfen." });
   }
 });
 
@@ -350,7 +353,7 @@ app.patch("/users/:id", authMiddleware, async (req, res) => {
     res.status(200).json(user);
   } catch (error) {
     res
-      .status(500)
+      .status(inputStatus(error))
       .json({ error: "Benutzer konnte nicht aktualisiert werden" });
   }
 });
@@ -360,6 +363,12 @@ app.delete("/users/:id", authMiddleware, async (req, res) => {
   const userId = req.user.userId;
   if (id !== userId) return res.status(403).json({ error: "Keine Berechtigung" });
   try {
+    const ownJobs = await Job.find({ createdBy: userId }).select("_id");
+    const jobIds = ownJobs.map(job => job._id);
+    await Promise.all([
+      Rating.deleteMany({ $or: [{ senderId: userId }, { jobId: { $in: jobIds } }] }),
+      Chat.deleteMany({ $or: [{ participants: userId }, { jobId: { $in: jobIds } }] }),
+    ]);
     await Job.deleteMany({ createdBy: userId });
     const user = await User.findByIdAndDelete(id);
     if (!user) {
@@ -400,11 +409,12 @@ app.post("/ratings", authMiddleware, async (req, res) => {
   const { jobId, rating, content } = req.body;
   const senderId = req.user.userId;
 
-  if (!jobId || !rating) {
+  if (!validId(jobId) || !Number.isInteger(rating) || rating < 1 || rating > 5 || (content !== undefined && (typeof content !== "string" || content.length > 2000))) {
     return res.status(400).json({ error: "Alle Felder sind Pflichtfelder" });
   }
 
   try {
+    if (!await Job.exists({ _id: jobId })) return res.status(404).json({ error: "Job nicht gefunden" });
     const newRating = new Rating({ jobId, senderId, rating, content });
     await newRating.save();
 
@@ -436,6 +446,7 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
 app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
   const { chatId } = req.params;
   const { content } = req.body;
+  if (typeof content !== "string" || !content.trim() || content.length > 5000) return res.status(400).json({ error: "Bitte eine Nachricht mit höchstens 5000 Zeichen eingeben." });
 
   try {
     const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId });
@@ -461,6 +472,7 @@ app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
 
 app.post("/chats", authMiddleware, async (req, res) => {
   const { jobId, message } = req.body;
+  if (!validId(jobId) || typeof message !== "string" || !message.trim() || message.length > 5000) return res.status(400).json({ error: "Ungültige Nachricht oder Job-ID" });
   const senderId = req.user.userId;
   try {
     const job = await Job.findById(jobId);
@@ -696,7 +708,7 @@ app.post("/forgot-password", async (req, res) => {
             Wenn Du kein neues Passwort angefordert hast, ignoriere bitte diese E-Mail.
           </p>
           <footer style="text-align: center; font-size: 12px; color: #999999; margin-top: 40px;">
-            <p style="margin: 0;">© 2025 EasyHelfer. Alle Rechte vorbehalten.</p>
+            <p style="margin: 0;">© ${new Date().getFullYear()} EasyHelfer. Alle Rechte vorbehalten.</p>
           </footer>
         </div>
       `,

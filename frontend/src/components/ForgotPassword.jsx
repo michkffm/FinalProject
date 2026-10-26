@@ -29,7 +29,7 @@ export function ForgotPassword() {
         setError(data.error || "Fehler beim Senden der E-Mail.");
         return;
       }
-      setMessage("E-Mail zum Zurücksetzen des Passworts wurde gesendet.");
+      setMessage(data.message);
       setTimeout(() => navigate("/login"), 2000);
     } catch {
       // Fehler, wenn die Antwort nicht im JSON-Format vorliegt

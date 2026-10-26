@@ -1,5 +1,5 @@
 import { API_URL } from "../api.js";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import StarRatings from "react-star-ratings";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ export function Ratings() {
   const [userComment, setUserComment] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false);
   const navigate = useNavigate();
 
 
@@ -22,60 +21,28 @@ export function Ratings() {
     setUserComment(e.target.value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    if (!userRating || !userComment) {
-      setMessage("Alle Felder sind erforderlich.");
-      setIsSubmitting(false);
-      return;
-    }
-
+    if (isSubmitting) return;
+    if (!userRating || !userComment.trim()) { setMessage("Alle Felder sind erforderlich."); return; }
     const token = localStorage.getItem("token");
-    if (!token) {
-      setMessage("Bitte einloggen.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    setIsFormSubmitted(true);
-  };
-
-  useEffect(() => {
-    if (isFormSubmitted) {
-      const token = localStorage.getItem("token");
-
-      fetch(`${API_URL}/ratings`, {
+    if (!token) { setMessage("Bitte einloggen."); return; }
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`${API_URL}/ratings`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          jobId: jobId,
-          rating: userRating,
-          content: userComment,
-        }),
-      })
-        .then((res) => { if (!res.ok) throw new Error("Bewertung fehlgeschlagen"); return res.json(); })
-        .then(() => {
-          setMessage("Bewertung erfolgreich hinzugefügt!");
-          setUserRating(0);
-          setUserComment("");
-          setTimeout(() => {
-            navigate("/hauptCategorie");
-          }, 2000);
-        })
-        .catch(() => {
-          setMessage("Fehler beim Hinzufügen der Bewertung.");
-        })
-        .finally(() => {
-          setIsSubmitting(false);
-          setIsFormSubmitted(false);
-        });
-    }
-  }, [isFormSubmitted, jobId, userRating, userComment, navigate]);
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ jobId, rating: userRating, content: userComment.trim() }),
+      });
+      if (!response.ok) throw new Error("Bewertung fehlgeschlagen");
+      setMessage("Bewertung erfolgreich hinzugefügt!");
+      setUserRating(0);
+      setUserComment("");
+      setTimeout(() => navigate("/hauptCategorie"), 2000);
+    } catch {
+      setMessage("Fehler beim Hinzufügen der Bewertung.");
+    } finally { setIsSubmitting(false); }
+  };
 
   if (!jobId) return <p>Job-ID fehlt. Bitte überprüfen Sie die URL.</p>;
 

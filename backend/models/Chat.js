@@ -12,7 +12,7 @@ const chatSchema = new mongoose.Schema({
     required: true,
   }],
   messages: [{
-    content: { type: String, required: true },
+    content: { type: String, required: true, trim: true, maxlength: 5000 },
     sender: { type: mongoose.ObjectId, ref: "User", required: true },
     read: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },

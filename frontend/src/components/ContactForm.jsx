@@ -3,22 +3,20 @@ import { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 
 export default function ContactForm() {
-  const [customSubject, setCustomSubject] = useState(false);
+  const [subjectChoice, setSubjectChoice] = useState("");
+  const [customSubject, setCustomSubject] = useState("");
+  const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
   const [data, setData] = useState({
     email: "",
     subject: "",
     message: "",
   });
-  const token = localStorage.getItem("token");
 
   const handleSubjectChange = (e) => {
     const selectedSubject = e.target.value;
-    setData({
-      ...data,
-      subject: selectedSubject,
-    });
-    setCustomSubject(selectedSubject === "custom");
+    setSubjectChoice(selectedSubject);
+    setData(previous => ({ ...previous, subject: selectedSubject }));
   };
 
   const handleSubmit = (e) => {
@@ -29,13 +27,17 @@ export default function ContactForm() {
       return;
     }
 
+    if (sending) return;
+    const subjects = { support: "Support-Anfrage", feedback: "Feedback", "profile-change": "Profil ändern", "profile-delete": "Profil löschen", "service-delete": "Dienstleistung löschen" };
+    const subject = subjectChoice === "custom" ? customSubject.trim() : subjects[subjectChoice];
+    if (!subject || !data.message.trim()) { setMessage("Bitte Betreff und Nachricht ausfüllen."); return; }
+    setSending(true);
     fetch(`${API_URL}/contact`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(data),
+      body: JSON.stringify({ ...data, subject }),
     })
       .then((res) => {
         if (!res.ok) {
@@ -51,6 +53,8 @@ export default function ContactForm() {
           subject: "",
           message: "",
         });
+        setSubjectChoice("");
+        setCustomSubject("");
         setMessage("Nachricht erfolgreich gesendet!");
         setTimeout(() => {
           setMessage("");
@@ -66,7 +70,7 @@ export default function ContactForm() {
         setTimeout(() => {
           setMessage("");
         }, 3000);
-      });
+      }).finally(() => setSending(false));
   };
 
   return (
@@ -95,6 +99,7 @@ export default function ContactForm() {
             <input
               id="email"
               type="email"
+              required
               name="email"
               value={data.email}
               onChange={(e) => setData({ ...data, email: e.target.value })}
@@ -114,7 +119,8 @@ export default function ContactForm() {
             <select
               id="subject"
               name="subject"
-              value={data.subject}
+              required
+              value={subjectChoice}
               onChange={handleSubjectChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
             >
@@ -128,14 +134,14 @@ export default function ContactForm() {
               <option value="service-delete">Dienstleistung löschen</option>
               <option value="custom">Sonstiges (bitte angeben)</option>
             </select>
-            {customSubject && (
+            {subjectChoice === "custom" && (
               <input
                 type="text"
                 name="customSubject"
-                value={data.subject}
-                onChange={(e) =>
-                  setData({ ...data, subject: e.target.value })
-                }
+                value={customSubject}
+                onChange={(e) => setCustomSubject(e.target.value)}
+                maxLength={120}
+                required
                 className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
                 placeholder="Bitte Betreff angeben"
               />
@@ -154,6 +160,8 @@ export default function ContactForm() {
               id="message"
               name="message"
               rows="5"
+              maxLength={5000}
+              required
               value={data.message}
               onChange={(e) => setData({ ...data, message: e.target.value })}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:border-teal-400"
@@ -164,9 +172,10 @@ export default function ContactForm() {
           {/* Senden-Button */}
           <button
             type="submit"
+            disabled={sending}
             className="w-full bg-teal-500 text-white font-bold py-2 px-4 rounded-lg duration-300 hover:bg-teal-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-teal-400"
           >
-            Senden
+            {sending ? "Wird gesendet..." : "Senden"}
           </button>
         </form>
       )}

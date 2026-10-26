@@ -125,13 +125,6 @@ export function Profile() {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const formData = new FormData();
-    // formData.append("profilePhoto", data.profilePhoto);
-    // formData.append("role", JSON.stringify(data.role));
-    // formData.append("profession", data.updatedUser.profession);
-    // formData.append("location", data.location);
-    // formData.append("description", data.description);
-    // console.log([...formData]);
     fetch(`${API_URL}/users/profile`, {
       method: "PATCH",
       headers: {
@@ -199,7 +192,7 @@ export function Profile() {
       <div className="flex flex-col bg-white bg-opacity-40 sm:flex-row justify-between items-center border-2 border-teal-300 shadow-md rounded-lg p-6 max-w-2xl w-full">
         <div className="w-full sm:w-auto order-0 sm:order-2 m-6 sm:mb-0 flex justify-center ">
           <img
-            src={profileImage}
+            src={data.profilePhoto || profileImage}
             alt="profileimage"
             className="w-100 h-90 sm:ml-6 ml-0 object-cover rounded-[5%] border border-teal-400"
           />
@@ -261,14 +254,12 @@ export function Profile() {
               <option value="Beratung">Beratung</option>
               <option value="Bildung und Schulung">Bildung und Schulung</option>
               <option
-                value="Betreuung und Gesundheit
-"
+                value="Betreuung und Gesundheit"
               >
                 Betreuung und Gesundheit
               </option>
               <option
-                value="Finanzen und Versicherungen
-"
+                value="Finanzen und Versicherungen"
               >
                 Finanzen und Versicherungen
               </option>
@@ -284,8 +275,7 @@ export function Profile() {
                 Bau- und Renovierungsdienste
               </option>
               <option
-                value="Freizeit und Unterhaltung
-"
+                value="Freizeit und Unterhaltung"
               >
                 Freizeit und Unterhaltung
               </option>
@@ -301,6 +291,7 @@ export function Profile() {
               Beschreibung:
             </label>
             <textarea
+              id="description"
               name="description"
               value={data.description}
               onChange={handleChange}
@@ -311,12 +302,13 @@ export function Profile() {
           </div>
           {/* Standort */}
           <div>
-            <label className="block text-gray-700 font-medium mb-2">
+            <label htmlFor="location" className="block text-gray-700 font-medium mb-2">
               Standort
             </label>
             <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
+                id="location"
                 name="location"
                 value={data.location}
                 onChange={handleChange}
@@ -342,6 +334,7 @@ export function Profile() {
                 <input
                   type="checkbox"
                   value="Anbieter"
+                  checked={data.role.includes("Anbieter")}
                   onChange={handleChangeRole}
                   className="mr-2"
                 />
@@ -351,6 +344,7 @@ export function Profile() {
                 <input
                   type="checkbox"
                   value="Suchender"
+                  checked={data.role.includes("Suchender")}
                   onChange={handleChangeRole}
                   className="mr-2"
                 />
@@ -367,6 +361,7 @@ export function Profile() {
           </button>
           <div className="flex justify-end">
             <button
+              type="button"
               className="px-4 py-2 bg-red-600 text-white rounded-lg shadow duration-300 hover:bg-red-500"
               onClick={handleDeleteProfile}
             >

@@ -34,7 +34,7 @@ function App() {
   }, [pathname]);
   return (
     <>
-    <div id="root" className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} /> {/* Header immer sichtbar */}
       <div className="content flex-grow">
         <Routes>
@@ -49,6 +49,7 @@ function App() {
           <Route path="/contact" element={<ContactForm />} /> {/* Route für das Kontaktformular */}
           <Route path="/datenschutz" element={<Datenschutz />} /> {/* Route für die Datenschutzerklärung */}
           <Route path="/hilfe" element={<Help />} />
+          <Route path="*" element={<main className="zero-section min-h-screen px-4 pt-40 text-center"><h1>Seite nicht gefunden</h1><a href="/">Zur Startseite</a></main>} />
           {/* protected routes */}
           <Route element={<ProtectedRoute />}>
           <Route path="/profile" element={<Profile />} />

@@ -245,3 +245,40 @@ test('rate limits are shared and cannot be bypassed with a forwarded header loca
   assert.match(counters[0]._id, /^[a-f0-9]{64}$/);
   assert.ok(counters[0].expiresAt instanceof Date);
 });
+
+test('offer inputs validate price and required fields with a client error', async () => {
+  const { data: login } = await request('/login', 'POST', { email: 'owner@example.invalid', password: 'Synthetic-Password!' });
+  for (const price of ['-1', 'abc', '12.345']) {
+    assert.equal((await request('/jobs', 'POST', { ...payload, price }, login.token)).status, 400);
+  }
+  assert.equal((await request('/jobs', 'POST', { ...payload, title: '  ' }, login.token)).status, 400);
+  const created = await request('/jobs', 'POST', { ...payload, price: '25,50' }, login.token);
+  assert.equal(created.status, 201);
+  assert.equal(created.data.job.price, '25.50');
+});
+
+test('ratings and messages reject invalid input and references before saving', async () => {
+  const { data: login } = await request('/login', 'POST', { email: 'owner@example.invalid', password: 'Synthetic-Password!' });
+  const created = await request('/jobs', 'POST', payload, login.token);
+  const jobId = created.data.job._id;
+  for (const rating of [-1, 0, 6, 2.5, '5']) {
+    assert.equal((await request('/ratings', 'POST', { jobId, rating }, login.token)).status, 400);
+  }
+  assert.equal((await request('/ratings', 'POST', { jobId: 'bad', rating: 4 }, login.token)).status, 400);
+  assert.equal((await request('/ratings', 'POST', { jobId: new mongoose.Types.ObjectId().toString(), rating: 4 }, login.token)).status, 404);
+  assert.equal((await request('/chats', 'POST', { jobId, message: '  ' }, login.token)).status, 400);
+  assert.equal((await request('/chats', 'POST', { jobId: 'bad', message: 'Text' }, login.token)).status, 400);
+  const chat = await request('/chats', 'POST', { jobId, message: 'Text' }, login.token);
+  assert.equal((await request(`/chats/${chat.data._id}/reply`, 'POST', { content: '  ' }, login.token)).status, 400);
+});
+
+test('authorized offer deletion removes its ratings and chats', async () => {
+  const { data: login } = await request('/login', 'POST', { email: 'owner@example.invalid', password: 'Synthetic-Password!' });
+  const created = await request('/jobs', 'POST', payload, login.token);
+  const jobId = created.data.job._id;
+  await request('/ratings', 'POST', { jobId, rating: 4, content: 'Test' }, login.token);
+  await request('/chats', 'POST', { jobId, message: 'Test' }, login.token);
+  assert.equal((await request(`/jobs/${jobId}`, 'DELETE', undefined, login.token)).status, 200);
+  assert.equal(await Rating.countDocuments({ jobId }), 0);
+  assert.equal(await Chat.countDocuments({ jobId }), 0);
+});

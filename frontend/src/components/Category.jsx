@@ -232,11 +232,11 @@ export function Category() {
                   </button>
                 </Link>
                 <Link
-                  to={`/payment/${job._id}?price=${job.price}`}
+                  to={`/payment/${job._id}`}
                   className="w-5/12"
                 >
                   <button className="w-full bg-blue-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors ">
-                    Buchen
+                    Zahlungsinfo
                   </button>
                 </Link>
               </div>

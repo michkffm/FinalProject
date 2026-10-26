@@ -10,7 +10,7 @@ export function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
-  const [tokenValid, setTokenValid] = useState(false);
+  const [tokenValid, setTokenValid] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -34,6 +34,8 @@ export function ResetPassword() {
       return;
     }
 
+    if (!tokenValid) return;
+    setError("");
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/reset-password/${token}`, {
@@ -158,7 +160,7 @@ export function ResetPassword() {
             className={`w-full py-3 rounded-md text-white ${
               loading ? "bg-gray-400" : "bg-teal-500 hover:bg-teal-600"
             } focus:outline-none focus:ring-4 focus:ring-teal-300`}
-            disabled={loading}
+            disabled={loading || !tokenValid}
           >
             {loading ? "Wird geladen..." : "Passwort zurücksetzen"}
           </button>

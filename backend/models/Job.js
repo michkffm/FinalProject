@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const jobSchema = new mongoose.Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  price: { type: String, required: true },
+  title: { type: String, required: true, trim: true, maxlength: 160 },
+  description: { type: String, required: true, trim: true, maxlength: 5000 },
+  price: { type: String, required: true, set: value => String(value).trim().replace(",", "."), match: /^\d{1,8}(?:\.\d{1,2})?$/ },
   category: {
     type: String,
     enum: [
@@ -22,8 +22,8 @@ const jobSchema = new mongoose.Schema({
     ],
     required: true,
   },
-  location: { type: String, required: true },
-  contact: { type: String, required: true },
+  location: { type: String, required: true, trim: true, maxlength: 200 },
+  contact: { type: String, required: true, trim: true, maxlength: 254 },
   createdBy: { type: mongoose.ObjectId, ref: "User", required: true },
   createdAt: { type: Date, default: Date.now },
 });
