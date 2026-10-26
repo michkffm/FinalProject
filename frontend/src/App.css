@@ -28,7 +28,7 @@ body {
   background-attachment: fixed; /* Hintergrund bleibt fixiert */
 }
 .handshake-section {
-  background-image: url("./assets/handshake-PNG.png");
+  background-image: url("./assets/handshake.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -98,7 +98,7 @@ body {
   opacity: 1;
 }
 .zero-section {
-  background-image: url("./assets/hintergrund-3.jpeg");
+  background-image: url("./assets/hintergrund-3.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
