@@ -24,7 +24,7 @@ EasyHelfer ist eine gemeinsam entwickelte Fullstack-Plattform für Dienstleistun
 
 ## Mein Beitrag
 
-Ich war **Projektleiter** und habe in mehreren Bereichen des Projekts mitentwickelt. Die Anwendung entstand im Team; die Umsetzung der einzelnen Funktionen ist eine gemeinsame Leistung.
+Ich war **Projektleiter** und habe in mehreren Bereichen des Projekts mitentwickelt. Die Anwendung entstand im Team, die Umsetzung der einzelnen Funktionen ist eine gemeinsame Leistung.
 
 Das Projekt verbindet die Entwicklung der Benutzeroberfläche mit API-Routen, Datenmodellen und der Anbindung einer Datenbank.
 
