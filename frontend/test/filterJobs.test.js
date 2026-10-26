@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { filterJobs } from '../src/filterJobs.js';
+import { filterJobs, emptyJobFilters } from '../src/filterJobs.js';
 const jobs = [{ title: 'Beratung', location: 'Frankfurt', price: '49' }, { title: 'Beratung', location: 'Frankfurt', price: '50' }, { title: 'Hilfe', location: 'Testort', price: '100' }, { title: 'Hilfe', location: 'Testort', price: '101' }];
 test('price filters include the correct boundary values', () => {
   const filters = { name: '', location: '', price: 'medium' };
@@ -24,4 +24,29 @@ test('category, trimmed title and location combine with price', () => {
   assert.deepEqual(filterJobs(offers, filters), [offers[0]]);
   assert.equal(filterJobs(offers, { name: '', location: '', price: 'all', category: '' }).length, 3);
   assert.deepEqual(filterJobs(offers, { ...filters, category: 'Bildung und Schulung' }), []);
+});
+
+test('sorts numeric prices in both directions after filtering without mutating input', () => {
+  const offers = [
+    { title: 'Hilfe', location: 'Frankfurt', price: '100.50' },
+    { title: 'Hilfe', location: 'Berlin', price: '2' },
+    { title: 'Hilfe', location: 'Frankfurt', price: '20' },
+    { title: 'Hilfe', location: 'Frankfurt', price: '9.99' },
+  ];
+  const filters = { ...emptyJobFilters, location: 'Frankfurt', sort: 'price-asc' };
+  assert.deepEqual(filterJobs(offers, filters).map(job => job.price), ['9.99', '20', '100.50']);
+  assert.deepEqual(filterJobs(offers, { ...filters, sort: 'price-desc' }).map(job => job.price), ['100.50', '20', '9.99']);
+  assert.deepEqual(offers.map(job => job.price), ['100.50', '2', '20', '9.99']);
+});
+
+test('newest offers precede older or missing dates and keep equal-date order', () => {
+  const offers = [
+    { title: 'Alt', location: '', price: 10, createdAt: '2025-01-01T00:00:00Z' },
+    { title: 'Ohne Datum', location: '', price: 10 },
+    { title: 'Neu', location: '', price: 10, createdAt: '2026-10-26T12:00:00Z' },
+    { title: 'Gleiches Datum', location: '', price: 10, createdAt: '2026-10-26T12:00:00Z' },
+    { title: 'Ungültiges Datum', location: '', price: 10, createdAt: 'invalid' },
+  ];
+  assert.deepEqual(filterJobs(offers, emptyJobFilters).map(job => job.title), ['Neu', 'Gleiches Datum', 'Alt', 'Ohne Datum', 'Ungültiges Datum']);
+  assert.deepEqual(filterJobs([], emptyJobFilters), []);
 });

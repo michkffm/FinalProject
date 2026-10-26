@@ -16,6 +16,11 @@ export function JobFilters({ filters, onChange, onReset, categories, count, load
         <option value="all">Alle Preise</option><option value="low">Unter 50 €</option>
         <option value="medium">50 bis 100 €</option><option value="high">Über 100 €</option>
       </select></label>
+      <label>Sortierung<select name="sort" value={filters.sort} onChange={onChange}>
+        <option value="newest">Neueste Angebote zuerst</option>
+        <option value="price-asc">Preis: niedrigster zuerst</option>
+        <option value="price-desc">Preis: höchster zuerst</option>
+      </select></label>
     </div>
     <p role="status">{loading ? "Angebote werden geladen …" : `${count} ${count === 1 ? "Angebot" : "Angebote"} gefunden`}</p>
   </section>;

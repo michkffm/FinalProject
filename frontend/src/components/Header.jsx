@@ -1,5 +1,5 @@
 import { API_URL } from "../api.js";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import logogross from "../assets/logo-gross-ohne-kontur.png";
 import { Inbox } from "./Inbox";
 import { useState } from "react";
@@ -27,113 +27,37 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
   };
 
   return (
-    <header>
-      {logoutError && <p role="alert">{logoutError}</p>}
-      <nav className="p-1 flex sm:bg-opacity-50 z-20 bg-opacity-100 sm:gap-14 gap-1 bg-white shadow-lg flex-col sm:flex-row sm:justify-center sm:items-center items-center fixed top-0 left-0 w-full">
-        <div className="flex justify-between items-center w-full sm:w-auto">
-          <div className="text-xl font-bold">
-            <Link to="/">
-              <img src={logogross} alt="logo" className="w-36 sm:w-25" />
-            </Link>
-          </div>
-          <button
-            className="sm:hidden text-teal-600 text-2xl"
-            onClick={toggleMenu}
-            aria-label="Menü öffnen oder schließen"
-            aria-expanded={menuOpen}
-          >
-            ☰
-          </button>
-        </div>
-
-        <ul
-          className={`${
-            menuOpen ? "flex" : "hidden"
-          } sm:flex flex-col sm:flex-row items-center gap-4 sm:gap-4 text-teal-600 text-lg w-full sm:w-auto`}
-        >
-          <li>
-            <Link
-              to="/"
-              className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-              onClick={() => setMenuOpen(false)}
-            >
-              <i className="fa-solid fa-house"></i>
-              Start
-            </Link>
-          </li>
-          {!isLoggedIn && (
-            <>
-              <li>
-                <Link
-                  to="/register"
-                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <i className="fa-solid fa-user"></i>
-                  Registrieren
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/login"
-                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <i className="fa-solid fa-right-to-bracket"></i>
-                  Login
-                </Link>
-              </li>
-            </>
-          )}
-          {isLoggedIn && (
-            <>
-              <li>
-                <Link
-                  to="/profile"
-                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <i className="fa-solid fa-user"></i>
-                  Profil
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/hauptCategorie"
-                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <i className="fa-solid fa-layer-group"></i>
-                  Kategorien
-                </Link>
-              </li>
-              <li>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setMenuOpen(false);
-                  }}
-                  className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-                >
-                  <i className="fa-solid fa-right-from-bracket"></i>
-                  Abmelden (alle Geräte)
-                </button>
-              </li>
-              <li>
-                <Inbox setMenuOpen={setMenuOpen}/>
-              </li>
-            </>
-          )}
-          <li>
-            <Link
-              to="/Hilfe"
-              className="flex flex-col sm:flex-row items-center gap-1 hover:underline"
-              onClick={() => setMenuOpen(false)}
-            >
-              <i className="fa-solid fa-circle-info"></i>
-              Hilfe
-            </Link>
-          </li>
+    <header className="site-header">
+      {logoutError && <p role="alert" className="header-error">{logoutError}</p>}
+      <nav className="header-bar" aria-label="Hauptnavigation" onKeyDown={e => {
+        if (e.key === "Escape") {
+          setMenuOpen(false);
+          e.currentTarget.querySelector(".header-toggle")?.focus();
+        }
+      }}>
+        <Link to="/" className="header-brand" onClick={() => setMenuOpen(false)}>
+          <img src={logogross} alt="EasyHelfer – Startseite" />
+        </Link>
+        <button type="button" className="header-toggle" onClick={toggleMenu}
+          aria-label={menuOpen ? "Menü schließen" : "Menü öffnen"}
+          aria-expanded={menuOpen} aria-controls="main-navigation">
+          <span aria-hidden="true">{menuOpen ? "✕" : "☰"}</span>
+        </button>
+        <ul id="main-navigation" className={`header-links ${menuOpen ? "is-open" : ""}`}>
+          <li><NavLink to="/" end onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-house" />Start</NavLink></li>
+          {isLoggedIn ? <>
+            <li><NavLink to="/hauptCategorie" onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-layer-group" />Kategorien</NavLink></li>
+            <li><NavLink to="/profile" onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-user" />Profil</NavLink></li>
+            <li className="header-inbox"><Inbox setMenuOpen={setMenuOpen} /></li>
+          </> : <>
+            <li><NavLink to="/register" onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-user-plus" />Registrieren</NavLink></li>
+            <li><NavLink to="/login" onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-right-to-bracket" />Login</NavLink></li>
+          </>}
+          <li><NavLink to="/Hilfe" onClick={() => setMenuOpen(false)}><i aria-hidden="true" className="fa-solid fa-circle-info" />Hilfe</NavLink></li>
+          {isLoggedIn && <li className="header-logout"><button type="button" onClick={() => {
+            handleLogout();
+            setMenuOpen(false);
+          }}><i aria-hidden="true" className="fa-solid fa-right-from-bracket" />Abmelden <span className="logout-scope">(alle Geräte)</span></button></li>}
         </ul>
       </nav>
     </header>

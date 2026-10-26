@@ -1,7 +1,7 @@
-export const emptyJobFilters = { name: "", category: "", location: "", price: "all" };
+export const emptyJobFilters = { name: "", category: "", location: "", price: "all", sort: "newest" };
 
 export function filterJobs(jobs, filters) {
-  return jobs.filter((job) => {
+  const filtered = jobs.filter((job) => {
     const amount = Number(job.price);
     const matchesPrice = filters.price === "all" ||
       (filters.price === "low" && amount < 50) ||
@@ -11,4 +11,13 @@ export function filterJobs(jobs, filters) {
       job.title.toLowerCase().includes(filters.name.trim().toLowerCase()) &&
       job.location.toLowerCase().includes(filters.location.trim().toLowerCase());
   });
+  if (filters.sort === "price-asc") {
+    filtered.sort((a, b) => Number(a.price) - Number(b.price));
+  } else if (filters.sort === "price-desc") {
+    filtered.sort((a, b) => Number(b.price) - Number(a.price));
+  } else if (filters.sort === "newest") {
+    const createdAt = job => Date.parse(job.createdAt) || 0;
+    filtered.sort((a, b) => createdAt(b) - createdAt(a));
+  }
+  return filtered;
 }
