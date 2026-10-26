@@ -40,7 +40,7 @@ export function Home() {
       {/* Handshake Section */}
       <div className="handshake-section absolute inset-0 z-9"></div>
 
-      <section className="relative z-10 flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center sm:-translate-y-[40px]">
+      <section className="home-search-panel relative z-10 flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center sm:-translate-y-[40px]">
         <h1 className="bg-white bg-opacity-0 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
@@ -53,7 +53,7 @@ export function Home() {
         >
           <input
             id="search-input"
-            className="sm:rounded-l p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+            className="bg-white text-gray-900 border border-teal-600 rounded sm:rounded-r-none p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -61,7 +61,7 @@ export function Home() {
           />
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
+            className="bg-teal-700 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
           >
             Suchen
           </button>

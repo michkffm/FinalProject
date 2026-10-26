@@ -35,6 +35,20 @@ body {
   opacity: 0;
   transition: opacity 3s ease-in;
 }
+.home-search-panel {
+  width: calc(100% - 2rem);
+  padding: clamp(1rem, 3vw, 2rem);
+  border-radius: 1rem;
+  background-color: #fff;
+  box-shadow: 0 8px 30px rgb(0 0 0 / 12%);
+}
+.home-search-panel h1 {
+  color: #0f766e;
+}
+.home-search-panel form {
+  width: 100%;
+  max-width: 36rem;
+}
 .handshake-section.visible {
   opacity: 1;
 }
