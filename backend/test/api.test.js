@@ -194,3 +194,54 @@ test('price ranges compare numeric values even when stored as strings', async ()
   assert.equal((await request('/search/jobs?price=110-50')).status, 400);
   assert.equal((await request('/search/jobs?price=50oops-110')).status, 400);
 });
+
+test('health endpoint confirms database readiness and disables caching', async () => {
+  const response = await fetch(base + '/health');
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get('cache-control'), 'no-store');
+  assert.deepEqual(await response.json(), { status: 'ok' });
+});
+
+test('contact validates input, uses configured recipient and handles delivery errors', async () => {
+  const { mail } = await import('../mail.js');
+  const { mock } = await import('node:test');
+  const old = { key: process.env.RESEND_API_KEY, from: process.env.RESEND_EMAIL, to: process.env.CONTACT_EMAIL };
+  process.env.RESEND_API_KEY = 'synthetic-test-key';
+  process.env.RESEND_EMAIL = 'sender@example.invalid';
+  process.env.CONTACT_EMAIL = 'recipient@example.invalid';
+  const sent = [];
+  const transport = mock.method(mail, 'send', async message => { sent.push(message); });
+  try {
+    const message = { email: 'visitor@example.invalid', subject: 'Kontakt', message: '<b>Nur Text</b>', to: 'attacker@example.invalid' };
+    assert.equal((await request('/contact', 'POST', { ...message, email: 'invalid' })).status, 400);
+    assert.equal((await request('/contact', 'POST', message)).status, 201);
+    assert.equal(sent.length, 1);
+    assert.equal(sent[0].to, 'recipient@example.invalid');
+    assert.equal(sent[0].replyTo, message.email);
+    assert.equal(sent[0].html, undefined);
+    assert.ok(sent[0].text.includes(message.message));
+    transport.mock.mockImplementation(async () => { throw new Error('synthetic provider failure'); });
+    assert.equal((await request('/contact', 'POST', message)).status, 502);
+  } finally {
+    transport.mock.restore();
+    for (const [name, value] of Object.entries({ RESEND_API_KEY: old.key, RESEND_EMAIL: old.from, CONTACT_EMAIL: old.to })) {
+      if (value === undefined) delete process.env[name]; else process.env[name] = value;
+    }
+  }
+});
+
+test('rate limits are shared and cannot be bypassed with a forwarded header locally', async () => {
+  await mongoose.connection.collection('requestlimits').deleteMany({});
+  const replies = await Promise.all(Array.from({ length: 12 }, (_, index) => fetch(base + '/forgot-password', {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Forwarded-For': `192.0.2.${index}` },
+    body: JSON.stringify({ email: 'synthetic@example.invalid' }),
+  })));
+  assert.equal(replies.filter(response => response.status === 503).length, 5);
+  assert.equal(replies.filter(response => response.status === 429).length, 7);
+  assert.ok(replies.find(response => response.status === 429).headers.get('retry-after'));
+  const counters = await mongoose.connection.collection('requestlimits').find({}).toArray();
+  assert.equal(counters.length, 1);
+  assert.equal(counters[0].count, 12);
+  assert.match(counters[0]._id, /^[a-f0-9]{64}$/);
+  assert.ok(counters[0].expiresAt instanceof Date);
+});

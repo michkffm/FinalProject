@@ -8,10 +8,12 @@ import cors from "cors";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import authMiddleware from "./middlewares/authMiddleware.js";
-import { Resend } from "resend";
+import { mail } from "./mail.js";
 import crypto from "crypto";
 import { pathToFileURL } from "node:url";
 import Contact from "./models/Contact.js";
+import { connectDatabase } from "./database.js";
+import { rateLimit } from "./middlewares/rateLimit.js";
 
 const { ObjectId } = mongoose.Types;
 
@@ -19,13 +21,28 @@ const { ObjectId } = mongoose.Types;
 
 const app = express();
 const port = process.env.PORT || 3000;
-const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
+
 
 const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
 app.disable("x-powered-by");
 app.use(cors({ origin: frontendUrl }));
 
 app.use(express.json({ limit: "100kb" }));
+app.use((req, res, next) => {
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('Cache-Control', 'no-store');
+  if (!process.env.JWT_SECRET_KEY || process.env.JWT_SECRET_KEY.length < 32) {
+    return res.status(503).json({ error: 'Server ist nicht konfiguriert.' });
+  }
+  connectDatabase().then(() => next()).catch(() => {
+    res.status(503).json({ error: 'Datenbank ist vorübergehend nicht verfügbar.' });
+  });
+});
+app.get('/health', (req, res) => res.json({ status: 'ok' }));
+app.use('/login', rateLimit('login', 30));
+app.use('/register', rateLimit('register', 10));
+app.use('/forgot-password', rateLimit('reset', 5));
+app.use('/contact', rateLimit('contact', 5));
 
 const profileFields = ["role", "profession", "location", "description", "profilePhoto"];
 const allowedCategories = Job.schema.path("category").enumValues;
@@ -648,7 +665,7 @@ app.post("/forgot-password", async (req, res) => {
     return res.status(400).json({ error: "E-Mail ist erforderlich." });
   }
   try {
-    if (!resend || !process.env.RESEND_EMAIL) return res.status(503).json({ error: "Mailversand ist nicht konfiguriert." });
+    if (!process.env.RESEND_API_KEY || !process.env.RESEND_EMAIL) return res.status(503).json({ error: "Mailversand ist nicht konfiguriert." });
     const user = await User.findOne({ email });
     if (!user) return res.status(200).json({ message: "Falls ein Konto existiert, wurde eine E-Mail angefordert." });
 
@@ -657,7 +674,7 @@ app.post("/forgot-password", async (req, res) => {
     user.resetPasswordToken = tokenHash(resetPasswordToken);
     user.resetPasswordExpires = resetPasswordExpires;
     await user.save();
-    const { error } = await resend.emails.send({
+    await mail.send({
       from: process.env.RESEND_EMAIL,
       to: user.email,
       subject: "Passwort zurücksetzen",
@@ -684,9 +701,6 @@ app.post("/forgot-password", async (req, res) => {
         </div>
       `,
     });
-    if (error) {
-      return res.status(502).json({ error: "Mailversand fehlgeschlagen." });
-    }
 
     res
       .status(200)
@@ -745,27 +759,30 @@ app.get("/reset-password/:token", async (req, res) => {
   }
 });
 app.post("/contact", async (req, res) => {
+  const { email, subject, message } = req.body;
+  if (!validEmail(email) || typeof subject !== 'string' || !subject.trim() || subject.length > 120 || typeof message !== 'string' || !message.trim() || message.length > 5000) {
+    return res.status(400).json({ error: 'Bitte E-Mail, Betreff und Nachricht gültig ausfüllen.' });
+  }
+  if (!process.env.RESEND_API_KEY || !process.env.RESEND_EMAIL || !validEmail(process.env.CONTACT_EMAIL)) {
+    return res.status(503).json({ error: 'Mailversand ist nicht konfiguriert.' });
+  }
   try {
-    const { email, subject, message } = req.body;
-
-    if (!email || !subject || !message) {
-      return res.status(400).json({ error: "Alle Felder sind erforderlich." });
-    }
-
-    const newContact = new Contact({
-      email,
-      subject,
-      message,
+    await mail.send({
+      to: process.env.CONTACT_EMAIL,
+      replyTo: email,
+      subject: `[EasyHelfer] ${subject.trim().replace(/[\r\n]/g, ' ')}`,
+      text: `Absender: ${email}\n\n${message.trim()}`,
     });
-
-    await newContact.save();
-
-    res.status(201).json({ message: "Nachricht erfolgreich gesendet!" });
-  } catch (error) {
-
-    res
-      .status(500)
-      .json({ error: "Es gab einen Fehler beim Senden der Nachricht." });
+  } catch {
+    return res.status(502).json({ error: 'Mailversand fehlgeschlagen. Bitte später erneut versuchen.' });
+  }
+  try {
+    await Contact.create({ email, subject: subject.trim(), message: message.trim() });
+    res.status(201).json({ message: 'Nachricht erfolgreich gesendet!' });
+  } catch {
+    // Delivery already succeeded; do not prompt duplicate sends on a storage failure.
+    console.error('Kontaktmail zugestellt, Speicherung fehlgeschlagen.');
+    res.status(201).json({ message: 'Nachricht erfolgreich gesendet!' });
   }
 });
 
@@ -776,9 +793,10 @@ app.use((error, req, res, next) => {
 });
 
 export { app };
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+export default app;
+if (process.env.VERCEL !== "1" && process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   if (!process.env.DB_URI || !process.env.JWT_SECRET_KEY || process.env.JWT_SECRET_KEY.length < 32) throw new Error("DB_URI und ein JWT_SECRET_KEY mit mindestens 32 Zeichen sind erforderlich.");
-  await mongoose.connect(process.env.DB_URI);
+  await connectDatabase();
   app.listen(port, () => console.log(`Server läuft auf Port ${port}`));
 }
 
