@@ -59,12 +59,13 @@ export function HauptCategory() {
       </div>
       <section className="flex flex-col justify-center items-center sm:mt-9 text-center transform -translate-y-[40px]">
         <form
-          className="flex flex-col sm:flex-row sm:gap-0 gap-2 pt-8 items-center sm:items-start z-10"
+          className="home-search-form flex flex-col sm:flex-row gap-3 pt-8 z-10"
           onSubmit={handleSearchSubmit}
         >
           <input
             id="search-input"
-            className="sm:rounded-l p-2 w-full focus:outline-none focus:ring-2 focus:ring-teal-500"
+            aria-label="Dienstleistung suchen"
+            className="home-search-input"
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -72,9 +73,9 @@ export function HauptCategory() {
           />
           <button
             type="submit"
-            className="bg-teal-400 text-white py-2 px-7 sm:mb-0 mb-10 sm:rounded-r duration-300 hover:bg-teal-500 w-full sm:w-auto"
+            className="home-search-button"
           >
-            Suchen
+            Suchen <span aria-hidden="true">→</span>
           </button>
         </form>
       </section>
