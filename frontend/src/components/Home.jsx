@@ -21,20 +21,6 @@ export function Home() {
     navigate(`/suche?query=${encodeURIComponent(query)}`);
   };
 
-  const handleOfferSubmit = (e) => {
-    e.preventDefault();
-    if (!isLoggedIn) {
-      setMessage("Bitte logge dich ein, um etwas anzubieten.");
-      setTimeout(() => {
-        setMessage(""); // Nachricht nach 3 Sekunden ausblenden
-        navigate("/login");
-      }, 3000);
-      return;
-    }
-    navigate("/jobs");
-  };
-  
-
   useEffect(() => {
     const section = document.querySelector(".handshake-section");
     const timer = setTimeout(() => {
@@ -54,7 +40,7 @@ export function Home() {
       {/* Handshake Section */}
       <div className="handshake-section absolute inset-0 z-9"></div>
 
-      <section className="flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center transform -translate-y-[40px]">
+      <section className="relative z-10 flex flex-col justify-center items-center max-w-5xl sm:mt-9 text-center sm:-translate-y-[40px]">
         <h1 className="bg-white bg-opacity-0 pr-2 rounded text-3xl sm:text-4xl text-teal-500 font-bold z-10">
           Finde qualifizierte Fachleute für Deine Aufgaben
         </h1>
@@ -81,23 +67,7 @@ export function Home() {
           </button>
         </form>
       </section>
-      <section className="z-10 sm:mb-5 px-4 sm:px-6 lg:px-8 transform -translate-y-[60px]">
-        <div className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-md shadow p-4 duration-300 hover:bg-opacity-50">
-          <h2 className="font-semibold mb-2">Dienstleistung anbieten</h2>
-          <form className="space-y-4" onSubmit={handleOfferSubmit}>
-            <div>
-              <label>Was bietest Du an?</label>
-            </div>
-            <button
-              type="submit"
-              className="bg-teal-400 text-white py-2 px-4 rounded duration-300 hover:bg-teal-500 w-full sm:w-100%"
-            >
-              Anbieten
-            </button>
-          </form>
-        </div>
-      </section>
-      <section className="hidden md:block transform -translate-y-[90px]">
+      <section className="relative z-10 hidden md:block transform -translate-y-[90px]">
         <HomeSlider isLoggedIn={isLoggedIn} />
       </section>
     </main>

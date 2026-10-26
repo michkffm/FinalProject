@@ -11,7 +11,13 @@ body {
 }
 .content {
   flex: 1;
+  min-width: 0;
   position: relative;
+  overflow-wrap: anywhere;
+}
+.content input, .content select, .content textarea {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .hero-section {
@@ -40,12 +46,19 @@ body {
   background-attachment: fixed;
   min-height: 100vh;
 }
-.position{
-  position: absolute;
-  top: 0;
-  height: 100%;
-  left: 0;
+.position {
+  position: relative;
+  height: auto;
   width: 100%;
+}
+.handshake-section {
+  pointer-events: none;
+}
+@media (max-width: 639px) {
+  .content > .position {
+    padding-top: 5rem;
+    padding-bottom: 2rem;
+  }
 }
 footer {
   box-shadow: 0px -5px 5px 0px #00000052;

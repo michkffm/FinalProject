@@ -1,7 +1,6 @@
 import { API_URL } from "../api.js";
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import StarRatings from "react-star-ratings";
 import { useNavigate } from "react-router-dom";
 
 export function Ratings() {
@@ -63,14 +62,21 @@ export function Ratings() {
     </h2>
     <form onSubmit={handleSubmit} className="space-y-4 w-full">
       <div className="flex flex-col items-center">
-        <StarRatings
-          rating={userRating}
-          changeRating={handleRatingChange}
-          starDimension="40px"
-          starSpacing="8px"
-          starRatedColor="#FFD700"
-          starEmptyColor="#E5E7EB"
-        />
+        <fieldset>
+          <legend className="sr-only">Bewertung von 1 bis 5 Sternen</legend>
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map(value => (
+              <label key={value} className="cursor-pointer">
+                <input type="radio" name="rating" value={value}
+                  checked={userRating === value}
+                  onChange={() => handleRatingChange(value)}
+                  className="sr-only peer" />
+                <span className="sr-only">{value} {value === 1 ? "Stern" : "Sterne"}</span>
+                <span aria-hidden="true" className={`text-4xl rounded peer-focus-visible:outline-2 peer-focus-visible:outline-teal-600 ${value <= userRating ? "text-yellow-500" : "text-gray-400"}`}>★</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
         <p className="text-sm text-gray-600 mt-2">
           Wählen Sie eine Bewertung aus.
         </p>

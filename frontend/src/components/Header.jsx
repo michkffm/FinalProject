@@ -39,7 +39,8 @@ export function Header({ isLoggedIn, setIsLoggedIn }) {
           <button
             className="sm:hidden text-teal-600 text-2xl"
             onClick={toggleMenu}
-            aria-label="Toggle navigation"
+            aria-label="Menü öffnen oder schließen"
+            aria-expanded={menuOpen}
           >
             ☰
           </button>
