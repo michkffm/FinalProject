@@ -1,8 +1,9 @@
-import { filterJobs } from "../filterJobs.js";
+import { JobCard } from "./JobCard.jsx";
+import { JobFilters } from "./JobFilters.jsx";
+import { filterJobs, emptyJobFilters } from "../filterJobs.js";
 import { API_URL } from "../api.js";
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import { JobRatings } from "./JobRatings.jsx";
+import { useParams } from "react-router-dom";
 
 export function Category() {
   const [message, setMessage] = useState("");
@@ -10,16 +11,18 @@ export function Category() {
   const username = localStorage.getItem("username");
   const [data, setData] = useState([]);
   const { name } = useParams();
-  const [filters, setFilters] = useState({
-    name: "",
-    price: "all",
-    location: "",
-  });
+  const [filters, setFilters] = useState({ ...emptyJobFilters });
+  const [loading, setLoading] = useState(true);
 
   const [contactMessages, setContactMessages] = useState({});
 
   useEffect(() => {
-    fetch(`${API_URL}/jobs?category=${name}`, {
+    const controller = new AbortController();
+    setLoading(true);
+    setData([]);
+    setMessage("");
+    fetch(`${API_URL}/jobs?category=${encodeURIComponent(name)}`, {
+      signal: controller.signal,
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -39,13 +42,15 @@ export function Category() {
         setData(data);
       })
       .catch((error) => {
+        if (error.name === "AbortError") return;
         try {
           const err = JSON.parse(error.message);
           setMessage(err.error || "Unbekannter Fehler.");
         } catch {
           setMessage("Fehler beim Laden der Kategorie.");
         }
-      });
+      }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
+    return () => controller.abort();
   }, [name, token]);
 
   const filteredData = filterJobs(data, filters);
@@ -69,7 +74,7 @@ export function Category() {
   const handleContactSubmit = (e, jobId) => {
     e.preventDefault();
     const contactMessage = contactMessages[jobId] || { message: "" };
-  
+
     fetch(`${API_URL}/chats`, {
       method: "POST",
       headers: {
@@ -148,120 +153,17 @@ export function Category() {
           </div>
         )}
 
-        {/* Filter und Jobanzeigen */}
-        <div className="mb-6 flex flex-wrap gap-4 ">
-          <input
-            type="text"
-            name="name"
-            value={filters.name}
-            onChange={handleFilterChange}
-            placeholder="Nach Name filtern"
-            className="p-2 border border-gray-300 rounded-md shadow-sm"
-          />
-          <select
-            name="price"
-            value={filters.price}
-            onChange={handleFilterChange}
-            className="p-2 border border-gray-300 rounded-md shadow-sm"
-          >
-            <option value="all">Alle Preise</option>
-            <option value="low">Unter 50€</option>
-            <option value="medium">50€ - 100€</option>
-            <option value="high">Über 100€</option>
-          </select>
-          <input
-            type="text"
-            name="location"
-            value={filters.location}
-            onChange={handleFilterChange}
-            placeholder="Nach Standort filtern"
-            className="p-2 border border-gray-300 rounded-md shadow-sm"
-          />
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredData.map((job) => (
-            <div
-              key={job._id}
-              className="bg-white bg-opacity-40 border-2 border-teal-300 rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
-            >
-              <div className="flex justify-end relative">
-                {job.createdBy && username === job.createdBy.username && (
-                  <button
-                    onClick={() => handleDelete(job._id)}
-                  >
-                     <i className="fa-solid fa-trash-can"></i>
-                     <span className="tooltip">Diensleistung löschen</span>
-                  </button>
-                )}
-              </div>
+        <h1 className="results-heading">{name}</h1>
+        <JobFilters filters={filters} onChange={handleFilterChange}
+          onReset={() => setFilters({ ...emptyJobFilters })}
 
-              <h2 className="text-xl font-bold text-gray-700 mb-2">
-                {job.title}
-              </h2>
-              <div>
-                {job.createdBy && job.createdBy.username ? (
-                  <p className="text-xl font-bold text-teal-500 mb-2">
-                    {job.createdBy.username}
-                  </p>
-                ) : (
-                  <p className="text-xl font-bold text-teal-500 mb-2">
-                    Unbekannter Ersteller
-                  </p>
-                )}
-              </div>
-
-              <h3 className="text-sm text-teal-500 font-medium">
-                {job.category}
-              </h3>
-              <p className="text-gray-600 mt-2">
-                <span className="font-medium text-gray-800">Kontakt:</span>{" "}
-                {job.contact}
-              </p>
-              <p className="text-gray-600 mt-1">{job.description}</p>
-              <p className="text-gray-600 mt-1">
-                <span className="font-medium text-gray-800">Standort:</span>{" "}
-                {job.location}
-              </p>
-              <p className="text-lg font-semibold text-teal-600 mt-3">
-                Preis: {job.price}€
-              </p>
-              <div className="flex justify-between mt-2">
-                <Link to={`/ratings/${job._id}`} className="w-5/12">
-                  <button className="w-full bg-blue-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors">
-                    Bewerten
-                  </button>
-                </Link>
-                <Link
-                  to={`/payment/${job._id}`}
-                  className="w-5/12"
-                >
-                  <button className="w-full bg-blue-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors ">
-                    Zahlungsinfo
-                  </button>
-                </Link>
-              </div>
-              <form
-                onSubmit={(e) => handleContactSubmit(e, job._id)}
-                className="mt-4"
-              >
-                <textarea
-                  name="message"
-                  value={contactMessages[job._id]?.message || ""}
-                  onChange={(e) => handleContactChange(e, job._id)}
-                  rows="3"
-                  className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Gib hier deine Nachricht ein..."
-                ></textarea>
-                <button
-                  type="submit"
-                  className="w-full bg-teal-500 text-white py-2 rounded duration-300 hover:bg-teal-600 transition-colors mt-2"
-                >
-                  Nachricht senden
-                </button>
-              </form>
-              <JobRatings jobId={job._id} />
-            </div>
-          ))}
+          count={filteredData.length} loading={loading} />
+        {!loading && filteredData.length === 0 && <p className="empty-results">Keine passenden Angebote gefunden. Passe die Filter oder den Suchbegriff an.</p>}
+        <div className="job-grid">
+          {filteredData.map(job => <JobCard key={job._id} job={job}
+            canDelete={Boolean(job.createdBy && username === job.createdBy.username)} onDelete={handleDelete}
+            contactMessage={contactMessages[job._id]?.message} onContactChange={handleContactChange}
+            onContactSubmit={handleContactSubmit} showRatings />)}
         </div>
       </div>
     </div>

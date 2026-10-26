@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import beratung from "../assets/beratung.jpeg";
 import bildung from "../assets/bildung.jpeg";
 import betreuung from "../assets/gesundheit.jpeg";
@@ -76,24 +76,29 @@ export function HomeSlider({ isLoggedIn }) {
   const [message, setMessage] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 4;
-  const handleNext = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex + itemsPerPage < categories.length
-        ? prevIndex + itemsPerPage
-        : 0
-    );
+  const [hoverDirection, setHoverDirection] = useState(null);
+  const maxIndex = categories.length - itemsPerPage;
+  const move = (direction) => {
+    setCurrentIndex(index => direction === "next"
+      ? (index >= maxIndex ? 0 : index + 1)
+      : (index <= 0 ? maxIndex : index - 1));
   };
-  const handlePrev = () => {
-    setCurrentIndex((prevIndex) =>
-      prevIndex - itemsPerPage >= 0
-        ? prevIndex - itemsPerPage
-        : categories.length - itemsPerPage
-    );
-  };
-  const visibleCategories = categories.slice(
-    currentIndex,
-    currentIndex + itemsPerPage
-  );
+  useEffect(() => {
+    if (!hoverDirection) return;
+    const timer = setInterval(() => {
+      setCurrentIndex(index => hoverDirection === "next"
+        ? (index >= maxIndex ? 0 : index + 1)
+        : (index <= 0 ? maxIndex : index - 1));
+    }, 800);
+    const stopWhenHidden = () => {
+      if (document.hidden) setHoverDirection(null);
+    };
+    document.addEventListener("visibilitychange", stopWhenHidden);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", stopWhenHidden);
+    };
+  }, [hoverDirection, maxIndex]);
   const handleSliderClick = (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
@@ -104,68 +109,37 @@ export function HomeSlider({ isLoggedIn }) {
       }, 3000);
       return;
     }
-    navigate();
   };
   return (
-    <div className="relative w-full flex justify-center items-center overflow-hidden">
-  {message && <p role="status">{message}</p>}
-  <button
-    onClick={handlePrev}
-    className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
-  >
-    &lt;
-  </button>
-  <div className="flex justify-center items-center gap-1 overflow-hidden w-[90%]">
-    {visibleCategories.map((category, index) =>
-      isLoggedIn ? (
-        <Link
-          key={index}
-          to={category.link}
-          className="flex flex-col justify-between items-center bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105
-                    flex-shrink-0 w-[22%] min-w-[180px] max-w-[250px] aspect-[3/4] min-h-[250px]"
-        >
-          {/* Yazı Alanı */}
-          <span className="text-sm font-semibold text-center min-h-[50px] flex items-center justify-center break-words px-2">
-            {category.name}
-          </span>
-          {/* Resim Alanı */}
-          <div className="w-full flex-grow flex items-end">
-            <img
-              src={category.image}
-              alt={category.name}
-              className="rounded-lg w-full h-full object-cover"
-            />
-          </div>
-        </Link>
-      ) : (
-        <div
-          key={index}
-          onClick={handleSliderClick}
-          className="flex flex-col justify-between items-center bg-teal-600 bg-opacity-40 text-white p-4 rounded-lg shadow-lg hover:bg-teal-500 transition-all duration-300 transform hover:scale-105
-                    flex-shrink-0 w-[22%] min-w-[180px] max-w-[250px] aspect-[3/4] min-h-[250px]"
-        >
-          {/* Yazı Alanı */}
-          <span className="text-sm font-semibold text-center min-h-[50px] flex items-center justify-center break-words px-2">
-            {category.name}
-          </span>
-          {/* Resim Alanı */}
-          <div className="w-full flex-grow flex items-end">
-            <img
-              src={category.image}
-              alt={category.name}
-              className="rounded-lg w-full h-full object-cover opacity-50"
-            />
-          </div>
+    <section className="home-carousel" aria-label="Dienstleistungskategorien">
+      {message && <p role="status">{message}</p>}
+      <button type="button" className="carousel-arrow carousel-prev"
+        aria-label="Vorherige Kategorien" onClick={() => move("prev")}
+        onPointerEnter={e => { if (e.pointerType === "mouse") setHoverDirection("prev"); }}
+        onPointerLeave={() => setHoverDirection(null)} onBlur={() => setHoverDirection(null)}>
+        <span aria-hidden="true">‹</span>
+      </button>
+      <div className="carousel-window">
+        <div className="carousel-track" style={{ transform: `translateX(-${currentIndex * 25}%)` }}>
+          {categories.map((category, index) => {
+            const content = <>
+              <img src={category.image} alt="" loading="lazy" />
+              <span>{category.name}</span>
+            </>;
+            const visible = index >= currentIndex && index < currentIndex + itemsPerPage;
+            return <div className="carousel-item" key={category.name}>
+              {isLoggedIn ? <Link to={category.link} className="category-tile" tabIndex={visible ? 0 : -1} aria-hidden={!visible}>{content}</Link>
+                : <button type="button" className="category-tile" onClick={handleSliderClick} tabIndex={visible ? 0 : -1} aria-hidden={!visible}>{content}</button>}
+            </div>;
+          })}
         </div>
-      )
-    )}
-  </div>
-  <button
-    onClick={handleNext}
-    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-teal-600 text-white rounded-full shadow-md hover:bg-teal-500 transition"
-  >
-    &gt;
-  </button>
-</div>
+      </div>
+      <button type="button" className="carousel-arrow carousel-next"
+        aria-label="Nächste Kategorien" onClick={() => move("next")}
+        onPointerEnter={e => { if (e.pointerType === "mouse") setHoverDirection("next"); }}
+        onPointerLeave={() => setHoverDirection(null)} onBlur={() => setHoverDirection(null)}>
+        <span aria-hidden="true">›</span>
+      </button>
+    </section>
   );
 }

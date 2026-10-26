@@ -13,3 +13,15 @@ test('name and location filters combine without mutating results', () => {
   assert.equal(jobs.length, 4);
   assert.deepEqual(filterJobs(jobs, { name: 'unbekannt', location: '', price: 'all' }), []);
 });
+
+test('category, trimmed title and location combine with price', () => {
+  const offers = [
+    { title: 'PC Hilfe', location: 'Frankfurt', category: 'Technologie und IT', price: 50 },
+    { title: 'PC Hilfe', location: 'Frankfurt', category: 'Beratung', price: 100 },
+    { title: 'PC Hilfe', location: 'Berlin', category: 'Technologie und IT', price: 25 },
+  ];
+  const filters = { name: ' pc ', location: ' FRANK ', price: 'medium', category: 'Technologie und IT' };
+  assert.deepEqual(filterJobs(offers, filters), [offers[0]]);
+  assert.equal(filterJobs(offers, { name: '', location: '', price: 'all', category: '' }).length, 3);
+  assert.deepEqual(filterJobs(offers, { ...filters, category: 'Bildung und Schulung' }), []);
+});
