@@ -4,7 +4,7 @@ EasyHelfer ist eine gemeinsam entwickelte Fullstack-Plattform für Dienstleistun
 
 [**EasyHelfer live ansehen →**](https://easyhelfer.vercel.app/)
 
-[![EasyHelfer – Screenshot der Startseite](docs/easyhelfer-homepage.jpg)](https://easyhelfer.vercel.app/)
+[![EasyHelfer – Screenshot der Startseite](docs/easyhelfer-homepage-v2.jpg)](https://easyhelfer.vercel.app/)
 
 ## Funktionen
 
