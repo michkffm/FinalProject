@@ -2,6 +2,10 @@
 
 EasyHelfer ist eine gemeinsam entwickelte Fullstack-Plattform für Dienstleistungen. Sie verbindet Menschen, die Unterstützung suchen, mit passenden Anbietern. Nutzer können Dienstleistungen veröffentlichen, Angebote durchsuchen und direkt miteinander Kontakt aufnehmen.
 
+[**EasyHelfer live ansehen →**](https://easyhelfer.vercel.app/)
+
+[![EasyHelfer – Screenshot der Startseite](docs/easyhelfer-homepage.jpg)](https://easyhelfer.vercel.app/)
+
 ## Funktionen
 
 - **Registrierung und Anmeldung:** Benutzerkonto erstellen und anmelden.
