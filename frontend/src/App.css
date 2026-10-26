@@ -40,7 +40,7 @@ body {
   padding: clamp(1.5rem, 4vw, 3rem);
   border: 1px solid #a5d9d2;
   border-radius: 1.5rem;
-  background: linear-gradient(135deg, #e4f5f1, #d2ece8);
+  background: linear-gradient(135deg, rgb(228 245 241 / 82%), rgb(210 236 232 / 78%));
   box-shadow: 0 16px 40px rgb(19 78 74 / 18%);
 }
 .home-search-panel h1 {
