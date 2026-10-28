@@ -1,216 +1,126 @@
-import { API_URL } from "../api.js";
-import { useState, useEffect, useCallback } from "react";
+import { API_URL } from '../api.js';
+import { useState, useEffect, useCallback } from 'react';
 
 export function MessagesPage() {
-  const [messages, setMessages] = useState([]);
-  const [replyMessages, setReplyMessages] = useState({});
-  const [error, setError] = useState(null);
-  const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username");
-   
-  
+  const [chats, setChats] = useState([]);
+  const [replies, setReplies] = useState({});
+  const [cursor, setCursor] = useState(null);
+  const [browsingHistory, setBrowsingHistory] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [sending, setSending] = useState(null);
+  const [error, setError] = useState('');
+  const token = localStorage.getItem('token');
+  const username = localStorage.getItem('username');
 
-  const fetchMessages = useCallback(() => {
-    fetch(`${API_URL}/chats`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((res) => { if (!res.ok) throw new Error("Anfrage fehlgeschlagen"); return res.json(); })
-      .then((response) => {
-        if (response.success && Array.isArray(response.data)) {
-          setMessages(response.data);
-
-        } else {
-          console.error(
-            "Fehler beim Laden der Nachrichten: Daten sind kein Array",
-            response
-          );
-        }
-      })
-      .catch(() => {
-        setError("Nachrichten konnten nicht geladen werden.");
-      });
+  const request = useCallback(async (path, method = 'GET', body) => {
+    const response = await fetch(`${API_URL}${path}`, { method,
+      headers: { Authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Anfrage fehlgeschlagen');
+    return data;
   }, [token]);
 
+  const markRead = useCallback(async (chatId, messages) => {
+    if (!messages.length) return;
+    try { await request(`/chats/${chatId}/read`, 'PATCH', { messageIds: messages.map(message => message._id) }); }
+    catch { setError('Der Lesestatus konnte nicht gespeichert werden.'); }
+  }, [request]);
+
+  const fetchChats = useCallback(async () => {
+    try {
+      const response = await request('/chats');
+      setChats(response.data);
+      setCursor(response.nextCursor);
+      await Promise.all(response.data.map(chat => markRead(chat._id, chat.messages)));
+    } catch (err) { setError(err.message || 'Nachrichten konnten nicht geladen werden.'); }
+  }, [request, markRead]);
+
+  useEffect(() => { fetchChats(); }, [fetchChats]);
   useEffect(() => {
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 60000); // 60000 ms = 1 Minute
-    return () => clearInterval(interval); // Cleanup function to clear the interval
-  }, [fetchMessages]);
+    if (browsingHistory) return;
+    const timer = setInterval(fetchChats, 60000);
+    return () => clearInterval(timer);
+  }, [fetchChats, browsingHistory]);
 
-  const handleReplyChange = (chatId, event) => {
-    setReplyMessages({
-      ...replyMessages,
-      [chatId]: event.target.value,
-    });
-  };
-
-  const handleReplySubmit = (chatId) => {
-    const replyMessage = replyMessages[chatId];
-    fetch(`${API_URL}/chats/${chatId}/reply`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ content: replyMessage }),
-    })
-      .then((res) => { if (!res.ok) throw new Error("Anfrage fehlgeschlagen"); return res.json(); })
-      .then(() => {
-        setReplyMessages({
-          ...replyMessages,
-          [chatId]: "",
-        });
-        fetchMessages(); // Refresh messages after sending a reply
-      })
-      .catch(() => {
-        setError("Antwort konnte nicht gesendet werden.");
-      });
-  };
-
-  const handleDelete = async (chatId) => {
+  const loadChats = async () => {
+    if (!cursor || loading) return;
+    setLoading(true);
+    setError('');
     try {
-      const chatIdString = chatId._id || chatId;
-
-      const response = await fetch(
-        `${API_URL}/chats/${chatIdString}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-      fetchMessages();
-    } catch (err) {
-      setError(err.message || "Fehler beim Löschen des Chats.");
-    }
+      const response = await request(`/chats?cursor=${encodeURIComponent(cursor)}`);
+      setChats(previous => [...previous, ...response.data.filter(chat => !previous.some(existing => existing._id === chat._id))]);
+      setCursor(response.nextCursor);
+      setBrowsingHistory(true);
+      await Promise.all(response.data.map(chat => markRead(chat._id, chat.messages)));
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
   };
-  const handleDeleteMessage = async (chatId, messageId) => {
+  const loadOlder = async chat => {
+    if (!chat.before || loading) return;
+    setLoading(true);
+    setError('');
     try {
-      const chatIdString = chatId._id || chatId;
-      const messageIdString = messageId._id || messageId;
-
-      // API-Request zum Löschen der Nachricht
-      const response = await fetch(
-        `${API_URL}/chats/${chatIdString}/messages/${messageIdString}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText);
-      }
-      setMessages((prevMessages) =>
-        prevMessages.map((chat) =>
-          chat._id === chatIdString
-            ? {
-                ...chat,
-                messages: chat.messages.filter(
-                  (msg) => msg._id !== messageIdString
-                ),
-              }
-            : chat
-        )
-      );
-    } catch (err) {
-      setError(err.message || "Fehler beim Löschen der Nachricht.");
-    }
+      const page = await request(`/chats/${chat._id}/messages?before=${encodeURIComponent(chat.before)}`);
+      setChats(previous => previous.map(current => current._id === chat._id ? { ...current,
+        messages: [...page.messages.filter(message => !current.messages.some(existing => existing._id === message._id)), ...current.messages],
+        hasMoreMessages: page.hasMore, before: page.before,
+      } : current));
+      setBrowsingHistory(true);
+      await markRead(chat._id, page.messages);
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
+  };
+  const reply = async (event, chatId) => {
+    event.preventDefault();
+    setSending(chatId);
+    setError('');
+    try {
+      await request(`/chats/${chatId}/reply`, 'POST', { content: replies[chatId] });
+      setReplies(previous => ({ ...previous, [chatId]: '' }));
+      setBrowsingHistory(false);
+      await fetchChats();
+    } catch (err) { setError(err.message); }
+    finally { setSending(null); }
+  };
+  const deleteChat = async chatId => {
+    try {
+      await request(`/chats/${chatId}`, 'DELETE');
+      setChats(previous => previous.filter(chat => chat._id !== chatId));
+    } catch (err) { setError(err.message); }
+  };
+  const deleteMessage = async (chatId, messageId) => {
+    try {
+      await request(`/chats/${chatId}/messages/${messageId}`, 'DELETE');
+      setChats(previous => previous.map(chat => chat._id === chatId ? { ...chat, messages: chat.messages.filter(message => message._id !== messageId) } : chat));
+    } catch (err) { setError(err.message); }
   };
 
-  return (
-    <div className="zero-section min-h-screen px-4 py-8 sm:mt-0 mt-8 flex flex-col justify-center items-center">
-      {error && <p role="alert">{error}</p>}
-      <div className="flex flex-col justify-center sm:mt-16 mt-10 items-center min-h-screen sm:w-3/6 w-full mt-6">
-        {Array.isArray(messages) && messages.length > 0 ? (
-          messages.map((chat) => (
-            <div
-              key={chat._id}
-              className="p-6 mb-6 w-full bg-green shadow-lg rounded-lg bg-white bg-opacity-40 border-2 border-teal-300"
-            >
-              <div>
-                <button onClick={() => handleDelete(chat._id)}>
-                  <i className="fa-solid fa-trash-can"></i>
-                  <span className="tooltip">Chat löschen</span>
-                </button>
-              </div>
-              <div className="flex justify-center items-center py-6 relative">
-                <h3 className="text-2xl sm:text-3xl text-teal-600 font-bold bg-white rounded-lg shadow-lg p-4 bg-opacity-80 mb-6 flex items-center justify-center border border-teal-300">
-                  Chat für {chat.jobId?.title || "Unbekannt"}
-                </h3>
-              </div>
-
-              {/* Textarea für Nachrichtenantwort */}
-              <div>
-                {chat.messages.map((msg) => (
-                  <div
-                    key={msg._id}
-                    className={`mb-4 message-standard relative ${
-                      username === msg.sender?.username ? "message-me" : ""
-                    }`}
-                  >
-                    <p>
-                      {username === msg.sender
-                        ? chat.participants
-                            .filter(
-                              (participant) => participant?.username !== username
-                            )
-                            .map((participant) => participant?.username)
-                            .join(", ")
-                        : typeof msg.sender === "object"
-                        ? msg.sender?.username
-                        : msg.sender}{" "}
-                      {/* Hier wird sichergestellt, dass nur ein String gerendert wird */}
-                    </p>
-
-                    <p>{msg.content}</p>
-                    <p className="text-sm text-gray-500">
-                      Gesendet am: {new Date(msg.createdAt).toLocaleString()}
-                    </p>
-                    <div className="absolute right-5 top-8">
-                      {username === msg.sender?.username && (
-                        <button
-                          onClick={() => handleDeleteMessage(chat._id, msg._id)}
-                        >
-                          <i className="fa-solid fa-trash-can"></i>
-                          <span className="tooltip">Nachricht löschen</span>
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <textarea
-                value={replyMessages[chat._id] || ""}
-                onChange={(e) => handleReplyChange(chat._id, e)}
-                className="w-full p-3 border rounded-lg mt-4 text-gray-700 focus:outline-none focus:ring-2 focus:ring-teal-400"
-                placeholder="Antwort schreiben..."
-              ></textarea>
-
-              {/* Antwort Button */}
-              <button
-                onClick={() => handleReplySubmit(chat._id)}
-                className="mt-4 w-full py-2 px-4 bg-teal-600 text-white rounded-lg duration-300 hover:bg-teal-700 transition-colors"
-              >
-                Antworten
-              </button>
-            </div>
-          ))
-        ) : (
-          <div className="text-gray-500 text-lg">Keine Nachrichten...</div>
-        )}
-      </div>
+  return <main className="zero-section min-h-screen px-4 pt-28 pb-8">
+    <div className="mx-auto max-w-3xl">
+      <div className="filter-heading"><h1 className="results-heading">Nachrichten</h1>
+        <button type="button" onClick={() => { setError(''); setBrowsingHistory(false); fetchChats(); }}>Aktualisieren</button></div>
+      {browsingHistory && <p className="mb-4">Du liest ältere Nachrichten. Mit „Aktualisieren“ lädst du die neuesten Unterhaltungen.</p>}
+      {error && <p role="alert" className="mb-4 rounded-lg bg-red-50 text-red-800 p-4">{error}</p>}
+      {!chats.length && <p>Keine Nachrichten vorhanden.</p>}
+      {chats.map(chat => <article key={chat._id} className="job-card mb-6">
+        <div className="filter-heading"><h2>Chat für {chat.jobId?.title || 'Gelöschtes Angebot'}</h2>
+          <button type="button" className="job-delete" onClick={() => deleteChat(chat._id)}>Chat löschen</button></div>
+        {chat.hasMoreMessages && <button type="button" disabled={loading} className="mb-4 underline" onClick={() => loadOlder(chat)}>{loading ? 'Wird geladen …' : 'Ältere Nachrichten laden'}</button>}
+        {chat.messages.map(message => <div key={message._id} className={`message-standard mb-4 p-3 rounded-lg ${message.sender?.username === username ? 'message-me' : ''}`}>
+          <p className="font-semibold">{message.sender?.username || 'Gelöschtes Konto'}</p>
+          <p className="whitespace-pre-wrap">{message.content}</p>
+          <p className="text-xs mt-2">{new Date(message.createdAt).toLocaleString()}</p>
+          {message.sender?.username === username && <button type="button" className="underline mt-2 text-sm" onClick={() => deleteMessage(chat._id, message._id)}>Nachricht löschen</button>}
+        </div>)}
+        <form className="job-contact" onSubmit={event => reply(event, chat._id)}>
+          <label htmlFor={`reply-${chat._id}`}>Antwort schreiben</label>
+          <textarea id={`reply-${chat._id}`} value={replies[chat._id] || ''} onChange={event => setReplies(previous => ({ ...previous, [chat._id]: event.target.value }))} required maxLength={5000} rows={3} />
+          <button type="submit" disabled={sending !== null}>{sending === chat._id ? 'Wird gesendet …' : 'Antworten'}</button>
+        </form>
+      </article>)}
+      {cursor && <button type="button" disabled={loading} className="home-search-button" onClick={loadChats}>{loading ? 'Wird geladen …' : 'Weitere Unterhaltungen laden'}</button>}
     </div>
-  );
+  </main>;
 }

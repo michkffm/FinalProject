@@ -282,3 +282,157 @@ test('authorized offer deletion removes its ratings and chats', async () => {
   assert.equal(await Rating.countDocuments({ jobId }), 0);
   assert.equal(await Chat.countDocuments({ jobId }), 0);
 });
+
+async function chatActors(label) {
+  const users = await Promise.all(['sender', 'recipient', 'outsider'].map(name => User.create({
+    username: `${label}-${name}`, email: `${label}-${name}@example.invalid`, password: 'Unused-synthetic-hash',
+  })));
+  const tokens = users.map(user => jwt.sign({ userId: String(user._id), tokenVersion: 0 }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' }));
+  const offer = await Job.create({ ...payload, createdBy: users[1]._id });
+  return { users, tokens, offer };
+}
+
+test('both chat send routes share sender quotas across jobs, recipients and chat deletion', async () => {
+  const { mock } = await import('node:test');
+  const fixedNow = Math.floor(Date.now() / 60000) * 60000 + 1000;
+  const clock = mock.method(Date, 'now', () => fixedNow);
+  try {
+    await mongoose.connection.collection('requestlimits').deleteMany({});
+    const { users, tokens, offer } = await chatActors('quota');
+    let chatId;
+    for (let index = 0; index < 30; index++) {
+      const reply = index % 2 && chatId;
+      const result = await request(reply ? `/chats/${chatId}/reply` : '/chats', 'POST',
+        reply ? { content: 'Normale Nachricht' } : { jobId: String(offer._id), message: 'Normale Nachricht' }, tokens[0]);
+      assert.equal(result.status, reply ? 201 : 200);
+      if (!chatId) chatId = result.data._id;
+      if (!reply) assert.equal(result.data.messages.length, 1, 'send response contains only the newly added message');
+    }
+    assert.equal((await request(`/chats/${chatId}/reply`, 'POST', { content: 'Zu viel' }, tokens[0])).status, 429);
+    const alternate = await Job.create({ ...payload, createdBy: users[2]._id });
+    assert.equal((await request('/chats', 'POST', { jobId: String(alternate._id), message: 'Anderer Empfänger' }, tokens[0])).status, 429);
+    assert.equal((await request(`/chats/${chatId}`, 'DELETE', undefined, tokens[0])).status, 200);
+    assert.equal((await request('/chats', 'POST', { jobId: String(offer._id), message: 'Neuer Chat' }, tokens[0])).status, 429);
+    assert.equal((await request('/chats', 'POST', { jobId: String(offer._id), message: 'Unabhängiger Sender' }, tokens[2])).status, 200);
+  } finally { clock.mock.restore(); }
+});
+
+test('recipient quota aggregates different senders and offers', async () => {
+  const { mock } = await import('node:test');
+  const clock = mock.method(Date, 'now', () => 1800000001000);
+  try {
+    await mongoose.connection.collection('requestlimits').deleteMany({});
+    const { users, tokens, offer } = await chatActors('recipient-budget');
+    const extra = await User.create({ username: 'budget-extra', email: 'budget-extra@example.invalid', password: 'Unused-synthetic-hash' });
+    const extraToken = jwt.sign({ userId: String(extra._id), tokenVersion: 0 }, process.env.JWT_SECRET_KEY, { expiresIn: '1h' });
+    const secondOffer = await Job.create({ ...payload, createdBy: users[1]._id });
+    for (const [token, offerId] of [[tokens[0], offer._id], [tokens[2], secondOffer._id]]) {
+      for (let index = 0; index < 30; index++) assert.equal((await request('/chats', 'POST', { jobId: String(offerId), message: 'Test' }, token)).status, 200);
+    }
+    assert.equal((await request('/chats', 'POST', { jobId: String(offer._id), message: 'Empfängerbudget voll' }, extraToken)).status, 429);
+  } finally { clock.mock.restore(); }
+});
+
+test('atomic chat cap survives concurrent writes and never trims old or legacy messages', async () => {
+  await mongoose.connection.collection('requestlimits').deleteMany({});
+  const { MAX_CHAT_MESSAGES } = await import('../chatLimits.js');
+  const { users, tokens, offer } = await chatActors('cap');
+  const messages = Array.from({ length: MAX_CHAT_MESSAGES - 1 }, (_, index) => ({ sender: users[0]._id, content: `Original-${index}` }));
+  const chat = await Chat.create({ jobId: offer._id, participants: [users[0]._id, users[1]._id], messages });
+  const results = await Promise.all([
+    request('/chats', 'POST', { jobId: String(offer._id), message: 'parallel-one' }, tokens[0]),
+    request(`/chats/${chat._id}/reply`, 'POST', { content: 'parallel-two' }, tokens[0]),
+  ]);
+  assert.equal(results.filter(result => result.status === 409).length, 1);
+  assert.equal(results.filter(result => [200, 201].includes(result.status)).length, 1);
+  let stored = await Chat.findById(chat._id);
+  assert.equal(stored.messages.length, MAX_CHAT_MESSAGES);
+  assert.deepEqual(stored.messages.slice(0, MAX_CHAT_MESSAGES - 1).map(message => message.content), messages.map(message => message.content));
+  await Chat.updateOne({ _id: chat._id }, { $push: { messages: { sender: users[0]._id, content: 'Legacy-over-cap' } } });
+  assert.equal((await request(`/chats/${chat._id}/reply`, 'POST', { content: 'Abgewiesen' }, tokens[0])).status, 409);
+  stored = await Chat.findById(chat._id);
+  assert.equal(stored.messages.length, MAX_CHAT_MESSAGES + 1);
+  assert.equal((await request(`/chats/${chat._id}/messages`, 'GET', undefined, tokens[1])).status, 200);
+});
+
+test('parallel first sends create only one conversation', async () => {
+  await mongoose.connection.collection('requestlimits').deleteMany({});
+  const { users, tokens, offer } = await chatActors('parallel-create');
+  const results = await Promise.all(Array.from({ length: 8 }, (_, index) => request('/chats', 'POST', { jobId: index % 2 ? String(offer._id).toUpperCase() : String(offer._id), message: `Message-${index}` }, tokens[0])));
+  assert.ok(results.every(result => result.status === 200));
+  const chats = await Chat.find({ jobId: offer._id, participants: users[0]._id });
+  assert.equal(chats.length, 1);
+  assert.equal(chats[0].messages.length, 8);
+});
+
+test('message history, unread counts and batch marking stay bounded and participant-only', async () => {
+  const { MESSAGE_PAGE_SIZE } = await import('../chatLimits.js');
+  const { users, tokens, offer } = await chatActors('pages');
+  const chat = await Chat.create({ jobId: offer._id, participants: [users[0]._id, users[1]._id],
+    messages: Array.from({ length: 47 }, (_, index) => ({ sender: users[0]._id, content: `Page-${index}` })),
+  });
+  const list = await request('/chats', 'GET', undefined, tokens[1]);
+  assert.equal(list.data.data[0].messages.length, MESSAGE_PAGE_SIZE);
+  assert.equal(list.data.data[0].unreadCount, 47);
+  const jobList = await request(`/chats/job/${offer._id}`, 'GET', undefined, tokens[1]);
+  assert.equal(jobList.data[0].messages.length, MESSAGE_PAGE_SIZE);
+  const unread = await request('/chats/unread', 'GET', undefined, tokens[1]);
+  assert.deepEqual(unread.data, { unreadCount: 47 });
+  assert.equal((await request('/chats/unread', 'GET', undefined, tokens[0])).data.unreadCount, 0);
+  assert.equal((await request(`/chats/${chat._id}/messages`, 'GET', undefined, tokens[2])).status, 404);
+  assert.equal((await request(`/chats/${chat._id}/read`, 'PATCH', { messageIds: list.data.data[0].messages.map(message => message._id) }, tokens[2])).status, 404);
+  assert.equal((await request(`/chats/${chat._id}/messages?before=invalid`, 'GET', undefined, tokens[1])).status, 400);
+  assert.equal((await request(`/chats/${chat._id}/messages?before=${new mongoose.Types.ObjectId()}`, 'GET', undefined, tokens[1])).status, 400);
+  assert.equal((await request(`/chats/${chat._id}/read`, 'PATCH', { messageIds: list.data.data[0].messages.map(message => message._id) }, tokens[1])).status, 200);
+  assert.equal((await request('/chats/unread', 'GET', undefined, tokens[1])).data.unreadCount, 27);
+  let before, collected = [];
+  do {
+    const page = await request(`/chats/${chat._id}/messages${before ? `?before=${before}` : ''}`, 'GET', undefined, tokens[1]);
+    assert.equal(page.status, 200);
+    assert.ok(page.data.messages.length <= MESSAGE_PAGE_SIZE);
+    assert.equal(page.data.messages[0].sender.username, users[0].username);
+    collected = [...page.data.messages, ...collected];
+    before = page.data.before;
+  } while (before);
+  assert.equal(new Set(collected.map(message => message._id)).size, 47);
+  assert.deepEqual(collected.map(message => message.content), Array.from({ length: 47 }, (_, index) => `Page-${index}`));
+});
+
+test('chat list pagination bounds both list routes without exposing other users', async () => {
+  const { CHAT_PAGE_SIZE } = await import('../chatLimits.js');
+  const { users, tokens, offer } = await chatActors('chat-pages');
+  await Chat.insertMany(Array.from({ length: 24 }, () => ({ jobId: offer._id, participants: [users[0]._id, users[1]._id], messages: [{ sender: users[0]._id, content: 'Test' }] })));
+  let cursor, ids = [];
+  do {
+    const page = await request(`/chats${cursor ? `?cursor=${encodeURIComponent(cursor)}` : ''}`, 'GET', undefined, tokens[1]);
+    assert.equal(page.status, 200);
+    assert.ok(page.data.data.length <= CHAT_PAGE_SIZE);
+    ids.push(...page.data.data.map(chat => chat._id));
+    cursor = page.data.nextCursor;
+  } while (cursor);
+  assert.equal(ids.length, 24);
+  assert.equal(new Set(ids).size, 24);
+  assert.equal((await request('/chats?cursor=invalid', 'GET', undefined, tokens[1])).status, 400);
+  assert.equal((await request(`/chats/job/${offer._id}`, 'GET', undefined, tokens[1])).data.length, CHAT_PAGE_SIZE);
+  assert.equal((await request('/chats', 'GET', undefined, tokens[2])).data.data.length, 0);
+});
+
+test('deleted history anchors remain usable and batch read cannot include newly arriving messages', async () => {
+  const { users, tokens, offer } = await chatActors('read-snapshot');
+  const chat = await Chat.create({ jobId: offer._id, participants: [users[0]._id, users[1]._id],
+    messages: Array.from({ length: 25 }, (_, index) => ({ sender: users[0]._id, content: `Original-${index}` })),
+  });
+  const first = (await request('/chats', 'GET', undefined, tokens[0])).data.data[0];
+  const deletedAnchor = first.messages[0]._id;
+  assert.equal((await request(`/chats/${chat._id}/messages/${deletedAnchor}`, 'DELETE', undefined, tokens[0])).status, 200);
+  const older = await request(`/chats/${chat._id}/messages?before=${encodeURIComponent(first.before)}`, 'GET', undefined, tokens[1]);
+  assert.equal(older.status, 200);
+  assert.deepEqual(older.data.messages.map(message => message.content), Array.from({ length: 5 }, (_, index) => `Original-${index}`));
+  const displayed = (await request('/chats', 'GET', undefined, tokens[1])).data.data[0].messages;
+  await Chat.updateOne({ _id: chat._id }, { $push: { messages: { sender: users[0]._id, content: 'Noch nicht angezeigt', read: false, createdAt: new Date() } } });
+  assert.equal((await request(`/chats/${chat._id}/read`, 'PATCH', { messageIds: displayed.map(message => message._id) }, tokens[1])).status, 200);
+  const saved = await Chat.findById(chat._id);
+  assert.equal(saved.messages.find(message => message.content === 'Noch nicht angezeigt').read, false);
+  assert.ok(displayed.every(message => saved.messages.id(message._id).read));
+  assert.equal((await request(`/chats/${chat._id}/read`, 'PATCH', { messageIds: Array(21).fill(String(displayed[0]._id)) }, tokens[1])).status, 400);
+});

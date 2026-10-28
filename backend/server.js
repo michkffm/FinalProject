@@ -14,6 +14,8 @@ import { pathToFileURL } from "node:url";
 import Contact from "./models/Contact.js";
 import { connectDatabase } from "./database.js";
 import { rateLimit } from "./middlewares/rateLimit.js";
+import { allowChatSend, MAX_CHAT_MESSAGES } from './chatLimits.js';
+import { listChats, messageWindow, incomingUnread } from './chatQueries.js';
 
 const { ObjectId } = mongoose.Types;
 
@@ -64,6 +66,7 @@ for (const name of ["id", "jobId", "chatId", "messageId"]) {
 app.use((req, res, next) => {
   if (req.body && (Array.isArray(req.body) || typeof req.body !== "object")) return res.status(400).json({ error: "Ungültige Eingabe" });
   for (const [key, value] of Object.entries(req.body || {})) {
+    if (key === 'messageIds' && req.method === 'PATCH' && /^\/chats\/[a-f0-9]{24}\/read$/i.test(req.path) && Array.isArray(value) && value.length <= 20 && value.every(validId)) continue;
     if (key === "role" && Array.isArray(value) && value.every((item) => typeof item === "string")) continue;
     if (!["string", "number", "boolean"].includes(typeof value) && value !== null) return res.status(400).json({ error: "Ungültige Eingabe" });
   }
@@ -443,233 +446,127 @@ app.delete("/ratings/:id", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Bewertung konnte nicht gelöscht werden" });
   }
 });
-app.post("/chats/:chatId/reply", authMiddleware, async (req, res) => {
-  const { chatId } = req.params;
+async function appendChatMessage(chatId, userId, content) {
+  return Chat.findOneAndUpdate({ _id: chatId, participants: userId,
+    [`messages.${MAX_CHAT_MESSAGES - 1}`]: { $exists: false },
+  }, { $push: { messages: { content, sender: userId, createdAt: new Date(), read: false } } },
+  { new: true, runValidators: true, projection: { messages: { $slice: -1 }, participants: 1, jobId: 1 } });
+}
+
+app.post('/chats/:chatId/reply', authMiddleware, async (req, res, next) => {
   const { content } = req.body;
-  if (typeof content !== "string" || !content.trim() || content.length > 5000) return res.status(400).json({ error: "Bitte eine Nachricht mit höchstens 5000 Zeichen eingeben." });
-
+  if (typeof content !== 'string' || !content.trim() || content.length > 5000) return res.status(400).json({ error: 'Bitte eine Nachricht mit höchstens 5000 Zeichen eingeben.' });
   try {
-    const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId });
-    if (!chat) {
-      return res.status(404).json({ error: "Chat nicht gefunden" });
-    }
-
-    // Erstelle eine neue Antwort
-    const reply = {
-      sender: req.user.userId, // oder ein anderes Feld für den Absender
-      content,
-      timestamp: new Date(),
-    };
-
-    chat.messages.push(reply); // Füge die Antwort zum Chat hinzu
-    await chat.save();
-
-    res.status(201).json({ message: "Antwort erfolgreich gesendet" });
-  } catch (error) {
-    res.status(500).json({ error: "Fehler beim Senden der Antwort" });
-  }
+    const chat = await Chat.findOne({ _id: req.params.chatId, participants: req.user.userId }).select('_id participants');
+    if (!chat) return res.status(404).json({ error: 'Chat nicht gefunden' });
+    const recipient = chat.participants.find(id => String(id) !== req.user.userId) || req.user.userId;
+    if (!await allowChatSend(req.user.userId, String(recipient), res)) return;
+    if (!await appendChatMessage(chat._id, req.user.userId, content)) return res.status(409).json({ error: 'Diese Unterhaltung ist voll oder nicht mehr verfügbar. Es wurden keine Nachrichten entfernt.' });
+    res.status(201).json({ message: 'Antwort erfolgreich gesendet' });
+  } catch (error) { next(error); }
 });
 
-app.post("/chats", authMiddleware, async (req, res) => {
+app.post('/chats', authMiddleware, async (req, res, next) => {
   const { jobId, message } = req.body;
-  if (!validId(jobId) || typeof message !== "string" || !message.trim() || message.length > 5000) return res.status(400).json({ error: "Ungültige Nachricht oder Job-ID" });
+  if (!validId(jobId) || typeof message !== 'string' || !message.trim() || message.length > 5000) return res.status(400).json({ error: 'Ungültige Nachricht oder Job-ID' });
   const senderId = req.user.userId;
   try {
-    const job = await Job.findById(jobId);
-    if (!job) {
-      return res.status(404).json({ error: "Job nicht gefunden" });
-    }
-    const recipientId = job.createdBy;
-    let chat = await Chat.findOne({
-      jobId,
-      participants: { $all: [senderId, recipientId] },
-    });
+    const job = await Job.findById(jobId).select('createdBy');
+    if (!job) return res.status(404).json({ error: 'Job nicht gefunden' });
+    if (!await allowChatSend(senderId, String(job.createdBy), res)) return;
+    let chat = await Chat.findOne({ jobId, participants: { $all: [senderId, job.createdBy] } }).select('_id');
     if (!chat) {
-      chat = new Chat({
-        jobId,
-        participants: [senderId, recipientId],
-        messages: [{ content: message, sender: senderId }],
-      });
-    } else {
-      chat.messages.push({ content: message, sender: senderId });
+      // Stable identity prevents parallel first messages from creating duplicate chats.
+      const participants = [...new Set([senderId, String(job.createdBy)])].sort();
+      const id = crypto.createHash('sha256').update(`${job._id}:${participants.join(':')}`).digest('hex').slice(0, 24);
+      try {
+        chat = await Chat.findOneAndUpdate({ _id: id }, { $setOnInsert: { jobId, participants, messages: [] } }, { upsert: true, new: true, projection: { _id: 1 } });
+      } catch (error) {
+        if (error.code !== 11000) throw error;
+        chat = { _id: id };
+      }
     }
-    await chat.save();
-    res.status(200).json(chat);
-  } catch (error) {
-
-    res
-      .status(500)
-      .json({
-        error: "Nachricht konnte nicht gesendet werden",
-      });
-  }
+    const updated = await appendChatMessage(chat._id, senderId, message);
+    if (!updated) return res.status(409).json({ error: 'Diese Unterhaltung ist voll oder nicht mehr verfügbar. Es wurden keine Nachrichten entfernt.' });
+    res.status(200).json(updated);
+  } catch (error) { next(error); }
 });
 
-app.get("/chats", authMiddleware, async (req, res) => {
-  const userId = req.user.userId;
+app.get('/chats/unread', authMiddleware, async (req, res, next) => {
   try {
-    const chats = await Chat.find({ participants: { $in: [userId] } })
-      .populate("participants", "username") // Nur den Benutzernamen der Teilnehmer
-      .populate("messages.sender", "username") // Nur den Benutzernamen des Senders
-      .populate("jobId", "title") // Nur den Titel des Jobs
-      .sort({ updatedAt: -1 }) // Zuletzt aktualisierte Chats zuerst
-      .lean(); // Gibt ein einfaches JavaScript-Objekt zurück, um Änderungen vorzunehmen
-    // Berechnung der ungelesenen Nachrichten für den aktuellen Benutzer
-    const chatsWithUnreadCount = chats.map((chat) => {
-      const unreadCount = chat.messages.filter(
-        (msg) => !msg.read && msg.sender?._id.toString() !== userId // Ungelesene Nachrichten, nicht vom Benutzer gesendet
-      ).length;
-      return {
-        ...chat, // Alle vorhandenen Chat-Daten
-        unreadCount, // Neues Feld für ungelesene Nachrichten
-      };
-    });
-    res.status(200).json({
-      success: true,
-      data: chatsWithUnreadCount,
-    });
-  } catch (error) {
-
-    res.status(500).json({
-      success: false,
-      error: "Fehler beim Abrufen der Chats",
-    });
-  }
+    const rows = await Chat.aggregate([
+      { $match: { participants: new ObjectId(req.user.userId) } },
+      { $project: { count: { $size: { $filter: { input: '$messages', as: 'message', cond: incomingUnread(req.user.userId) } } } } },
+      { $group: { _id: null, unreadCount: { $sum: '$count' } } },
+    ]);
+    res.json({ unreadCount: rows[0]?.unreadCount || 0 });
+  } catch (error) { next(error); }
 });
-
-app.get("/chats/job/:jobId", authMiddleware, async (req, res) => {
-  const { jobId } = req.params;
-  const userId = req.user.userId;
-
+app.get('/chats', authMiddleware, async (req, res, next) => {
+  try { res.json({ success: true, ...await listChats(req.user.userId, { cursor: req.query.cursor }) }); }
+  catch (error) { next(error); }
+});
+app.get('/chats/job/:jobId', authMiddleware, async (req, res, next) => {
   try {
-    const chats = await Chat.find({
-      jobId,
-      participants: { $in: [userId] },
-    })
-      .populate("participants", "username")
-      .populate("messages.sender", "username")
-      .sort({ updatedAt: -1 });
-
-    res.status(200).json(chats);
-  } catch (error) {
-    res
-      .status(500)
-      .json({
-        error: "Chats konnten nicht abgerufen werden.",
-      });
-  }
+    const page = await listChats(req.user.userId, { jobId: req.params.jobId, cursor: req.query.cursor });
+    if (page.nextCursor) res.set('X-Next-Cursor', page.nextCursor);
+    res.json(page.data);
+  } catch (error) { next(error); }
 });
-
-app.patch(
-  "/chats/:chatId/messages/:messageId",
-  authMiddleware,
-  async (req, res) => {
-    const { chatId, messageId } = req.params;
-
-    try {
-      const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId });
-
-      if (!chat) {
-        return res.status(404).json({ error: "Chat nicht gefunden" });
-      }
-
-      const message = chat.messages.id(messageId);
-      if (!message) {
-        return res.status(404).json({ error: "Message nicht gefunden" });
-      }
-
-      if (message.sender.toString() === req.user.userId) return res.status(403).json({ error: "Nur empfangene Nachrichten können als gelesen markiert werden" });
-      message.read = true;
-      await chat.save();
-
-      res.status(200).json({ success: true, message });
-    } catch (error) {
-      res
-        .status(500)
-        .json({
-          error: "Nachricht konnte nicht aktualisiert werden",
-        });
-    }
-  }
-);
-
-app.delete("/chats/:chatId", authMiddleware, async (req, res) => {
-  const { chatId } = req.params;
-  const userId = req.user.userId;
-  // Überprüfe, ob die chatId eine gültige ObjectId ist
-  if (!ObjectId.isValid(chatId)) {
-    return res.status(400).json({ error: "Ungültige chatId" });
-  }
+app.get('/chats/:chatId/messages', authMiddleware, async (req, res, next) => {
   try {
-    // Wandelt chatId in ObjectId um, um sicherzustellen, dass sie korrekt behandelt wird
-    const chat = await Chat.findOne({
-      _id: new ObjectId(chatId),
-      participants: { $in: [userId] },
-    });
-    if (!chat) {
-      return res
-        .status(404)
-        .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
-    }
-    // Lösche den Chat
-    await Chat.findByIdAndDelete(chatId);
-    res
-      .status(200)
-      .json({ success: true, message: "Chat erfolgreich gelöscht" });
-  } catch (error) {
-
-    res
-      .status(500)
-      .json({ error: "Fehler beim Löschen des Chats", });
-  }
+    const page = await messageWindow(req.user.userId, req.params.chatId, req.query.before);
+    if (!page) return res.status(404).json({ error: 'Chat nicht gefunden' });
+    await Chat.populate(page.messages, { path: 'sender', model: 'User', select: 'username' });
+    res.json(page);
+  } catch (error) { next(error); }
+});
+app.patch('/chats/:chatId/read', authMiddleware, async (req, res, next) => {
+  const ids = req.body?.messageIds;
+  if (!Array.isArray(ids) || !ids.length || ids.length > 20 || !ids.every(validId)) return res.status(400).json({ error: 'Ungültige Nachrichtenauswahl' });
+  try {
+    const result = await Chat.updateOne({ _id: req.params.chatId, participants: req.user.userId },
+      { $set: { 'messages.$[message].read': true } },
+      { arrayFilters: [{ 'message._id': { $in: ids.map(id => new ObjectId(id)) }, 'message.sender': { $ne: new ObjectId(req.user.userId) } }], timestamps: false });
+    if (!result.matchedCount) return res.status(404).json({ error: 'Chat nicht gefunden' });
+    res.json({ success: true });
+  } catch (error) { next(error); }
 });
 
-app.delete(
-  "/chats/:chatId/messages/:messageId",
-  authMiddleware,
-  async (req, res) => {
-    const { chatId, messageId } = req.params;
-    const userId = req.user.userId;
-
-    try {
-      const chat = await Chat.findOne({
-        _id: chatId,
-        participants: { $in: [userId] },
-      });
-
-      if (!chat) {
-        return res
-          .status(404)
-          .json({ error: "Chat nicht gefunden oder Zugriff verweigert" });
-      }
-
-      const message = chat.messages.id(messageId);
-      if (!message) {
-        return res.status(404).json({ error: "Message nicht gefunden" });
-      }
-
-      if (message.sender.toString() !== userId) {
-        return res
-          .status(403)
-          .json({ error: "Sie können nur Ihre eigenen Nachrichten löschen" });
-      }
-
-      chat.messages.pull(messageId);
-      await chat.save();
-
-      res
-        .status(200)
-        .json({ success: true, message: "Nachricht erfolgreich gelöscht" });
-    } catch (error) {
-
-      res
-        .status(500)
-        .json({
-          error: "Nachricht konnte nicht gelöscht werden",
-        });
-    }
-  }
-);
+app.patch('/chats/:chatId/messages/:messageId', authMiddleware, async (req, res, next) => {
+  const { chatId, messageId } = req.params;
+  try {
+    const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId },
+      { messages: { $elemMatch: { _id: new ObjectId(messageId) } } });
+    if (!chat || !chat.messages.length) return res.status(404).json({ error: 'Nachricht nicht gefunden' });
+    const message = chat.messages[0];
+    if (String(message.sender) === req.user.userId) return res.status(403).json({ error: 'Nur empfangene Nachrichten können als gelesen markiert werden' });
+    const result = await Chat.updateOne({ _id: chatId, participants: req.user.userId, 'messages._id': messageId },
+      { $set: { 'messages.$.read': true } }, { timestamps: false });
+    if (!result.matchedCount) return res.status(404).json({ error: 'Nachricht nicht gefunden' });
+    message.read = true;
+    res.json({ success: true, message });
+  } catch (error) { next(error); }
+});
+app.delete('/chats/:chatId', authMiddleware, async (req, res, next) => {
+  try {
+    const deleted = await Chat.findOneAndDelete({ _id: req.params.chatId, participants: req.user.userId }, { projection: { _id: 1 } });
+    if (!deleted) return res.status(404).json({ error: 'Chat nicht gefunden oder Zugriff verweigert' });
+    res.json({ success: true, message: 'Chat erfolgreich gelöscht' });
+  } catch (error) { next(error); }
+});
+app.delete('/chats/:chatId/messages/:messageId', authMiddleware, async (req, res, next) => {
+  const { chatId, messageId } = req.params;
+  try {
+    const chat = await Chat.findOne({ _id: chatId, participants: req.user.userId },
+      { messages: { $elemMatch: { _id: new ObjectId(messageId) } } });
+    if (!chat || !chat.messages.length) return res.status(404).json({ error: 'Nachricht nicht gefunden' });
+    if (String(chat.messages[0].sender) !== req.user.userId) return res.status(403).json({ error: 'Sie können nur Ihre eigenen Nachrichten löschen' });
+    await Chat.updateOne({ _id: chatId, participants: req.user.userId },
+      { $pull: { messages: { _id: messageId, sender: req.user.userId } } });
+    res.json({ success: true, message: 'Nachricht erfolgreich gelöscht' });
+  } catch (error) { next(error); }
+});
 
 app.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
