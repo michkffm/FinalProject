@@ -1,5 +1,7 @@
 # EasyHelfer · Unser Final Projekt
 
+**Deutsch** | [English](README.en.md)
+
 EasyHelfer ist eine gemeinsam entwickelte Webanwendung zur Vermittlung von Dienstleistungen. Menschen, die Unterstützung im Alltag oder bei bestimmten Aufgaben suchen, können passende Angebote finden und die Anbieter direkt kontaktieren. Wer selbst eine Dienstleistung anbieten möchte, kann ein Profil erstellen und eigene Angebote veröffentlichen.
 
 Das Projekt verbindet eine React-Oberfläche mit einem Node.js-Backend und einer MongoDB-Datenbank.
@@ -116,4 +118,15 @@ FinalProject/
 
 ## Gemeinschaftsarbeit
 
-EasyHelfer entstand als unser gemeinsames Final Projekt. Die Gestaltung und Umsetzung der Anwendung sind eine Teamleistung. Michael Koch übernahm die Projektleitung und arbeitete in mehreren Entwicklungsbereichen mit.
+EasyHelfer entstand als unser gemeinsames Final Projekt. Von der Gestaltung der Oberfläche bis zur Umsetzung von Backend und Datenbank haben wir die Anwendung gemeinsam entwickelt.
+
+| Teammitglied | GitHub-Profil |
+| --- | --- |
+| Bilal Bagci | [![GitHub-Profil von Bilal Bagci](docs/github-cat.png)](https://github.com/webdevbfb) |
+| Pacome Adoufack | [![GitHub-Profil von Pacome Adoufack](docs/github-cat.png)](https://github.com/Pacome-Adoufack) |
+| Sükrü Cebeci | [![GitHub-Profil von Sükrü Cebeci](docs/github-cat.png)](https://github.com/Okyanuspol) |
+| Michael Koch | [![GitHub-Profil von Michael Koch](docs/github-cat.png)](https://github.com/michkffm) |
+
+## Autor
+
+Autor und Projekt: [Michael Koch](https://github.com/michkffm)
