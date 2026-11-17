@@ -12,7 +12,7 @@ Das Projekt verbindet eine React-Oberfläche mit einem Node.js-Backend und einer
 
 EasyHelfer entstand als unser gemeinsames Final Projekt. Von der Gestaltung der Oberfläche bis zur Umsetzung von Backend und Datenbank haben wir die Anwendung gemeinsam entwickelt.
 
-| Teammitglied | GitHub-Profil | LinkedIn-Profil |
+| Softwareentwickler | GitHub-Profil | LinkedIn-Profil |
 | --- | --- | --- |
 | Bilal Bagci | [![GitHub-Profil von Bilal Bagci](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
 | Pacome Adoufack | [![GitHub-Profil von Pacome Adoufack](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |

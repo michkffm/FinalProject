@@ -12,7 +12,7 @@ The project combines a React frontend with a Node.js backend and a MongoDB datab
 
 EasyHelfer was created as our shared final project. From designing the interface to implementing the backend and database, we developed the application together.
 
-| Team Member | GitHub Profile | LinkedIn Profile |
+| Software Developer | GitHub Profile | LinkedIn Profile |
 | --- | --- | --- |
 | Bilal Bagci | [![Bilal Bagci's GitHub profile](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn Profile](docs/linkedin.svg)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
 | Pacome Adoufack | [![Pacome Adoufack's GitHub profile](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn Profile](docs/linkedin.svg)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
