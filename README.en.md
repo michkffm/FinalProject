@@ -12,12 +12,37 @@ The project combines a React frontend with a Node.js backend and a MongoDB datab
 
 EasyHelfer was created as our shared final project. From designing the interface to implementing the backend and database, we developed the application together.
 
-| Software Developer | GitHub Profile | LinkedIn Profile |
-| --- | --- | --- |
-| Bilal Bagci | [![Bilal Bagci's GitHub profile](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn Profile](docs/linkedin.svg)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
-| Pacome Adoufack | [![Pacome Adoufack's GitHub profile](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn Profile](docs/linkedin.svg)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
-| Sükrü Cebeci | [![Sükrü Cebeci's GitHub profile](docs/github-cat.png)](https://github.com/Okyanuspol) | [![LinkedIn Profile](docs/linkedin.svg)](https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/) |
-| Michael Koch | [![Michael Koch's GitHub profile](docs/github-cat.png)](https://github.com/michkffm) | — |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="400">Software Developer</th>
+      <th width="300">GitHub Profile</th>
+      <th width="300">LinkedIn Profile</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bilal Bagci</td>
+      <td><a href="https://github.com/webdevbfb"><img src="docs/github-cat.png" alt="Bilal Bagci's GitHub profile" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/bilal-f-bagci-a4543a332/"><img src="docs/linkedin.svg" alt="LinkedIn Profile" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Pacome Adoufack</td>
+      <td><a href="https://github.com/Pacome-Adoufack"><img src="docs/github-cat.png" alt="Pacome Adoufack's GitHub profile" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/"><img src="docs/linkedin.svg" alt="LinkedIn Profile" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Sükrü Cebeci</td>
+      <td><a href="https://github.com/Okyanuspol"><img src="docs/github-cat.png" alt="Sükrü Cebeci's GitHub profile" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/"><img src="docs/linkedin.svg" alt="LinkedIn Profile" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Michael Koch</td>
+      <td><a href="https://github.com/michkffm"><img src="docs/github-cat.png" alt="Michael Koch's GitHub profile" width="64" height="64"></a></td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Preview
 

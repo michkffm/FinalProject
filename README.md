@@ -12,12 +12,37 @@ Das Projekt verbindet eine React-Oberfläche mit einem Node.js-Backend und einer
 
 EasyHelfer entstand als unser gemeinsames Final Projekt. Von der Gestaltung der Oberfläche bis zur Umsetzung von Backend und Datenbank haben wir die Anwendung gemeinsam entwickelt.
 
-| Softwareentwickler | GitHub-Profil | LinkedIn-Profil |
-| --- | --- | --- |
-| Bilal Bagci | [![GitHub-Profil von Bilal Bagci](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
-| Pacome Adoufack | [![GitHub-Profil von Pacome Adoufack](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
-| Sükrü Cebeci | [![GitHub-Profil von Sükrü Cebeci](docs/github-cat.png)](https://github.com/Okyanuspol) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/) |
-| Michael Koch | [![GitHub-Profil von Michael Koch](docs/github-cat.png)](https://github.com/michkffm) | — |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="400">Softwareentwickler</th>
+      <th width="300">GitHub-Profil</th>
+      <th width="300">LinkedIn-Profil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Bilal Bagci</td>
+      <td><a href="https://github.com/webdevbfb"><img src="docs/github-cat.png" alt="GitHub-Profil von Bilal Bagci" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/bilal-f-bagci-a4543a332/"><img src="docs/linkedin.svg" alt="LinkedIn-Profil" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Pacome Adoufack</td>
+      <td><a href="https://github.com/Pacome-Adoufack"><img src="docs/github-cat.png" alt="GitHub-Profil von Pacome Adoufack" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/"><img src="docs/linkedin.svg" alt="LinkedIn-Profil" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Sükrü Cebeci</td>
+      <td><a href="https://github.com/Okyanuspol"><img src="docs/github-cat.png" alt="GitHub-Profil von Sükrü Cebeci" width="64" height="64"></a></td>
+      <td><a href="https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/"><img src="docs/linkedin.svg" alt="LinkedIn-Profil" width="64" height="64"></a></td>
+    </tr>
+    <tr>
+      <td>Michael Koch</td>
+      <td><a href="https://github.com/michkffm"><img src="docs/github-cat.png" alt="GitHub-Profil von Michael Koch" width="64" height="64"></a></td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>
 
 ## Einblick
 
