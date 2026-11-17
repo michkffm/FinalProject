@@ -8,6 +8,17 @@ The project combines a React frontend with a Node.js backend and a MongoDB datab
 
 [**Explore EasyHelfer live →**](https://easyhelfer.vercel.app/)
 
+## Team Collaboration
+
+EasyHelfer was created as our shared final project. From designing the interface to implementing the backend and database, we developed the application together.
+
+| Team Member | GitHub Profile | LinkedIn Profile |
+| --- | --- | --- |
+| Bilal Bagci | [![Bilal Bagci's GitHub profile](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
+| Pacome Adoufack | [![Pacome Adoufack's GitHub profile](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
+| Sükrü Cebeci | [![Sükrü Cebeci's GitHub profile](docs/github-cat.png)](https://github.com/Okyanuspol) | [![LinkedIn Profile](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/) |
+| Michael Koch | [![Michael Koch's GitHub profile](docs/github-cat.png)](https://github.com/michkffm) | — |
+
 ## Preview
 
 [![Current EasyHelfer homepage with search and service categories](docs/easyhelfer-homepage-v3.jpg)](https://easyhelfer.vercel.app/)
@@ -115,17 +126,6 @@ FinalProject/
 ├── backend/      Express API, data models and email delivery
 └── docs/         Screenshots for the project presentation
 ```
-
-## Team Collaboration
-
-EasyHelfer was created as our shared final project. From designing the interface to implementing the backend and database, we developed the application together.
-
-| Team Member | GitHub Profile |
-| --- | --- |
-| Bilal Bagci | [![Bilal Bagci's GitHub profile](docs/github-cat.png)](https://github.com/webdevbfb) |
-| Pacome Adoufack | [![Pacome Adoufack's GitHub profile](docs/github-cat.png)](https://github.com/Pacome-Adoufack) |
-| Sükrü Cebeci | [![Sükrü Cebeci's GitHub profile](docs/github-cat.png)](https://github.com/Okyanuspol) |
-| Michael Koch | [![Michael Koch's GitHub profile](docs/github-cat.png)](https://github.com/michkffm) |
 
 ## Author
 
