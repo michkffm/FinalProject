@@ -14,9 +14,9 @@ EasyHelfer entstand als unser gemeinsames Final Projekt. Von der Gestaltung der 
 
 | Teammitglied | GitHub-Profil | LinkedIn-Profil |
 | --- | --- | --- |
-| Bilal Bagci | [![GitHub-Profil von Bilal Bagci](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn-Profil](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
-| Pacome Adoufack | [![GitHub-Profil von Pacome Adoufack](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn-Profil](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
-| Sükrü Cebeci | [![GitHub-Profil von Sükrü Cebeci](docs/github-cat.png)](https://github.com/Okyanuspol) | [![LinkedIn-Profil](https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/) |
+| Bilal Bagci | [![GitHub-Profil von Bilal Bagci](docs/github-cat.png)](https://github.com/webdevbfb) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/bilal-f-bagci-a4543a332/) |
+| Pacome Adoufack | [![GitHub-Profil von Pacome Adoufack](docs/github-cat.png)](https://github.com/Pacome-Adoufack) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/pacome-adoufack-tsamo-8a2972317/) |
+| Sükrü Cebeci | [![GitHub-Profil von Sükrü Cebeci](docs/github-cat.png)](https://github.com/Okyanuspol) | [![LinkedIn-Profil](docs/linkedin.svg)](https://www.linkedin.com/in/s%C3%BCkr%C3%BC-cebeci-a2643a332/) |
 | Michael Koch | [![GitHub-Profil von Michael Koch](docs/github-cat.png)](https://github.com/michkffm) | — |
 
 ## Einblick
